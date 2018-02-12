@@ -18,28 +18,49 @@ import java.nio.FloatBuffer;
  * Created by huijonglee on 2018. 1. 30..
  */
 
-class FCameraRenderer {
-    public class FilterVar {
+public class FCameraRenderer {
+    public static class FilterVar {
         public float [] rgb = {0.0f, 0.0f, 0.0f};
-        private float blur = 0.0f;
-        private float aberration = 0.6f;
-        private float focus = 1.0f;
-        private float noiseSize = 1.0f;
-        private float noiseIntensity = 0.0f;
+        private static float blur = 0.0f;
+        private static float aberration = 0.6f;
 
-        public void setBlur(float num) {
+        public static float getBlur() {
+            return blur;
+        }
+
+        public static float getAberration() {
+            return aberration;
+        }
+
+        public static float getFocus() {
+            return focus;
+        }
+
+        public static float getNoiseSize() {
+            return noiseSize;
+        }
+
+        public static float getNoiseIntensity() {
+            return noiseIntensity;
+        }
+
+        private static float focus = 1.0f;
+        private static float noiseSize = 1.0f;
+        private static float noiseIntensity = 0.0f;
+
+        public static void setBlur(float num) {
             blur = num;
         }
-        public void setAberration(float num) {
+        public static void setAberration(float num) {
             aberration = num;
         }
-        public void setFocus(float num) {
+        public static void setFocus(float num) {
             focus = num;
         }
-        public void setNoiseSize(float num) {
+        public static void setNoiseSize(float num) {
             noiseSize = num;
         }
-        public void setNoiseIntensity(float num) {
+        public static void setNoiseIntensity(float num) {
             noiseIntensity = num;
         }
 

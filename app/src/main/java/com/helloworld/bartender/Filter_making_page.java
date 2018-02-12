@@ -1,13 +1,80 @@
 package com.helloworld.bartender;
 
+
+import android.graphics.BlurMaskFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.helloworld.bartender.FilterableCamera.FCamera;
+import com.helloworld.bartender.FilterableCamera.FCameraRenderer;
 
 public class Filter_making_page extends AppCompatActivity {
+
+    private SeekBar sbBlur;
+    private SeekBar sbFocus;
+    private SeekBar sbAberation;
+    private SeekBar sbNoiseSize;
+    private SeekBar sbNoiseIntensity;
+
+    private TextView txtBlur;
+    private TextView txtFocus;
+    private TextView txtAberation;
+    private TextView txtNoiseSize;
+    private TextView txtNoiseIntensity;
+
+    public float BlurVal;
+    public float FocusVal;
+    public float AberationVal;
+    public float NoiseSizeVal;
+    public float NoiseIntensityVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter_making_page);
+
+        sbBlur = (SeekBar) findViewById(R.id.sbBlur);
+        sbFocus = (SeekBar) findViewById(R.id.sbFocus);
+        sbAberation = (SeekBar) findViewById(R.id.sbAberation);
+        sbNoiseSize = (SeekBar) findViewById(R.id.sbNoiseSize);
+        sbNoiseIntensity = (SeekBar) findViewById(R.id.sbNoiseIntensity);
+
+        txtBlur = (TextView)findViewById(R.id.blurVal);
+        txtFocus = (TextView)findViewById(R.id.focusVal);
+        txtAberation = (TextView)findViewById(R.id.aberationVal);
+        txtNoiseSize = (TextView)findViewById(R.id.noiseSizeVal);
+        txtNoiseIntensity = (TextView)findViewById(R.id.noiseIntensityVal);
+
+       // sbBlur.setProgress(FCameraRenderer.FilterVar.getBlur()*100);
+        txtBlur.setText(Integer.toString(Math.round(FCameraRenderer.FilterVar.getBlur())));
+
+        sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                BlurVal = (float)seekBar.getProgress()/100;
+                update(txtBlur,BlurVal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                BlurVal = (float)seekBar.getProgress()/100;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                BlurVal = (float)seekBar.getProgress()/100;
+            }
+        });
+
  }
+
+ public void update(TextView txt,float num){
+        txt.setText(new StringBuilder().append(num));
+        FCameraRenderer.FilterVar.setBlur(num);
+
+ }
+
+
 }

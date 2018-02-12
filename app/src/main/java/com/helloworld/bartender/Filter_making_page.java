@@ -47,13 +47,26 @@ public class Filter_making_page extends AppCompatActivity {
         txtNoiseSize = (TextView)findViewById(R.id.noiseSizeVal);
         txtNoiseIntensity = (TextView)findViewById(R.id.noiseIntensityVal);
 
-       // sbBlur.setProgress(FCameraRenderer.FilterVar.getBlur()*100);
-        txtBlur.setText(Integer.toString(Math.round(FCameraRenderer.FilterVar.getBlur())));
+        sbBlur.setProgress(Math.round(FCameraRenderer.FilterVar.getBlur()*100));
+        txtBlur.setText(Float.toString(FCameraRenderer.FilterVar.getBlur()));
+
+        sbFocus.setProgress(Math.round(FCameraRenderer.FilterVar.getFocus()*100));
+        txtFocus.setText(Float.toString(FCameraRenderer.FilterVar.getFocus()));
+
+        sbAberation.setProgress(Math.round(FCameraRenderer.FilterVar.getAberration()*100));
+        txtAberation.setText(Float.toString(FCameraRenderer.FilterVar.getAberration()));
+
+        sbNoiseSize.setProgress(Math.round(FCameraRenderer.FilterVar.getNoiseSize()*100-25));
+        txtNoiseSize.setText(Float.toString(FCameraRenderer.FilterVar.getNoiseSize()));
+
+        sbNoiseIntensity.setProgress(Math.round(FCameraRenderer.FilterVar.getNoiseIntensity()*100));
+        txtNoiseIntensity.setText(Float.toString(FCameraRenderer.FilterVar.getNoiseIntensity()));
 
         sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 BlurVal = (float)seekBar.getProgress()/100;
+                FCameraRenderer.FilterVar.setBlur(BlurVal);
                 update(txtBlur,BlurVal);
             }
 
@@ -68,12 +81,86 @@ public class Filter_making_page extends AppCompatActivity {
             }
         });
 
+        sbFocus.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                FocusVal = (float)seekBar.getProgress()/100;
+                FCameraRenderer.FilterVar.setFocus(FocusVal);
+                update(txtFocus,FocusVal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                FocusVal = (float)seekBar.getProgress()/100;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                FocusVal = (float)seekBar.getProgress()/100;
+            }
+        });
+
+        sbAberation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                AberationVal = (float)seekBar.getProgress()/100;
+                FCameraRenderer.FilterVar.setAberration(AberationVal);
+                update(txtAberation,AberationVal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                AberationVal = (float)seekBar.getProgress()/100;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                AberationVal = (float)seekBar.getProgress()/100;
+            }
+        });
+
+        sbNoiseSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                NoiseSizeVal = (float)(seekBar.getProgress()+25)/100;
+                FCameraRenderer.FilterVar.setNoiseSize(NoiseSizeVal);
+                update(txtNoiseSize,NoiseSizeVal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                NoiseSizeVal = (float)(seekBar.getProgress()+25)/100;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                NoiseSizeVal = (float)(seekBar.getProgress()+25)/100;
+            }
+        });
+
+        sbNoiseIntensity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                NoiseIntensityVal = (float)seekBar.getProgress()/100;
+                FCameraRenderer.FilterVar.setNoiseIntensity(NoiseIntensityVal);
+                update(txtNoiseIntensity,NoiseIntensityVal);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                NoiseIntensityVal = (float)seekBar.getProgress()/100;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+               NoiseIntensityVal = (float)seekBar.getProgress()/100;
+            }
+        });
+
  }
 
  public void update(TextView txt,float num){
         txt.setText(new StringBuilder().append(num));
-        FCameraRenderer.FilterVar.setBlur(num);
-
  }
 
 

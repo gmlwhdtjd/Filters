@@ -29,7 +29,7 @@ float rand3(vec2 co) {
 
 void main ()
 {
-
+    float git;
     vec2 dis = gl_FragCoord.xy/iResolution.xy;
     vec2 pixelize = dis;
     dis *= -1.0;

@@ -32,7 +32,7 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/imgBtt1"
+                    android:id="@+id/cameraSwitchingBtt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -150,7 +150,7 @@
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <ImageButton
-            android:id="@+id/cameraBtt"
+            android:id="@+id/cameraCaptureBtt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"

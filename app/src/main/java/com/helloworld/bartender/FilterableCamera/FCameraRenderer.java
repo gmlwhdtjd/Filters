@@ -17,7 +17,6 @@ import java.nio.FloatBuffer;
 /**
  * Created by huijonglee on 2018. 1. 30..
  */
-
 public class FCameraRenderer {
     public static class FilterVar {
         public float [] rgb = {0.0f, 0.0f, 0.0f};
@@ -108,9 +107,9 @@ public class FCameraRenderer {
         return new SurfaceTexture(mTextureIds[0]);
     }
 
-    static final byte flip_NON = 0x00; // non flipping
-    static final byte flip_UD = 0x01; // Up Down flipping
-    static final byte flip_RL = 0x10; // Right Left flipping
+    static final int flip_NON = 0x00; // non flipping
+    static final int flip_UD = 0x01; // Up Down flipping
+    static final int flip_RL = 0x10; // Right Left flipping
 
     private void swapElement(float[] a, int i, int j) {
         float tmp = a[i];
@@ -125,7 +124,7 @@ public class FCameraRenderer {
      * @param cameraOrientation it should be 0, 90, 180, 270
      * @param flipping use flip_NON, flip_UD, flip_RL
      */
-    void setBuffers(int cameraOrientation, byte flipping) {
+    void setBuffers(int cameraOrientation, int flipping) {
         if ( mVertexBuffer != null)
             mVertexBuffer.clear();
 

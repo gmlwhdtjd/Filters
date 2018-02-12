@@ -6,30 +6,129 @@
     android:layout_height="match_parent"
     tools:context="com.helloworld.bartender.Filter_making_page"
     android:orientation="vertical">
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="create"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="modify"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="delete"/>
-    </LinearLayout>
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listfragment"
-        android:name="com.helloworld.bartender.FilterListFragment"
-        >
 
-    </fragment>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="create" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="modify" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="delete" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/blur"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="blur" />
+
+    <SeekBar
+        android:id="@+id/sbBlur"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/blurVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/focus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="focus" />
+
+    <SeekBar
+        android:id="@+id/sbFocus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/focusVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:text="0" />
+
+    <TextView
+        android:id="@+id/aberation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="aberation" />
+
+    <SeekBar
+        android:id="@+id/sbAberation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/aberationVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/noiseSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="noiseSize" />
+
+    <SeekBar
+        android:id="@+id/sbNoiseSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/noiseSizeVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/noiseIntensity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="noiseIntesity" />
+
+    <SeekBar
+        android:id="@+id/sbNoiseIntensity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/noiseIntensityVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+
+    <!--<fragment-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/listfragment"-->
+        <!--android:name="com.helloworld.bartender.FilterListFragment"-->
+        <!--&gt;-->
+
+    <!--</fragment>-->
 
 </LinearLayout>

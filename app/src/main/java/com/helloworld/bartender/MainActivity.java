@@ -49,28 +49,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 카메라 관련 정의
         FCameraView fCameraView = findViewById(R.id.cameraView);
         FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
         final FCamera fCamera = new FCamera(this, getLifecycle(), fCameraView, fCameraCapturer);
 
-        findViewById(R.id.cameraBtt).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cameraCaptureBtt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fCamera.takePicture();
             }
         });
 
-        findViewById(R.id.imgBtt1).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cameraSwitchingBtt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fCamera.setCameraFacing(FCamera.CameraFacing.Front);
-            }
-        });
-
-        findViewById(R.id.imgBtt2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fCamera.setCameraFacing(FCamera.CameraFacing.Back);
+                fCamera.switchCameraFacing();
             }
         });
 

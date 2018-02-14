@@ -186,21 +186,161 @@
             app:layout_behavior="@string/bottom_sheet_behavior"
             >
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="안녕하세요 이것은 bottomsheet 예제입니다. 제가 이곳에 쓰는것은 아무말 대잔치 입니다..."
-                    android:textSize="28sp"
-                    android:id="@+id/txt"
-                    android:layout_gravity="center"/>
+            <TabHost
+                android:id="@+id/tabHost1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
+                    <!-- TabWidget의 id값이 반드시 "tabs"로 지정되어야 함. -->
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <!-- FrameLayout의 id값이 반드시 "tabcontent"로 지정되어야 함. -->
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- 첫 번째 페이지. content1 -->
+                        <LinearLayout
+                            android:id="@+id/content1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/blur"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="blur" />
+
+                            <SeekBar
+                                android:id="@+id/sbBlur"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/blurVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+
+                        </LinearLayout>
+
+                        <!-- 두 번째 페이지. content2 -->
+                        <LinearLayout
+                            android:id="@+id/content2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/focus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="focus" />
+
+                            <SeekBar
+                                android:id="@+id/sbFocus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/focusVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="TextView"
+                                tools:text="0" />
+
+
+                        </LinearLayout>
+
+                        <!-- 세 번째 페이지. content3 -->
+                        <LinearLayout
+                            android:id="@+id/content3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/aberation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="aberation" />
+
+                            <SeekBar
+                                android:id="@+id/sbAberation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100"
+                                android:progress="0" />
+
+                            <TextView
+                                android:id="@+id/aberationVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/content4"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/noiseSize"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="noiseSize" />
+
+                            <SeekBar
+                                android:id="@+id/sbNoiseSize"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="75" />
+
+                            <TextView
+                                android:id="@+id/noiseSizeVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/content5"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/noiseIntensity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="noiseIntesity" />
+
+                            <SeekBar
+                                android:id="@+id/sbNoiseIntensity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/noiseIntensityVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </TabHost>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 

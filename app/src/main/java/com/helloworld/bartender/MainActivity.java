@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -24,6 +27,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private int REQ_PICK_CODE=100;
+
+    //bottom slide
+    NestedScrollView bottomSheet;
+    BottomSheetBehavior bottomSheetBehavior;
+
 
     //첫 실행 판별
     public SharedPreferences prefs;
@@ -48,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //bottomslide
+        bottomSheet =(NestedScrollView) findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
         FCameraView fCameraView = findViewById(R.id.cameraView);
         FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
@@ -90,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(String str, int position, int lastposition) {
                 if(position == lastposition-1){
-                   Intent intent=new Intent(MainActivity.this,Filter_making_page.class);
+                   Intent intent=new Intent(MainActivity.this,BottomPanelUPTest.class);
                     startActivity(intent);
                 }
                 else {
@@ -135,6 +147,12 @@ public class MainActivity extends AppCompatActivity {
         SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
         translateLeftAnim.setAnimationListener(animationListener);
         translateRightAnim.setAnimationListener(animationListener);
+
+        //bottomSlider
+        //peek = 0로 하면 첫 화면에서 안보임
+        bottomSheetBehavior.setPeekHeight(50);
+
+
     }
 
     //첫 실행 판독 함수

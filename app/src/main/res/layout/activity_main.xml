@@ -1,92 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.helloworld.bartender.MainActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4.5"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--android:layout_height="match_parent"-->
-
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="4.5"
+            android:orientation="vertical">
 
-            <com.helloworld.bartender.FilterableCamera.FCameraView
-                android:id="@+id/cameraView"
+            <!--android:layout_height="match_parent"-->
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/topLinear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/imgBtt1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher_round" />
-
-                <ImageButton
-                    android:id="@+id/imgBtt2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher_round" />
-
-                <ImageButton
-                    android:id="@+id/imgBtt3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher" />
-            </LinearLayout>
-
-
-
-
-            <LinearLayout
-                android:id="@+id/slidingPage"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@color/transBlack"
-                android:orientation="horizontal"
-                android:layout_alignBottom="@id/cameraView"
-                android:layout_alignParentStart="true"
-                android:visibility="gone"
-                >
-
-
-                <!--android:visibility="gone"-->
-                <android.support.v7.widget.RecyclerView
-                    android:layout_height="wrap_content"
+                <com.helloworld.bartender.FilterableCamera.FCameraView
+                    android:id="@+id/cameraView"
                     android:layout_width="match_parent"
-                    android:id="@+id/filterList">
-                </android.support.v7.widget.RecyclerView>
-                <!--<Button-->
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:id="@+id/topLinear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/imgBtt1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_launcher_round" />
+
+                    <ImageButton
+                        android:id="@+id/imgBtt2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_launcher_round" />
+
+                    <ImageButton
+                        android:id="@+id/imgBtt3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@mipmap/ic_launcher" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/slidingPage"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_alignBottom="@id/cameraView"
+                    android:layout_alignParentStart="true"
+                    android:background="@color/transBlack"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+
+                    <!--android:visibility="gone"-->
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/filterList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                    <!--<Button-->
                     <!--android:id="@+id/BackBtt"-->
                     <!--android:onClick="onArrowButton1Clicked"-->
                     <!--android:layout_width="wrap_content"-->
@@ -99,22 +99,21 @@
                     <!--/>-->
 
 
-
-                <!--<ImageView-->
+                    <!--<ImageView-->
                     <!--android:id="@+id/imageView4"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
                     <!--android:layout_weight="1"-->
                     <!--app:srcCompat="@mipmap/ic_launcher" />-->
 
-                <!--<ImageView-->
+                    <!--<ImageView-->
                     <!--android:id="@+id/imageView3"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
                     <!--android:layout_weight="1"-->
                     <!--app:srcCompat="@mipmap/ic_launcher" />-->
 
-                <!--<ImageButton-->
+                    <!--<ImageButton-->
                     <!--android:id="@+id/ArrowBtt2"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="52dp"-->
@@ -122,55 +121,89 @@
 
                     <!--android:onClick="onArrowButton1Clicked"-->
                     <!--app:srcCompat="@android:drawable/ic_media_play" />-->
-             <!---->
+                    <!---->
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomLinear"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/galleryBtt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:onClick="onGalleryBttClicked"
+                app:srcCompat="@mipmap/ic_launcher_round" />
+
+            <ImageButton
+                android:id="@+id/cameraBtt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="3"
+                app:srcCompat="@mipmap/ic_launcher_round" />
+
+            <ImageButton
+                android:id="@+id/FilmBtt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                app:srcCompat="@mipmap/ic_launcher" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width = "match_parent"
+            android:layout_height="300dp"
+            android:background="@color/transBlack"
+            android:id="@+id/bottom_sheet"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="안녕하세요 이것은 bottomsheet 예제입니다. 제가 이곳에 쓰는것은 아무말 대잔치 입니다..."
+                    android:textSize="28sp"
+                    android:id="@+id/txt"
+                    android:layout_gravity="center"/>
+
             </LinearLayout>
 
-        </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
 
-    </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/bottomLinear"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/galleryBtt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:onClick="onGalleryBttClicked"
-            app:srcCompat="@mipmap/ic_launcher_round" />
-
-        <ImageButton
-            android:id="@+id/cameraBtt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="3"
-            app:srcCompat="@mipmap/ic_launcher_round" />
-
-        <ImageButton
-            android:id="@+id/FilmBtt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            app:srcCompat="@mipmap/ic_launcher" />
-
-    </LinearLayout>
-</LinearLayout>
+</FrameLayout>
 

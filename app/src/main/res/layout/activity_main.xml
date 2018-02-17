@@ -33,36 +33,52 @@
 
                 <ImageButton
                     android:id="@+id/cameraSwitchingBtt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher_round" />
+                    android:background="@android:color/transparent"
+                    android:cropToPadding="false"
+                    app:srcCompat="@mipmap/ic_camera_switching" />
 
                 <ImageButton
-                    android:id="@+id/imgBtt2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/cameraFlashBtt"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher_round" />
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@mipmap/ic_camera_flash_auto" />
 
                 <ImageButton
-                    android:id="@+id/imgBtt3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/cameraTimerBtt"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@mipmap/ic_camera_timer_off" />
+
+                <ImageButton
+                    android:id="@+id/settingBtt"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@mipmap/ic_setting" />
             </LinearLayout>
 
 

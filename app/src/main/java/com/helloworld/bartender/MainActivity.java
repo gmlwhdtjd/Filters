@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> data;
 
+    int tmp1 = 0;
+
+    int tmp2 = 0;
+
 
 
     @Override
@@ -65,6 +69,45 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fCamera.switchCameraFacing();
+            }
+        });
+
+        findViewById(R.id.cameraFlashBtt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tmp1 = (tmp1 + 1) % 3 ;
+                switch (tmp1) {
+                    case 0:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_auto);
+                        break;
+                    case 1:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_off);
+                        break;
+                    case 2:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_on);
+                        break;
+                }
+            }
+        });
+
+        findViewById(R.id.cameraTimerBtt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tmp1 = (tmp1 + 1) % 4 ;
+                switch (tmp1) {
+                    case 0:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_off);
+                        break;
+                    case 1:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_3);
+                        break;
+                    case 2:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_5);
+                        break;
+                    case 3:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_10);
+                        break;
+                }
             }
         });
 

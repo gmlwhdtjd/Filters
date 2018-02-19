@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     //bottom slide
     NestedScrollView bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
-
+    private LinearLayout bottomLinear;
 
     //첫 실행 판별
     public SharedPreferences prefs;
@@ -205,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         //bottomslide
         bottomSheet = (NestedScrollView) findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        bottomLinear = (LinearLayout) findViewById(R.id.bottomLinear);
 
         FCameraView fCameraView = findViewById(R.id.cameraView);
         FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
@@ -247,8 +249,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(String str, int position, int lastposition) {
                 if (position == lastposition - 1) {
-                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
+//                    startActivity(intent);
+                    //meaning bottomsheet state
+                    if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    } else {
+                        bottomLinear.setVisibility(View.VISIBLE);
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), position + " " + str, Toast.LENGTH_SHORT).show();
                 }
@@ -325,6 +334,27 @@ public class MainActivity extends AppCompatActivity {
         ts5.setIndicator("NoiseIntensity");
         tabHost1.addTab(ts5);
 
+        //bottom slide event handling
+        //slide를 내려서 상태가 바뀔때
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+              //      bottomLinear.setVisibility(View.INVISIBLE);
+                    if (isPageOpen) {
+                        slidingPage01.startAnimation(translateRightAnim);
+                    }
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomLinear.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
 
 
     }
@@ -415,11 +445,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-    //필터 아이콘 클릭 이벤트
-    public void onFilterIconClicked(View v) {
-
-    }
+//
+//    //필터 아이콘 클릭 이벤트
+//    public void onFilterIconClicked(View v) {
+//
+//
+//    }
 
     public void update(TextView txt, float num) {
         txt.setText(new StringBuilder().append(num));

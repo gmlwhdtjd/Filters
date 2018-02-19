@@ -233,6 +233,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="0" />
 
+
                         </LinearLayout>
 
                         <!-- 두 번째 페이지. content2 -->

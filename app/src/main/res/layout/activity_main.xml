@@ -28,8 +28,6 @@
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:scaleType="fitXY"
                 android:visibility="invisible"
                 app:srcCompat="@mipmap/ic_flash_square" />

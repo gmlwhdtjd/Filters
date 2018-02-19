@@ -24,6 +24,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                app:srcCompat="@mipmap/ic_flash_square" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:shadowColor="@color/shadow"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="50.0"
+                android:textColor="@color/white"
+                android:textSize="200sp" />
+
             <LinearLayout
                 android:id="@+id/topLinear"
                 android:layout_width="match_parent"
@@ -80,9 +103,6 @@
                     android:background="@android:color/transparent"
                     app:srcCompat="@mipmap/ic_setting" />
             </LinearLayout>
-
-
-
 
             <LinearLayout
                 android:id="@+id/slidingPage"

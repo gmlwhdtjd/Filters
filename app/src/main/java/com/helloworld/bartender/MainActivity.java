@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.widget.NestedScrollView;
+
+import android.os.CountDownTimer;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TabHost;
@@ -74,11 +79,20 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> data;
 
+    int tmp1 = 0;
+
+    int timerStatus = 0;
+    int timerValue = 0;
+    TextView timerTextView;
+
+    ImageView captureEffectView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        captureEffectView = findViewById(R.id.imageView);
+        timerTextView = findViewById(R.id.textView);
 
         //seekBar
         sbBlur = (SeekBar) findViewById(R.id.sbBlur);
@@ -208,28 +222,88 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomLinear = (LinearLayout) findViewById(R.id.bottomLinear);
 
-        FCameraView fCameraView = findViewById(R.id.cameraView);
+      
+        // 카메라 관련 정의
+        final FCameraView fCameraView = findViewById(R.id.cameraView);
         FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
         final FCamera fCamera = new FCamera(this, getLifecycle(), fCameraView, fCameraCapturer);
 
-        findViewById(R.id.cameraBtt).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cameraCaptureBtt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fCamera.takePicture();
+                findViewById(R.id.cameraCaptureBtt).setClickable(false);
+
+                new CountDownTimer(timerValue * 1000 - 1, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        timerTextView.setText( String.format(" %d ", (millisUntilFinished/1000) + 1) );
+
+                        Animation countDown = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.count_down_effect);
+                        timerTextView.startAnimation(countDown);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        timerTextView.setText("");
+
+                        fCamera.takePicture();
+
+                        Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.capture_effect);
+                        captureEffectView.startAnimation(captuer);
+
+                        findViewById(R.id.cameraCaptureBtt).setClickable(true);
+                    }
+                }.start();
             }
         });
 
-        findViewById(R.id.imgBtt1).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cameraSwitchingBtt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fCamera.setCameraFacing(FCamera.CameraFacing.Front);
+                fCamera.switchCameraFacing();
             }
         });
 
-        findViewById(R.id.imgBtt2).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cameraFlashBtt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fCamera.setCameraFacing(FCamera.CameraFacing.Back);
+                tmp1 = (tmp1 + 1) % 3 ;
+                switch (tmp1) {
+                    case 0:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_auto);
+                        break;
+                    case 1:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_off);
+                        break;
+                    case 2:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_on);
+                        break;
+                }
+            }
+        });
+
+        findViewById(R.id.cameraTimerBtt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timerStatus = (timerStatus + 1) % 4 ;
+                switch (timerStatus) {
+                    case 0:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_off);
+                        timerValue = 0;
+                        break;
+                    case 1:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_3);
+                        timerValue = 3;
+                        break;
+                    case 2:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_5);
+                        timerValue = 5;
+                        break;
+                    case 3:
+                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_10);
+                        timerValue = 10;
+                        break;
+                }
             }
         });
 

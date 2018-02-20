@@ -1,126 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.helloworld.bartender.MainActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4.5"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--android:layout_height="match_parent"-->
-
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="4.5"
+            android:orientation="vertical">
 
-            <com.helloworld.bartender.FilterableCamera.FCameraView
-                android:id="@+id/cameraView"
+            <!--android:layout_height="match_parent"-->
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:visibility="invisible"
-                app:srcCompat="@mipmap/ic_flash_square" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:shadowColor="@color/shadow"
-                android:shadowDx="0.0"
-                android:shadowDy="0.0"
-                android:shadowRadius="50.0"
-                android:textColor="@color/white"
-                android:textSize="200sp" />
-
-            <LinearLayout
-                android:id="@+id/topLinear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/cameraSwitchingBtt"
-                    android:layout_width="@android:dimen/app_icon_size"
-                    android:layout_height="@android:dimen/app_icon_size"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:cropToPadding="false"
-                    app:srcCompat="@mipmap/ic_camera_switching" />
-
-                <ImageButton
-                    android:id="@+id/cameraFlashBtt"
-                    android:layout_width="@android:dimen/app_icon_size"
-                    android:layout_height="@android:dimen/app_icon_size"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    app:srcCompat="@mipmap/ic_camera_flash_auto" />
-
-                <ImageButton
-                    android:id="@+id/cameraTimerBtt"
-                    android:layout_width="@android:dimen/app_icon_size"
-                    android:layout_height="@android:dimen/app_icon_size"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    app:srcCompat="@mipmap/ic_camera_timer_off" />
-
-                <ImageButton
-                    android:id="@+id/settingBtt"
-                    android:layout_width="@android:dimen/app_icon_size"
-                    android:layout_height="@android:dimen/app_icon_size"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    app:srcCompat="@mipmap/ic_setting" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/slidingPage"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@color/transBlack"
-                android:orientation="horizontal"
-                android:layout_alignBottom="@id/cameraView"
-                android:layout_alignParentStart="true"
-                android:visibility="gone"
-                >
-
-
-                <!--android:visibility="gone"-->
-                <android.support.v7.widget.RecyclerView
-                    android:layout_height="wrap_content"
+                android:layout_height="match_parent">
+          
+                <com.helloworld.bartender.FilterableCamera.FCameraView
+                    android:id="@+id/cameraView"
                     android:layout_width="match_parent"
-                    android:id="@+id/filterList">
-                </android.support.v7.widget.RecyclerView>
-                <!--<Button-->
+                    android:layout_height="match_parent" />
+          
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible"
+                    app:srcCompat="@mipmap/ic_flash_square" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:shadowColor="@color/shadow"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0.0"
+                    android:shadowRadius="50.0"
+                    android:textColor="@color/white"
+                    android:textSize="200sp" />
+
+                <LinearLayout
+                    android:id="@+id/topLinear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/cameraSwitchingBtt"
+                        android:layout_width="@android:dimen/app_icon_size"
+                        android:layout_height="@android:dimen/app_icon_size"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:cropToPadding="false"
+                        app:srcCompat="@mipmap/ic_camera_switching" />
+
+                    <ImageButton
+                        android:id="@+id/cameraFlashBtt"
+                        android:layout_width="@android:dimen/app_icon_size"
+                        android:layout_height="@android:dimen/app_icon_size"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        app:srcCompat="@mipmap/ic_camera_flash_auto" />
+
+                    <ImageButton
+                        android:id="@+id/cameraTimerBtt"
+                        android:layout_width="@android:dimen/app_icon_size"
+                        android:layout_height="@android:dimen/app_icon_size"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        app:srcCompat="@mipmap/ic_camera_timer_off" />
+
+                    <ImageButton
+                        android:id="@+id/settingBtt"
+                        android:layout_width="@android:dimen/app_icon_size"
+                        android:layout_height="@android:dimen/app_icon_size"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        app:srcCompat="@mipmap/ic_setting" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/slidingPage"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_alignBottom="@id/cameraView"
+                    android:layout_alignParentStart="true"
+                    android:background="@color/transBlack"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+
+                    <!--android:visibility="gone"-->
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/filterList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                    <!--<Button-->
                     <!--android:id="@+id/BackBtt"-->
                     <!--android:onClick="onArrowButton1Clicked"-->
                     <!--android:layout_width="wrap_content"-->
@@ -133,22 +135,21 @@
                     <!--/>-->
 
 
-
-                <!--<ImageView-->
+                    <!--<ImageView-->
                     <!--android:id="@+id/imageView4"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
                     <!--android:layout_weight="1"-->
                     <!--app:srcCompat="@mipmap/ic_launcher" />-->
 
-                <!--<ImageView-->
+                    <!--<ImageView-->
                     <!--android:id="@+id/imageView3"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
                     <!--android:layout_weight="1"-->
                     <!--app:srcCompat="@mipmap/ic_launcher" />-->
 
-                <!--<ImageButton-->
+                    <!--<ImageButton-->
                     <!--android:id="@+id/ArrowBtt2"-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="52dp"-->
@@ -156,49 +157,224 @@
 
                     <!--android:onClick="onArrowButton1Clicked"-->
                     <!--app:srcCompat="@android:drawable/ic_media_play" />-->
-             <!---->
-            </LinearLayout>
+                    <!---->
+                </LinearLayout>
 
-        </RelativeLayout>
+            </RelativeLayout>
 
-    </FrameLayout>
+        </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/bottomLinear"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical|center_horizontal"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/bottomLinear"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/galleryBtt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@android:color/transparent"
-            android:onClick="onGalleryBttClicked"
-            app:srcCompat="@mipmap/ic_album" />
+            <ImageButton
+                android:id="@+id/galleryBtt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@android:color/transparent"
+                android:onClick="onGalleryBttClicked"
+                app:srcCompat="@mipmap/ic_album" />
 
-        <ImageButton
-            android:id="@+id/cameraCaptureBtt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:background="@android:color/transparent"
-            app:srcCompat="@mipmap/ic_launcher_round" />
+            <ImageButton
+                android:id="@+id/cameraCaptureBtt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:background="@android:color/transparent"
+                app:srcCompat="@mipmap/ic_launcher_round" />
 
-        <ImageButton
-            android:id="@+id/FilmBtt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@android:color/transparent"
-            app:srcCompat="@mipmap/ic_edit" />
-
+            <ImageButton
+                android:id="@+id/FilmBtt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@android:color/transparent"
+                app:srcCompat="@mipmap/ic_edit" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width = "match_parent"
+            android:layout_height="300dp"
+            android:background="@color/transBlack"
+            android:id="@+id/bottom_sheet"
+            app:layout_behavior="@string/bottom_sheet_behavior"
+            >
+
+            <TabHost
+                android:id="@+id/tabHost1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!-- TabWidget의 id값이 반드시 "tabs"로 지정되어야 함. -->
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <!-- FrameLayout의 id값이 반드시 "tabcontent"로 지정되어야 함. -->
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- 첫 번째 페이지. content1 -->
+                        <LinearLayout
+                            android:id="@+id/content1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/blur"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="blur" />
+
+                            <SeekBar
+                                android:id="@+id/sbBlur"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/blurVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+
+
+                        </LinearLayout>
+
+                        <!-- 두 번째 페이지. content2 -->
+                        <LinearLayout
+                            android:id="@+id/content2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/focus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="focus" />
+
+                            <SeekBar
+                                android:id="@+id/sbFocus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/focusVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="TextView"
+                                tools:text="0" />
+
+
+                        </LinearLayout>
+
+                        <!-- 세 번째 페이지. content3 -->
+                        <LinearLayout
+                            android:id="@+id/content3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/aberation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="aberation" />
+
+                            <SeekBar
+                                android:id="@+id/sbAberation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100"
+                                android:progress="0" />
+
+                            <TextView
+                                android:id="@+id/aberationVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/content4"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/noiseSize"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="noiseSize" />
+
+                            <SeekBar
+                                android:id="@+id/sbNoiseSize"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="75" />
+
+                            <TextView
+                                android:id="@+id/noiseSizeVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/content5"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/noiseIntensity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="noiseIntesity" />
+
+                            <SeekBar
+                                android:id="@+id/sbNoiseIntensity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:max="100" />
+
+                            <TextView
+                                android:id="@+id/noiseIntensityVal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="0" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </TabHost>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
+
+
+</FrameLayout>
 

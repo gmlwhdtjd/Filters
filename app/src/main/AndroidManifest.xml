@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera2" />
-    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -19,9 +21,7 @@
             android:name=".tedpermission.TedPermissionActivity"
             android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|screenLayout|fontScale|uiMode|orientation|screenSize|layoutDirection"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Transparent.Permission"
-            />
-
+            android:theme="@style/Theme.Transparent.Permission" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -31,9 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Filter_making_page" />
-        <activity android:name=".Guide_page"></activity>
+        <activity android:name=".Guide_page" />
+        <activity android:name=".BottomPanelUPTest"></activity>
     </application>
 
 </manifest>

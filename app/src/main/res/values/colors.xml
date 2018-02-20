@@ -6,4 +6,5 @@
     <color name="transBlack">#82000000</color>
     <color name="filterBackColor">#806ce615</color>
     <color name="white">#ffffff</color>
+    <color name="shadow">#55000000</color>
 </resources>

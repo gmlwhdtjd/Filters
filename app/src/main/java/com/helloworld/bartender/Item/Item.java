@@ -16,8 +16,7 @@ public class Item {
 
     }
 
-    public Item(long id, String filter_name, float blur, float focus, float aberation, float noiseSize, float noiseIntensity) {
-        this.id = id;
+    public Item(String filter_name, float blur, float focus, float aberation, float noiseSize, float noiseIntensity) {
         this.filter_name = filter_name;
         this.blur = blur;
         this.focus = focus;

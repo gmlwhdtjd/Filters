@@ -25,14 +25,16 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraRenderer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
-import java.util.ArrayList;
-import java.util.List;
+//TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
+
+//TODO:
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,7 +79,13 @@ public class MainActivity extends AppCompatActivity {
     ImageButton button1;
     ImageButton button2;
 
-    private List<String> data;
+    //recyclerview
+    private String option = "";
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManger;
+    private DatabaseHelper dbHelper;
+    private horizontal_adapter adapter;
+
 
     int tmp1 = 0;
 
@@ -311,37 +319,16 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
         checkFirstRun();
 
-        data = new ArrayList<String>();
-        //data 추가
-        data.add("#1");
-        data.add("#2");
-        data.add("#3");
-        data.add("#plus");
 
-        final horizontal_adapter RecyclerAdapter = new horizontal_adapter(data);
-        RecyclerAdapter.setItemClick(new horizontal_adapter.ItemClick() {
-            @Override
-            public void onClick(String str, int position, int lastposition) {
-                if (position == lastposition - 1) {
-//                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
-//                    startActivity(intent);
-                    //meaning bottomsheet state
-                    if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
-                        bottomLinear.setVisibility(View.VISIBLE);
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), position + " " + str, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         //리사이클러 뷰
-        RecyclerView list = (RecyclerView) findViewById(R.id.filterList);
-        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        list.setAdapter(RecyclerAdapter);
+        mRecyclerView= (RecyclerView) findViewById(R.id.filterList);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManger = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManger);
+
+        populateRecyclerView(option);
+
 
         //슬라이딩 레이아웃
         //UI
@@ -431,6 +418,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    //populate recyclerview
+    private void populateRecyclerView(String option){
+        dbHelper = new DatabaseHelper(this);
+        adapter = new horizontal_adapter(dbHelper.FilterList(option),this,mRecyclerView);
+        adapter.setItemClick(new horizontal_adapter.ItemClick() {
+            @Override
+            public void onClick(String str, int position, int lastposition) {
+                if (position == lastposition - 1) {
+//                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
+//                    startActivity(intent);
+                    //meaning bottomsheet state
+                    if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    } else {
+                        bottomLinear.setVisibility(View.VISIBLE);
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), position + " " + str, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        mRecyclerView.setAdapter(adapter);
     }
 
     //첫 실행 판독 함수

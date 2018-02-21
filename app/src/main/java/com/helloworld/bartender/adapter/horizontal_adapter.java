@@ -23,9 +23,6 @@ import java.util.List;
  **/
 public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> {
 
-    //아이템 리스트
-    private List<String> items;
-
     private List<Item> filters;
     private Context mContext;
     private RecyclerView mRecyclerV;
@@ -130,16 +127,16 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         final Item filter = filters.get(position);
         holder.filterName.setText(filter.getFilter_name());
 
-        position = position % items.size();
-        final String str = items.get(position);
+        position = position % filters.size();
+        final String str = filters.get(position).getFilter_name();
         final int finalPosition1 = position;
 
         holder.filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (itemClick != null) {
-                    itemClick.onClick(str, finalPosition1, items.size());
-                    String s = String.valueOf(items.size());
+                    itemClick.onClick(str, finalPosition1, filters.size());
+                    String s = String.valueOf(filters.size());
                     Log.v("x", s);
                 }
             }

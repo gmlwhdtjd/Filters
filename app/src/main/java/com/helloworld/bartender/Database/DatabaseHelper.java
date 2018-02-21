@@ -26,7 +26,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
     private static String DB_NAME ="filter_list.db";    //sqlite
-    private static final int DB_VERSION = 1 ;
+    private static final int DB_VERSION = 2 ;
     public static final String TABLE_NAME = "list";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_FILTER_NAME = "name";
@@ -47,17 +47,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 COLUMN_FILTER_NAME + " TEXT NOT NULL, " +
                 COLUMN_FILTER_BLUR + " REAL NOT NULL, " +
                 COLUMN_FILTER_ABERATION + " REAL NOT NULL, " +
-                COLUMN_FILTER_FOCUS + " REAL NOT NULL,"+
-                COLUMN_FILTER_NOISE_SIZE+"REAL NOT NULL,"+
-                COLUMN_FILTER_NOISE_INTENSITY+"REAL NOT NULL);"
+                COLUMN_FILTER_FOCUS + " REAL NOT NULL, "+
+                COLUMN_FILTER_NOISE_SIZE+" REAL NOT NULL, "+
+                COLUMN_FILTER_NOISE_INTENSITY+" REAL NOT NULL);"
         );
-
-        saveFilter(new Item("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
-        saveFilter(new Item("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
-        saveFilter(new Item("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
-        saveFilter(new Item("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
-        saveFilter(new Item("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
-        saveFilter(new Item("sample6",0.5f,0.5f,0.5f,0.5f,0.5f));
+        Log.e("x","sqldbcreated");
 
     }
 
@@ -90,11 +84,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }else{
             query = "SELECT * FROM "+ TABLE_NAME+" ORDER BY "+option;
         }
-        List<Item> filterLinkedList = new LinkedList<Item>();
+        List<Item> filterLinkedList = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query,null);
         Item filter;
         if(cursor.moveToFirst()){
+            int i=0;
             do{
                 filter = new Item();
                 filter.setId(cursor.getLong((cursor.getColumnIndex(COLUMN_ID))));
@@ -105,7 +100,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 filter.setNoiseSize(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_SIZE)));
                 filter.setNoiseIntensity(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_INTENSITY)));
                 filterLinkedList.add(filter);
+                i++;
             }while(cursor.moveToNext());
+            Log.d("x",String.valueOf(i)+"repeated this");
         }
         return filterLinkedList;
     }

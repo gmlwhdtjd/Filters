@@ -14,6 +14,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,6 +31,7 @@ import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraRenderer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
+import com.helloworld.bartender.Item.Item;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
@@ -38,6 +40,7 @@ import com.helloworld.bartender.adapter.horizontal_adapter;
 
 public class MainActivity extends AppCompatActivity {
 
+    public SharedPreferences prefs;
     private int REQ_PICK_CODE = 100;
 
     //필터 속성값들
@@ -63,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
     NestedScrollView bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
     private LinearLayout bottomLinear;
-
-    //첫 실행 판별
-    public SharedPreferences prefs;
 
     //슬라이드 열기/닫기 플래그
     boolean isPageOpen = false;
@@ -225,6 +225,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
         //bottomslide
         bottomSheet = (NestedScrollView) findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
@@ -315,19 +318,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //oreference 정의
-        prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
-        checkFirstRun();
+
 
 
 
         //리사이클러 뷰
         mRecyclerView= (RecyclerView) findViewById(R.id.filterList);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManger = new LinearLayoutManager(this);
+      //  mRecyclerView.setHasFixedSize(true);
+        mLayoutManger = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManger);
 
         populateRecyclerView(option);
+        prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
+        checkFirstRun(dbHelper);
 
 
         //슬라이딩 레이아웃
@@ -420,6 +423,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    //첫 실행시 기본 필터 추가
+    public void checkFirstRun(DatabaseHelper dbHelper) {
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+        if (isFirstRun) {
+           dbHelper.saveFilter(new Item("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new Item("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new Item("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new Item("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new Item("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
+
+            Log.d("x","sqlinserted");
+            prefs.edit().putBoolean("isFirstRun", false).apply();
+        }
+    }
+
     //populate recyclerview
     private void populateRecyclerView(String option){
         dbHelper = new DatabaseHelper(this);
@@ -445,50 +464,18 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
     }
 
-    //첫 실행 판독 함수
-    public void checkFirstRun() {
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
-        if (isFirstRun) {
-
-
-            SQLiteDatabase sqliteDB = null;
-            //db생성
-//
-//        try {
-//            sqliteDB = SQLiteDatabase.openOrCreateDatabase("filter_list.db", null) ;
-//        } catch (SQLiteException e) {
-//            e.printStackTrace() ;
-//        }
-//
-//        try {
-//            String sqlCreateTbl = "CREATE TABLE IF NOT EXISTS ORDER_T (NO INTEGER, NAME TEXT, ATTRIBUTE TEXT)";
-//            sqliteDB.execSQL(sqlCreateTbl);
-//            String sqlInsert = "INSERT INTO ORDER_T (NO, NAME) VALUES (1, 'test','sample')";
-//            sqliteDB.execSQL(sqlInsert);
-//        }catch (SQLiteException e){
-//            e.printStackTrace();
-//        }
-//        final DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-//
-//         Log.e("jkjk","created!!");
-
-            Intent guideIntent = new Intent(MainActivity.this, Guide_page.class);
-            startActivity(guideIntent);
-
-            prefs.edit().putBoolean("isFirstRun", false).apply();
-        }
-    }
-
 
     //갤러리 이동
     public void onGalleryBttClicked(View v) {
-        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+//        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+//
+//        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+//
+//        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        startActivityForResult(pickerIntent, REQ_PICK_CODE);
 
-        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-
-        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(pickerIntent, REQ_PICK_CODE);
+        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
     }
 //
 //    //슬라이딩 버튼 닫기 오픈

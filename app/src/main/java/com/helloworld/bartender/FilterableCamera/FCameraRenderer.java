@@ -22,7 +22,7 @@ public class FCameraRenderer {
     public static class FilterVar {
         public float [] rgb = {0.0f, 0.0f, 0.0f};
         private static float blur = 0.0f;
-        private static float aberration = 0.6f;
+        private static float aberration = 0.0f;
 
         public static float getBlur() {
             return blur;
@@ -46,7 +46,7 @@ public class FCameraRenderer {
 
         private static float focus = 1.0f;
         private static float noiseSize = 1.0f;
-        private static float noiseIntensity = 0.0f;
+        private static float noiseIntensity = 1.0f;
 
         public static void setBlur(float num) {
             blur = num;

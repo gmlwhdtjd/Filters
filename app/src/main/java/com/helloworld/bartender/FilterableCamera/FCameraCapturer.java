@@ -158,7 +158,7 @@ public class FCameraCapturer {
 
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
                 if (facing == CameraCharacteristics.LENS_FACING_FRONT)
-                    mCameraRender.setBuffers(orientation, (byte) (FCameraRenderer.flip_RL | FCameraRenderer.flip_UD));
+                    mCameraRender.setBuffers(orientation, FCameraRenderer.flip_RL | FCameraRenderer.flip_UD);
                 else
                     mCameraRender.setBuffers(orientation, FCameraRenderer.flip_UD);
 

@@ -42,7 +42,6 @@ import com.helloworld.bartender.R;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,7 +60,6 @@ import java.util.concurrent.TimeUnit;
  *
  * Modified by Hui-Jong Lee
  */
-
 public class FCamera implements LifecycleObserver {
 
     /**
@@ -82,12 +80,11 @@ public class FCamera implements LifecycleObserver {
      */
     private static final String TAG = "FCamera";
 
-    public enum CameraFacing {
-        Front,
-        Back
-    };
-
-    private CameraFacing mCameraFacing;
+    /**
+     * true == back camera
+     * false == front camera
+     */
+    private Boolean mCameraFacing;
 
     /**
      * FCamera state: Showing camera preview.
@@ -162,13 +159,7 @@ public class FCamera implements LifecycleObserver {
     /**
      * An {@link ImageReader} that handles still image capture.
      */
-    //private ImageReader mImageReader;
     private FCameraCapturer mFCameraCapturer;
-
-    /**
-     * This is the output file for our picture.
-     */
-    private File mFile;
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -196,11 +187,6 @@ public class FCamera implements LifecycleObserver {
      * Whether the current camera device supports Flash or not.
      */
     private boolean mFlashSupported;
-
-    /**
-     * Orientation of the camera sensor
-     */
-    private int mSensorOrientation;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -340,9 +326,48 @@ public class FCamera implements LifecycleObserver {
             }
         });
 
-        mCameraFacing = CameraFacing.Back;
+        mCameraFacing = true;
 
         mFCameraCapturer = fCameraCapturer;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+        startBackgroundThread();
+        mFCameraCapturer.onResume();
+        mFCameraView.onResume();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPause() {
+        mFCameraView.onPause();
+        mFCameraCapturer.onPause();
+        closeCamera();
+        stopBackgroundThread();
+    }
+
+    /**
+     * Initiate a still image capture.
+     *
+     * This method has been referenced from Android Camera2Basic Sample.
+     */
+    public void takePicture() {
+        lockFocus();
+    }
+
+    /**
+     * Switching between front and back camera
+     *
+     * just close camera and restart other camera
+     *
+     * Created by huijonglee on 2018. 2. 12..
+     */
+    public void switchCameraFacing() {
+        closeCamera();
+
+        mCameraFacing = !mCameraFacing;
+
+        openCamera(mFCameraView.getWidth(), mFCameraView.getHeight());
     }
 
     /**
@@ -421,37 +446,6 @@ public class FCamera implements LifecycleObserver {
         }
     }
 
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void onStart() {
-        mFile = new File(mActivity.getExternalFilesDir(null), "pic.jpg");
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    public void onResume() {
-        startBackgroundThread();
-        mFCameraCapturer.onResume();
-        mFCameraView.onResume();
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    public void onPause() {
-        mFCameraView.onPause();
-        mFCameraCapturer.onPause();
-        closeCamera();
-        stopBackgroundThread();
-    }
-
-    public void setCameraFacing(CameraFacing Facing) {
-        if (Facing != mCameraFacing) {
-            closeCamera();
-
-            mCameraFacing = Facing;
-
-            openCamera(mFCameraView.getWidth(), mFCameraView.getHeight());
-        }
-    }
-
     /**
      * Sets up member variables related to camera.
      *
@@ -477,12 +471,12 @@ public class FCamera implements LifecycleObserver {
 
                 // Witch Camera do you want?
                 Integer targetFacing;
-                if (mCameraFacing == CameraFacing.Front)
-                    targetFacing = CameraCharacteristics.LENS_FACING_FRONT;
-                else
+                if (mCameraFacing)
                     targetFacing = CameraCharacteristics.LENS_FACING_BACK;
+                else
+                    targetFacing = CameraCharacteristics.LENS_FACING_FRONT;
 
-                if (facing != null && facing != targetFacing)
+                if (facing != null && !facing.equals(targetFacing))
                     continue;
 
                 StreamConfigurationMap map = characteristics.get(
@@ -500,10 +494,10 @@ public class FCamera implements LifecycleObserver {
                 mFCameraCapturer.setCameraCharacteristics(characteristics, largest);
 
                 //noinspection ConstantConditions
-                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
                 boolean swappedDimensions = false;
 
-                if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+                if (sensorOrientation == 90 || sensorOrientation == 270) {
                     swappedDimensions = true;
                 }
 
@@ -712,15 +706,6 @@ public class FCamera implements LifecycleObserver {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Initiate a still image capture.
-     *
-     * This method has been referenced from Android Camera2Basic Sample.
-     */
-    public void takePicture() {
-        lockFocus();
     }
 
     /**

@@ -121,7 +121,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void onBindViewHolder(horizontalViewHolder holder, int position) {
         //이곳에서 dataset에서 element를 가져온다
 
-        if (position == filters.size()) {
+        if (position == filters.size()-1) {
             holder.filterIcon.setImageResource(R.mipmap.ic_edit);
         }
         final Item filter = filters.get(position);

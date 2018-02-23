@@ -5,7 +5,7 @@ uniform vec4 noiseLevel;
 uniform float iGlobalTime;
 uniform samplerExternalOES sTexture;
 varying vec2 texCoord;
-
+uniform float mask[49];
 struct Filter_Var {
     vec3 rgb;
     float blur;
@@ -148,21 +148,31 @@ void main ()
     distance += (dis.y>0.0)?dis.y:(-1.0)*dis.y;
     distance *= variables.focus;
 
-    float ResS = 150.0;
-    float ResT = 150.0;
+    float ResS = iResolution.x;
+    float ResT = iResolution.y;
 
-    vec2 stp0 = vec2(1.0/ResS, 0.0);
-    vec2 st0p = vec2(0.0, 1.0/ResT);
+    vec2 stp0 = vec2(4.0/ResS, 0.0);    //  x
+    vec2 st0p = vec2(0.0, 8.0/ResT);    //  y
     vec2 stpp = vec2(1.0/ResS, 1.0/ResT);
     vec2 stpm = vec2(1.0/ResS, -1.0/ResT);
 
     vec3 target = vec3(0.0, 0.0, 0.0);
-
+    float fi=0.0;
+    float fj = 0.0;
+    for(int i=0; i<7; i++) {
+        fj = 0.0;
+        for(int j=0; j<7; j++) {
+            target += texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)).rgb*mask[i*7+j];
+            fj+=1.0;
+        }
+        fi += 1.0;
+    }
+/*mask[i*7+j]
     vec3 i00 = texture2D(sTexture, texCoord).rgb;
-    int k=5;
+    int k=50;
     float result = 0.0;
     float mm = 1.0;         //next pixel
-    float count = variables.blur;      //0.0 ~ 1.1 blur level
+    float count = variables.blur;      //0.0 ~ 1.0 blur level
     target += (i00)*1.0;
     result += 1.0;
     for(int i=1; i<k; i++) {
@@ -181,8 +191,9 @@ void main ()
     }
     //count = ((1.0-count)/(1.0-0.5))*4.0 + 2.0;
     target /= result;
-    target += vec3(rValue.r, gValue.g, bValue.b);
-    target /= 2.0;
+    */
+    //target += vec3(rValue.r, gValue.g, bValue.b);
+    //target /= 2.0;
 
     vec3 HSL = RGBtoHSL(target);
     HSL += vec3(0.0, variables.rgb.g, variables.rgb.b);
@@ -199,7 +210,7 @@ void main ()
     float blocksize = 500.0 * variables.noiseSize;
     vec2 block = floor(pixelize*blocksize);
     vec3 randomDelta = vec3((rand(block) * 2.0) - 1.0, (rand2(block) * 2.0) - 1.0, (rand3(block) * 2.0) - 1.0);
-    gl_FragColor += 0.0*vec4(randomDelta, 0.0)*variables.noiseIntensity;
+    gl_FragColor += 0.1*vec4(randomDelta, 0.0)*variables.noiseIntensity;
 
     //gl_FragColor = texture2D(sTexture, texCoord);
 }

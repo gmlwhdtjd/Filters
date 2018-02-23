@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraRenderer;
+import com.helloworld.bartender.FilterableCamera.OriginalFilter;
 
 public class Filter_making_page extends AppCompatActivity {
 
@@ -47,26 +48,26 @@ public class Filter_making_page extends AppCompatActivity {
         txtNoiseSize = (TextView)findViewById(R.id.noiseSizeVal);
         txtNoiseIntensity = (TextView)findViewById(R.id.noiseIntensityVal);
 
-        sbBlur.setProgress(Math.round(FCameraRenderer.FilterVar.getBlur()*100));
-        txtBlur.setText(Float.toString(FCameraRenderer.FilterVar.getBlur()));
+        sbBlur.setProgress(Math.round(OriginalFilter.FilterVar.getBlur()*100));
+        txtBlur.setText(Float.toString(OriginalFilter.FilterVar.getBlur()));
 
-        sbFocus.setProgress(Math.round(FCameraRenderer.FilterVar.getFocus()*100));
-        txtFocus.setText(Float.toString(FCameraRenderer.FilterVar.getFocus()));
+        sbFocus.setProgress(Math.round(OriginalFilter.FilterVar.getFocus()*100));
+        txtFocus.setText(Float.toString(OriginalFilter.FilterVar.getFocus()));
 
-        sbAberation.setProgress(Math.round(FCameraRenderer.FilterVar.getAberration()*100));
-        txtAberation.setText(Float.toString(FCameraRenderer.FilterVar.getAberration()));
+        sbAberation.setProgress(Math.round(OriginalFilter.FilterVar.getAberration()*100));
+        txtAberation.setText(Float.toString(OriginalFilter.FilterVar.getAberration()));
 
-        sbNoiseSize.setProgress(Math.round(FCameraRenderer.FilterVar.getNoiseSize()*100-25));
-        txtNoiseSize.setText(Float.toString(FCameraRenderer.FilterVar.getNoiseSize()));
+        sbNoiseSize.setProgress(Math.round(OriginalFilter.FilterVar.getNoiseSize()*100-25));
+        txtNoiseSize.setText(Float.toString(OriginalFilter.FilterVar.getNoiseSize()));
 
-        sbNoiseIntensity.setProgress(Math.round(FCameraRenderer.FilterVar.getNoiseIntensity()*100));
-        txtNoiseIntensity.setText(Float.toString(FCameraRenderer.FilterVar.getNoiseIntensity()));
+        sbNoiseIntensity.setProgress(Math.round(OriginalFilter.FilterVar.getNoiseIntensity()*100));
+        txtNoiseIntensity.setText(Float.toString(OriginalFilter.FilterVar.getNoiseIntensity()));
 
         sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 BlurVal = (float)seekBar.getProgress()/100;
-                FCameraRenderer.FilterVar.setBlur(BlurVal);
+                OriginalFilter.FilterVar.setBlur(BlurVal);
                 update(txtBlur,BlurVal);
             }
 
@@ -85,7 +86,7 @@ public class Filter_making_page extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 FocusVal = (float)seekBar.getProgress()/100;
-                FCameraRenderer.FilterVar.setFocus(FocusVal);
+                OriginalFilter.FilterVar.setFocus(FocusVal);
                 update(txtFocus,FocusVal);
             }
 
@@ -104,7 +105,7 @@ public class Filter_making_page extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 AberationVal = (float)seekBar.getProgress()/100;
-                FCameraRenderer.FilterVar.setAberration(AberationVal);
+                OriginalFilter.FilterVar.setAberration(AberationVal);
                 update(txtAberation,AberationVal);
             }
 
@@ -123,7 +124,7 @@ public class Filter_making_page extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 NoiseSizeVal = (float)(seekBar.getProgress()+25)/100;
-                FCameraRenderer.FilterVar.setNoiseSize(NoiseSizeVal);
+                OriginalFilter.FilterVar.setNoiseSize(NoiseSizeVal);
                 update(txtNoiseSize,NoiseSizeVal);
             }
 
@@ -142,7 +143,7 @@ public class Filter_making_page extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 NoiseIntensityVal = (float)seekBar.getProgress()/100;
-                FCameraRenderer.FilterVar.setNoiseIntensity(NoiseIntensityVal);
+                OriginalFilter.FilterVar.setNoiseIntensity(NoiseIntensityVal);
                 update(txtNoiseIntensity,NoiseIntensityVal);
             }
 

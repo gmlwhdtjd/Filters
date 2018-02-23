@@ -5,13 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.opengl.GLES20;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,11 +16,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
-import android.util.TimeUtils;
 import android.view.Surface;
 import android.widget.Toast;
 
-import com.helloworld.bartender.R;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
@@ -32,11 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
@@ -75,8 +67,8 @@ public class FCameraCapturer {
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
 
-    private int mFragmentShaderID = R.raw.filter_fragment_shader;
-    private int mVertexShaderID = R.raw.filter_vertex_shader;
+    private boolean filterChanged = true;
+    private FCameraFilter mCameraFilter;
 
     private Semaphore initLock = new Semaphore(0);
     private boolean mSurfaceUpdated = false;
@@ -104,6 +96,11 @@ public class FCameraCapturer {
 
     public FCameraCapturer(Context context) {
         mContext = context;
+    }
+
+    public void setFilter(FCameraFilter filter) {
+        mCameraFilter = filter;
+        filterChanged = true;
     }
 
     void setCameraCharacteristics(@NonNull CameraCharacteristics characteristics, Size largest) {
@@ -152,8 +149,8 @@ public class FCameraCapturer {
 
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
-                mCameraRender = new FCameraRenderer(mContext);
-                mCameraRender.initRender(mVertexShaderID, mFragmentShaderID);
+                mCameraRender = new FCameraRenderer();
+                mCameraRender.initRender();
                 mCameraRender.setViewSize(mImageSize.getWidth(), mImageSize.getHeight());
 
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
@@ -179,6 +176,10 @@ public class FCameraCapturer {
         renderHandler.post(new Runnable() {
             @Override
             public void run() {
+                if (filterChanged) {
+                    mCameraRender.setFilter(mCameraFilter);
+                    filterChanged = false;
+                }
 
                 synchronized (mOnFrameAvailableListener) {
                     if (mSurfaceUpdated) {

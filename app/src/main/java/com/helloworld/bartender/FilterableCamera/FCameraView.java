@@ -106,11 +106,10 @@ public class FCameraView extends GLSurfaceView {
         if (0 == mRatioWidth || 0 == mRatioHeight) {
             setMeasuredDimension(width, height);
         } else {
-            if (width < height * mRatioWidth / mRatioHeight) {
-                setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
-            } else {
-                setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
-            }
+            // Todo : 화면 사이즈 관련 수정 필요
+            // 화면 사이즈 관련해서 화면의 길이는 짧으나 카메라의 길이가 긴 디바이스의 경우
+            // 화면 좌우에 레터박스가 생길 수 있으므로 이에 대한 처리가 필요함
+            setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
         }
     }
 

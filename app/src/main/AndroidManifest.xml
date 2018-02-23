@@ -11,6 +11,7 @@
         android:required="true" />
 
     <application
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,15 +25,15 @@
             android:theme="@style/Theme.Transparent.Permission" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" />
+        <activity android:name=".Filter_making_page" />
+        <activity android:name=".Guide_page">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Guide_page" />
-        <activity android:name=".BottomPanelUPTest"></activity>
     </application>
 
 </manifest>

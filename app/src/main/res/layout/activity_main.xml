@@ -23,7 +23,7 @@
                 android:layout_height="match_parent" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/captureEffectImg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
@@ -31,7 +31,7 @@
                 app:srcCompat="@mipmap/ic_flash_square" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/timerNumberText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_alignParentTop="true"
             android:orientation="horizontal">
 
@@ -58,23 +58,14 @@
                 android:id="@+id/cameraSwitchingBtt"
                 android:layout_width="@android:dimen/app_icon_size"
                 android:layout_height="@android:dimen/app_icon_size"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:cropToPadding="false"
                 app:srcCompat="@mipmap/ic_camera_switching" />
 
             <ImageButton
                 android:id="@+id/cameraFlashBtt"
                 android:layout_width="@android:dimen/app_icon_size"
                 android:layout_height="@android:dimen/app_icon_size"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:srcCompat="@mipmap/ic_camera_flash_auto" />
@@ -83,10 +74,6 @@
                 android:id="@+id/cameraTimerBtt"
                 android:layout_width="@android:dimen/app_icon_size"
                 android:layout_height="@android:dimen/app_icon_size"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:srcCompat="@mipmap/ic_camera_timer_off" />
@@ -95,10 +82,6 @@
                 android:id="@+id/settingBtt"
                 android:layout_width="@android:dimen/app_icon_size"
                 android:layout_height="@android:dimen/app_icon_size"
-                android:layout_marginBottom="10dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 app:srcCompat="@mipmap/ic_setting" />
@@ -138,14 +121,29 @@
                 android:onClick="onGalleryBttClicked"
                 app:srcCompat="@mipmap/ic_album" />
 
-            <ImageButton
-                android:id="@+id/cameraCaptureBtt"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/transparent"
-                app:srcCompat="@mipmap/button_capture" />
+                android:layout_marginRight="20dp">
+
+                <ImageButton
+                    android:id="@+id/cameraCaptureBtt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:scaleType="center"
+                    app:srcCompat="@mipmap/button_capture" />
+
+                <ImageView
+                    android:id="@+id/cameraCaptureInnerImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:scaleType="center"
+                    app:srcCompat="@mipmap/button_capture_inner" />
+
+            </FrameLayout>
 
             <ImageButton
                 android:id="@+id/FilmBtt"

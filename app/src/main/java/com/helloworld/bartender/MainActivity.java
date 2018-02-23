@@ -1,8 +1,7 @@
 package com.helloworld.bartender;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
@@ -18,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public float NoiseIntensityVal;
 
     //bottom slide
-    NestedScrollView bottomSheet;
+    FrameLayout bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
     private LinearLayout bottomLinear;
 
@@ -87,20 +87,21 @@ public class MainActivity extends AppCompatActivity {
     private horizontal_adapter adapter;
 
 
+    int tmpColor = 255;
     int tmp1 = 0;
 
     int timerStatus = 0;
     int timerValue = 0;
     TextView timerTextView;
 
-    ImageView captureEffectView;
+    ImageView captureEffectImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        captureEffectView = findViewById(R.id.imageView);
-        timerTextView = findViewById(R.id.textView);
+        captureEffectImageView = findViewById(R.id.captureEffectImg);
+        timerTextView = findViewById(R.id.timerNumberText);
 
         //seekBar
         sbBlur = (SeekBar) findViewById(R.id.sbBlur);
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //bottomslide
-        bottomSheet = (NestedScrollView) findViewById(R.id.bottom_sheet);
+        bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomLinear = (LinearLayout) findViewById(R.id.bottomLinear);
 
@@ -260,9 +261,13 @@ public class MainActivity extends AppCompatActivity {
                         fCamera.takePicture();
 
                         Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.capture_effect);
-                        captureEffectView.startAnimation(captuer);
+                        captureEffectImageView.startAnimation(captuer);
 
                         findViewById(R.id.cameraCaptureBtt).setClickable(true);
+
+                        // Todo: 임시적인 효과를 위한 코드 -> 나중에 지우고 다른 부분에서 구현할 필요가 있음
+                        ((ImageView)findViewById(R.id.cameraCaptureInnerImg)).setColorFilter(Color.argb(150, tmpColor, tmpColor, tmpColor));
+                        tmpColor = (tmpColor + 50) % 255;
                     }
                 }.start();
             }
@@ -370,31 +375,31 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehavior.setPeekHeight(50);
 
         //탭 메뉴
-        TabHost tabHost1 = (TabHost) findViewById(R.id.tabHost1);
+        TabHost tabHost1 = (TabHost) findViewById(R.id.tabHost);
         tabHost1.setup();
         // 첫 번째 Tab. (탭 표시 텍스트:"TAB 1"), (페이지 뷰:"content1")
         TabHost.TabSpec ts1 = tabHost1.newTabSpec("Tab Spec 1");
-        ts1.setContent(R.id.content1);
+        ts1.setContent(R.id.tab1);
         ts1.setIndicator("Blur");
         tabHost1.addTab(ts1);
         // 두 번째 Tab. (탭 표시 텍스트:"TAB 2"), (페이지 뷰:"content2")
         TabHost.TabSpec ts2 = tabHost1.newTabSpec("Tab Spec 2");
-        ts2.setContent(R.id.content2);
+        ts2.setContent(R.id.tab2);
         ts2.setIndicator("Focus");
         tabHost1.addTab(ts2);
         // 세 번째 Tab. (탭 표시 텍스트:"TAB 3"), (페이지 뷰:"content3")
         TabHost.TabSpec ts3 = tabHost1.newTabSpec("Tab Spec 3");
-        ts3.setContent(R.id.content3);
+        ts3.setContent(R.id.tab3);
         ts3.setIndicator("Aberation");
         tabHost1.addTab(ts3);
 
         TabHost.TabSpec ts4 = tabHost1.newTabSpec("Tab Spec 4");
-        ts4.setContent(R.id.content4);
+        ts4.setContent(R.id.tab4);
         ts4.setIndicator("NoiseSize");
         tabHost1.addTab(ts4);
 
         TabHost.TabSpec ts5 = tabHost1.newTabSpec("Tab Spec 5");
-        ts5.setContent(R.id.content5);
+        ts5.setContent(R.id.tab5);
         ts5.setIndicator("NoiseIntensity");
         tabHost1.addTab(ts5);
 

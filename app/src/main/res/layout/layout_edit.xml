@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <FrameLayout
         android:id="@+id/bottom_sheet"
-        app:layout_behavior="@string/bottom_sheet_behavior"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_behavior="@string/bottom_sheet_behavior">
 
         <TabHost
-            android:id="@+id/tabHost1"
+            android:id="@+id/tabHost"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -23,23 +23,36 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <!-- TabWidget의 id값이 반드시 "tabs"로 지정되어야 함. -->
-                <TabWidget
-                    android:id="@android:id/tabs"
+                <RelativeLayout
+                    android:id="@+id/buttonPanel"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:orientation="horizontal">
 
-                <!-- FrameLayout의 id값이 반드시 "tabcontent"로 지정되어야 함. -->
+                    <ImageButton
+                        android:id="@+id/imageButton"
+                        android:layout_width="@android:dimen/app_icon_size"
+                        android:layout_height="@android:dimen/app_icon_size"
+                        android:backgroundTint="@android:color/transparent"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@mipmap/ic_cancel" />
+                </RelativeLayout>
+
                 <FrameLayout
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_above="@android:id/tabs"
+                    android:layout_below="@id/buttonPanel"
+                    android:padding="20dp">
 
-                    <!-- 첫 번째 페이지. content1 -->
                     <LinearLayout
-                        android:id="@+id/content1"
+                        android:id="@+id/tab1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -60,14 +73,13 @@
                             android:layout_height="wrap_content"
                             android:text="0" />
 
-
                     </LinearLayout>
 
-                    <!-- 두 번째 페이지. content2 -->
                     <LinearLayout
-                        android:id="@+id/content2"
+                        android:id="@+id/tab2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -88,14 +100,13 @@
                             android:layout_height="wrap_content"
                             android:text="TextView" />
 
-
                     </LinearLayout>
 
-                    <!-- 세 번째 페이지. content3 -->
                     <LinearLayout
-                        android:id="@+id/content3"
+                        android:id="@+id/tab3"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -119,9 +130,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/content4"
+                        android:id="@+id/tab4"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -145,9 +157,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/content5"
+                        android:id="@+id/tab5"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:orientation="vertical">
 
                         <TextView
@@ -168,8 +181,19 @@
                             android:layout_height="wrap_content"
                             android:text="0" />
                     </LinearLayout>
+
                 </FrameLayout>
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true" />
+
             </LinearLayout>
+
         </TabHost>
-    </android.support.v4.widget.NestedScrollView>
+
+    </FrameLayout>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -1,50 +1,45 @@
 package com.helloworld.bartender.FilterableCamera;
 
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.util.Log;
+import android.util.Size;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.lang.Math;
-
-import static java.lang.Math.exp;
 
 /**
  * Created by huijonglee on 2018. 1. 30..
  */
-public class FCameraRenderer {
+class FCameraRenderer {
 
-    private Context mContext;
-    private FCameraFilter mSelectFilter;
     private int[] mTextureIds;
 
     //shader variable
     private FloatBuffer mVertexBuffer;
     private FloatBuffer mTexCoordBuffer;
 
+    private Size mViewSize;
+
+    private FCameraFilter mFilter;
     private int mProgram;
-    private int mWidth;
-    private int mHeight;
     private boolean initStatus = false;
 
-    FCameraRenderer(Context context) {
-        mContext = context;
+    FCameraRenderer() {
     }
 
-    void initRender(int vertexShaderID, int fragmentShaderID) {
+    void initRender() {
         setBuffers(0, flip_NON);
 
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        mSelectFilter = new OriginalFilter(mContext);
-        mProgram = mSelectFilter.getProgram();
+    }
+
+    void setFilter(FCameraFilter filter) {
+        mFilter = filter;
+        mProgram = mFilter.getProgram();
     }
 
     SurfaceTexture getInputSurfaceTexture() {
@@ -134,13 +129,12 @@ public class FCameraRenderer {
     }
 
     void setViewSize(int width, int height) {
+        mViewSize = new Size(width, height);
         GLES20.glViewport(0, 0, width, height);
-        mWidth = -width;
-        mHeight = -height;
     }
 
     void onDraw() {
-        if (initStatus) {
+        if (initStatus && mFilter != null) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             GLES20.glUseProgram(mProgram);
@@ -159,7 +153,8 @@ public class FCameraRenderer {
             GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureIds[0]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(mProgram, "sTexture"), 0);
 
-            mSelectFilter.onDraw(mWidth, mHeight);
+            mFilter.onDraw(mProgram, mViewSize);
+
             GLES20.glFlush();
         }
     }
@@ -171,6 +166,4 @@ public class FCameraRenderer {
             mTexCoordBuffer.clear();
         initStatus = false;
     }
-
-
 }

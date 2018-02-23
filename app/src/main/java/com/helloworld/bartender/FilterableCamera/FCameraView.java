@@ -22,7 +22,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
-import com.helloworld.bartender.R;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,6 +63,10 @@ public class FCameraView extends GLSurfaceView {
     public void onPause() {
         mRenderer.onPause();
         super.onPause();
+    }
+
+    public void setFilter(FCameraFilter filter) {
+        mRenderer.setFilter(filter);
     }
 
     public void setCameraCharacteristics(CameraCharacteristics characteristics) {
@@ -116,8 +120,8 @@ public class FCameraView extends GLSurfaceView {
     private class CameraViewRenderer implements GLSurfaceView.Renderer {
         private FCameraRenderer mCameraRender;
 
-        private int mFragmentShaderID = R.raw.filter_fragment_shader;
-        private int mVertexShaderID = R.raw.filter_vertex_shader;
+        private Boolean filterChanged = false;
+        private FCameraFilter mCameraFilter;
 
         private SurfaceTexture mInputSurfaceTexture;
 
@@ -136,7 +140,13 @@ public class FCameraView extends GLSurfaceView {
         private void onPause() {
             mSurfaceUpdated = false;
             mInitState.set(false);
+            filterChanged = true;
             mCameraRender.clear();
+        }
+
+        private void setFilter(FCameraFilter filter) {
+            mCameraFilter = filter;
+            filterChanged = true;;
         }
 
         private void setCameraCharacteristics(CameraCharacteristics characteristics) throws NullPointerException {
@@ -151,9 +161,8 @@ public class FCameraView extends GLSurfaceView {
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            mCameraRender = new FCameraRenderer(FCameraView.this.getContext());
-
-            mCameraRender.initRender(mVertexShaderID, mFragmentShaderID);
+            mCameraRender = new FCameraRenderer();
+            mCameraRender.initRender();
 
             mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
             mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
@@ -179,6 +188,11 @@ public class FCameraView extends GLSurfaceView {
         public void onDrawFrame(GL10 gl) {
             if (!mInitState.get())
                 return;
+
+            if (filterChanged) {
+                mCameraRender.setFilter(mCameraFilter);
+                filterChanged = false;
+            }
 
             synchronized (mOnFrameAvailableListener) {
                 if (mSurfaceUpdated) {

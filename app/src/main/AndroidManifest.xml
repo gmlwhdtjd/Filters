@@ -31,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Filter_making_page" />
         <activity android:name=".Guide_page" />
         <activity android:name=".BottomPanelUPTest"></activity>
     </application>

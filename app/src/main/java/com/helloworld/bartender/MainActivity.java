@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,9 +27,9 @@ import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
-import com.helloworld.bartender.FilterableCamera.FCameraRenderer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
-import com.helloworld.bartender.FilterableCamera.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> data;
 
+    FCameraFilter cameraFilter;
+
     int tmp1 = 0;
 
     int timerStatus = 0;
@@ -95,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
         captureEffectView = findViewById(R.id.imageView);
         timerTextView = findViewById(R.id.textView);
 
+        cameraFilter = new OriginalFilter(this);
+        final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
+
         //seekBar
         sbBlur = (SeekBar) findViewById(R.id.sbBlur);
         sbFocus = (SeekBar) findViewById(R.id.sbFocus);
@@ -108,26 +112,26 @@ public class MainActivity extends AppCompatActivity {
         txtNoiseSize = (TextView) findViewById(R.id.noiseSizeVal);
         txtNoiseIntensity = (TextView) findViewById(R.id.noiseIntensityVal);
 
-        sbBlur.setProgress(Math.round(OriginalFilter.FilterVar.getBlur() * 100));
-        txtBlur.setText(Float.toString(OriginalFilter.FilterVar.getBlur()));
+        sbBlur.setProgress(Math.round(originalFilter.getBlur() * 100));
+        txtBlur.setText(Float.toString(originalFilter.getBlur()));
 
-        sbFocus.setProgress(Math.round(OriginalFilter.FilterVar.getFocus() * 100));
-        txtFocus.setText(Float.toString(OriginalFilter.FilterVar.getFocus()));
+        sbFocus.setProgress(Math.round(originalFilter.getFocus() * 100));
+        txtFocus.setText(Float.toString(originalFilter.getFocus()));
 
-        sbAberation.setProgress(Math.round(OriginalFilter.FilterVar.getAberration() * 100));
-        txtAberation.setText(Float.toString(OriginalFilter.FilterVar.getAberration()));
+        sbAberation.setProgress(Math.round(originalFilter.getAberration() * 100));
+        txtAberation.setText(Float.toString(originalFilter.getAberration()));
 
-        sbNoiseSize.setProgress(Math.round(OriginalFilter.FilterVar.getNoiseSize() * 100 - 25));
-        txtNoiseSize.setText(Float.toString(OriginalFilter.FilterVar.getNoiseSize()));
+        sbNoiseSize.setProgress(Math.round(originalFilter.getNoiseSize() * 100 - 25));
+        txtNoiseSize.setText(Float.toString(originalFilter.getNoiseSize()));
 
-        sbNoiseIntensity.setProgress(Math.round(OriginalFilter.FilterVar.getNoiseIntensity() * 100));
-        txtNoiseIntensity.setText(Float.toString(OriginalFilter.FilterVar.getNoiseIntensity()));
+        sbNoiseIntensity.setProgress(Math.round(originalFilter.getNoiseIntensity() * 100));
+        txtNoiseIntensity.setText(Float.toString(originalFilter.getNoiseIntensity()));
 
         sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 BlurVal = (float) seekBar.getProgress() / 25+0.01f;
-                OriginalFilter.FilterVar.setBlur(BlurVal);
+                originalFilter.setBlur(BlurVal);
                 update(txtBlur, BlurVal);
             }
 
@@ -146,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 FocusVal = (float) seekBar.getProgress() / 100;
-                OriginalFilter.FilterVar.setFocus(FocusVal);
+                originalFilter.setFocus(FocusVal);
                 update(txtFocus, FocusVal);
             }
 
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 AberationVal = (float) seekBar.getProgress() / 100;
-                OriginalFilter.FilterVar.setAberration(AberationVal);
+                originalFilter.setAberration(AberationVal);
                 update(txtAberation, AberationVal);
             }
 
@@ -184,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-                OriginalFilter.FilterVar.setNoiseSize(NoiseSizeVal);
+                originalFilter.setNoiseSize(NoiseSizeVal);
                 update(txtNoiseSize, NoiseSizeVal);
             }
 
@@ -203,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-                OriginalFilter.FilterVar.setNoiseIntensity(NoiseIntensityVal);
+                originalFilter.setNoiseIntensity(NoiseIntensityVal);
                 update(txtNoiseIntensity, NoiseIntensityVal);
             }
 
@@ -226,7 +230,11 @@ public class MainActivity extends AppCompatActivity {
       
         // 카메라 관련 정의
         final FCameraView fCameraView = findViewById(R.id.cameraView);
-        FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
+        fCameraView.setFilter(cameraFilter);
+
+        final FCameraCapturer fCameraCapturer = new FCameraCapturer(this);
+        fCameraCapturer.setFilter(cameraFilter);
+
         final FCamera fCamera = new FCamera(this, getLifecycle(), fCameraView, fCameraCapturer);
 
         findViewById(R.id.cameraCaptureBtt).setOnClickListener(new View.OnClickListener() {

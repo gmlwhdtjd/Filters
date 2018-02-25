@@ -426,26 +426,8 @@ public class MainActivity extends AppCompatActivity {
     private void populateRecyclerView(String option){
         dbHelper = new DatabaseHelper(this);
         adapter = new horizontal_adapter(dbHelper.FilterList(option),this,mRecyclerView);
-        adapter.setItemClick(new horizontal_adapter.ItemClick() {
-            @Override
-            public void onClick(String str, int position, int lastposition) {
-                if (position == lastposition - 1) {
-//                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
-//                    startActivity(intent);
-                    //meaning bottomsheet state
-                    if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), position + " " + str, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         mRecyclerView.setAdapter(adapter);
     }
-
 
     //갤러리 이동
     public void onGalleryBttClicked(View v) {
@@ -458,6 +440,15 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(pickerIntent, REQ_PICK_CODE);
 
 //        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+    }
+
+    //갤러리 이동
+    public void onEndBtnClicked(View v) {
+        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
     }
 
     public void update(TextView txt, float num) {

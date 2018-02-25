@@ -13,5 +13,5 @@
         android:onClick="onEndBtnClicked"
         android:padding="20dp"
         android:adjustViewBounds="true"
-        app:srcCompat="@mipmap/ic_edit" />
+        app:srcCompat="@drawable/ic_edit" />
 </LinearLayout>

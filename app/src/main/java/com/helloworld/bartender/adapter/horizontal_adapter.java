@@ -50,7 +50,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             super(itemView);
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
-            filterName = (TextView) itemView.findViewById(R.id.filterName);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtn);
 
             if (viewType == R.layout.layout_filter_icon) {
@@ -59,7 +58,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     public void onClick(View v) {
                         lastSelectedPosition = getAdapterPosition();
                         notifyDataSetChanged();
-                        Toast.makeText(horizontal_adapter.this.mContext, filterName.getText(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(horizontal_adapter.this.mContext, filterIcon.getText(), Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -111,7 +110,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         if (position == filters.size()) {
         } else {
             Item filter = filters.get(position);
-            holder.filterName.setText(filter.getFilter_name());
+            holder.filterIcon.setText(filter.getFilter_name());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
         }
 

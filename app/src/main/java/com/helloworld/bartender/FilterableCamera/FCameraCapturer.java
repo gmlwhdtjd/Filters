@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -67,7 +68,7 @@ public class FCameraCapturer {
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
 
-    private boolean filterChanged = true;
+    private AtomicBoolean filterChanged = new AtomicBoolean(false);
     private FCameraFilter mCameraFilter;
 
     private Semaphore initLock = new Semaphore(0);
@@ -100,7 +101,7 @@ public class FCameraCapturer {
 
     public void setFilter(FCameraFilter filter) {
         mCameraFilter = filter;
-        filterChanged = true;
+        filterChanged.set(true);
     }
 
     void setCameraCharacteristics(@NonNull CameraCharacteristics characteristics, Size largest) {
@@ -176,10 +177,8 @@ public class FCameraCapturer {
         renderHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (filterChanged) {
+                if (filterChanged.getAndSet(false))
                     mCameraRender.setFilter(mCameraFilter);
-                    filterChanged = false;
-                }
 
                 synchronized (mOnFrameAvailableListener) {
                     if (mSurfaceUpdated) {

@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -303,13 +304,13 @@ public class MainActivity extends AppCompatActivity {
                 tmp1 = (tmp1 + 1) % 3 ;
                 switch (tmp1) {
                     case 0:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_auto);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_flash_auto);
                         break;
                     case 1:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_off);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_flash_off);
                         break;
                     case 2:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_flash_on);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_flash_on);
                         break;
                 }
             }
@@ -321,19 +322,19 @@ public class MainActivity extends AppCompatActivity {
                 timerStatus = (timerStatus + 1) % 4 ;
                 switch (timerStatus) {
                     case 0:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_off);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_timer_off);
                         timerValue = 0;
                         break;
                     case 1:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_3);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_timer_3);
                         timerValue = 3;
                         break;
                     case 2:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_5);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_timer_5);
                         timerValue = 5;
                         break;
                     case 3:
-                        ((ImageButton)v).setImageResource(R.mipmap.ic_camera_timer_10);
+                        ((ImageButton)v).setImageResource(R.drawable.ic_camera_timer_10);
                         timerValue = 10;
                         break;
                 }

@@ -68,7 +68,10 @@ public class MainActivity extends AppCompatActivity {
     //bottom slide
     FrameLayout bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
-    private LinearLayout bottomLinear;
+
+    //filterlist slide
+    NestedScrollView nestedFilterList;
+    BottomSheetBehavior filterListBehavior;
 
     //슬라이드 열기/닫기 플래그
     boolean isPageOpen = false;
@@ -240,9 +243,11 @@ public class MainActivity extends AppCompatActivity {
         //bottomslide
         bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        bottomLinear = (LinearLayout) findViewById(R.id.bottomLinear);
 
-      
+        //filterList
+        nestedFilterList = (NestedScrollView) findViewById(R.id.filter_list_nested);
+        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
+
         // 카메라 관련 정의
         final FCameraView fCameraView = findViewById(R.id.cameraView);
         fCameraView.setFilter(cameraFilter);
@@ -349,38 +354,21 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
         checkFirstRun(dbHelper);
 
-
-        //슬라이딩 레이아웃
-        //UI
-        slidingPage01 = (LinearLayout) findViewById(R.id.slidingPage);
         button1 = (ImageButton) findViewById(R.id.FilmBtt);
 
         button1.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                //닫기
-                if (isPageOpen) {
-                    //애니메이션 시작
-                    slidingPage01.startAnimation(translateRightAnim);
-                }
-                //열기
-                else {
-                    slidingPage01.setVisibility(View.VISIBLE);
-                    slidingPage01.startAnimation(translateLeftAnim);
+                if(filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                    filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }else{
+                    filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
 
             }
         });
 
-
-        //애니메이션
-        translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
-        translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
-
-        //애니메이션 리스너 설정
-        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
-        translateLeftAnim.setAnimationListener(animationListener);
-        translateRightAnim.setAnimationListener(animationListener);
+        filterListBehavior.setPeekHeight(0);
 
         //bottomSlider
         //peek = 0로 하면 첫 화면에서 안보임
@@ -422,13 +410,8 @@ public class MainActivity extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-              //      bottomLinear.setVisibility(View.INVISIBLE);
-                    if (isPageOpen) {
-                        slidingPage01.startAnimation(translateRightAnim);
-                    }
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomLinear.setVisibility(View.VISIBLE);
                 }
+
             }
 
             @Override
@@ -460,87 +443,30 @@ public class MainActivity extends AppCompatActivity {
     private void populateRecyclerView(String option){
         dbHelper = new DatabaseHelper(this);
         adapter = new horizontal_adapter(dbHelper.FilterList(option),this,mRecyclerView);
-        adapter.setItemClick(new horizontal_adapter.ItemClick() {
-            @Override
-            public void onClick(String str, int position, int lastposition) {
-                if (position == lastposition - 1) {
-//                    Intent intent = new Intent(MainActivity.this, BottomPanelUPTest.class);
-//                    startActivity(intent);
-                    //meaning bottomsheet state
-                    if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    } else {
-                        bottomLinear.setVisibility(View.VISIBLE);
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), position + " " + str, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         mRecyclerView.setAdapter(adapter);
     }
 
-
     //갤러리 이동
     public void onGalleryBttClicked(View v) {
-//        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
-//
-//        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-//
-//        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//
-//        startActivityForResult(pickerIntent, REQ_PICK_CODE);
+        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
 
-        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+
+        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(pickerIntent, REQ_PICK_CODE);
+
+//        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
     }
-//
-//    //슬라이딩 버튼 닫기 오픈
-//    public void onArrowButton1Clicked(View v){
-//        //닫기
-//        if(isPageOpen){
-//            //애니메이션 시작
-//            slidingPage01.startAnimation(translateRightAnim);
-//        }
-//        //열기
-//        else{
-//            slidingPage01.setVisibility(View.VISIBLE);
-//            slidingPage01.startAnimation(translateLeftAnim);
-//        }
-//    }
 
-    //슬라이딩 페이지 애니메이션 리스너
-    private class SlidingPageAnimationListener implements Animation.AnimationListener {
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            //슬라이드 열기->닫기
-            if (isPageOpen) {
-                slidingPage01.setVisibility(View.GONE);
-
-                isPageOpen = false;
-            }
-            //슬라이드 닫기->열기
-            else {
-                isPageOpen = true;
-            }
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-
+    //갤러리 이동
+    public void onEndBtnClicked(View v) {
+        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
-//
-//    //필터 아이콘 클릭 이벤트
-//    public void onFilterIconClicked(View v) {
-//
-//
-//    }
 
     public void update(TextView txt, float num) {
         txt.setText(new StringBuilder().append(num));

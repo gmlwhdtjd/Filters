@@ -88,20 +88,9 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/slidingPage"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_alignBottom="@id/cameraFrame"
-            android:background="@color/transBlack"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/filterList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+       <include
+           layout="@layout/layout_filter_list"
+           />
 
         <LinearLayout
             android:id="@id/bottomLinear"

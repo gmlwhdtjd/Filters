@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+   >
+    <!--<Button-->
+        <!--android:id="@+id/filterIcon"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:padding="20dp"-->
+        <!--android:text="Filter"-->
+        <!--android:textSize="20sp"-->
+        <!--android:textAllCaps="true"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:background="@drawable/bg"-->
+        <!--/>-->
+
+
+    <RadioButton
+        android:id="@+id/filterIcon"
+        android:button="@drawable/custom_radio_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:padding="20dp"
+        android:adjustViewBounds="true" />
+
+    <TextView
+        android:id="@+id/filterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/filterIcon"
+        android:text="sampleIcon"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+</RelativeLayout>

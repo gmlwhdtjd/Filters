@@ -9,18 +9,20 @@ public class Item {
     private String filter_name;
     private float blur;
     private float focus;
-    private float aberation;
+    private float aberration;
     private float noiseSize;
+    private float noiseIntensity;
 
-    public Item(){
+
+    public Item() {
 
     }
 
-    public Item(String filter_name, float blur, float focus, float aberation, float noiseSize, float noiseIntensity) {
+    public Item(String filter_name, float blur, float focus, float aberration, float noiseSize, float noiseIntensity) {
         this.filter_name = filter_name;
         this.blur = blur;
         this.focus = focus;
-        this.aberation = aberation;
+        this.aberration = aberration;
         this.noiseSize = noiseSize;
         this.noiseIntensity = noiseIntensity;
     }
@@ -57,12 +59,12 @@ public class Item {
         this.focus = focus;
     }
 
-    public float getAberation() {
-        return aberation;
+    public float getAberration() {
+        return aberration;
     }
 
-    public void setAberation(float aberation) {
-        this.aberation = aberation;
+    public void setAberration(float aberration) {
+        this.aberration = aberration;
     }
 
     public float getNoiseSize() {
@@ -80,10 +82,5 @@ public class Item {
     public void setNoiseIntensity(float noiseIntensity) {
         this.noiseIntensity = noiseIntensity;
     }
-
-    private float noiseIntensity;
-
-
-
 
 }

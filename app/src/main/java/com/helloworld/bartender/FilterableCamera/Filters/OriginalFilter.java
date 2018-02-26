@@ -16,6 +16,8 @@ import static java.lang.Math.exp;
 
 public class OriginalFilter extends FCameraFilter {
     private float [] rgb = {0.0f, 0.0f, 0.0f};
+    private long id;
+    private String filter_name;
     private float blur;
     private float aberration;
     private float focus;
@@ -56,6 +58,8 @@ public class OriginalFilter extends FCameraFilter {
     public float getNoiseIntensity() {
         return noiseIntensity;
     }
+    public long getId() {return id;}
+    public String getFilter_name() {return filter_name;}
 
     public void setBlur(float num) {
         blur = num;
@@ -73,6 +77,8 @@ public class OriginalFilter extends FCameraFilter {
     public void setNoiseIntensity(float num) {
             noiseIntensity = num;
         }
+    public void setId(long id) {this.id = id;}
+    public void setFilter_name(String filter_name) {this.filter_name = filter_name;}
 
     private float[] nl = {0.1f, 0.1f, 0.1f, 0.0f};
     private final long START_TIME = System.currentTimeMillis();
@@ -80,11 +86,22 @@ public class OriginalFilter extends FCameraFilter {
     public OriginalFilter(Context context) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
 
+        setFilter_name("default filter");
         setBlur(0.1f);
         setAberration(0.0f);
         setFocus(1.0f);
         setNoiseSize(1.0f);
         setNoiseIntensity(1.0f);
+    }
+
+    public OriginalFilter(Context context,String filter_name, float blur, float focus, float aberration, float noiseSize, float noiseIntensity) {
+        super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
+        setFilter_name(filter_name);
+        setBlur(blur);
+        setAberration(focus);
+        setFocus(aberration);
+        setNoiseSize(noiseSize);
+        setNoiseIntensity(noiseIntensity);
     }
 
     @Override

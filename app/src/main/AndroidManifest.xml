@@ -27,7 +27,7 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".Filter_making_page" />
-        <activity android:name=".Guide_page">
+        <activity android:name=".GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

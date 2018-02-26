@@ -22,11 +22,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.FCamera;
@@ -50,19 +48,19 @@ public class MainActivity extends AppCompatActivity {
     //필터 속성값들
     private SeekBar sbBlur;
     private SeekBar sbFocus;
-    private SeekBar sbAberation;
+    private SeekBar sbAberration;
     private SeekBar sbNoiseSize;
     private SeekBar sbNoiseIntensity;
 
     private TextView txtBlur;
     private TextView txtFocus;
-    private TextView txtAberation;
+    private TextView txtAberration;
     private TextView txtNoiseSize;
     private TextView txtNoiseIntensity;
 
     public float BlurVal;
     public float FocusVal;
-    public float AberationVal;
+    public float AberrationVal;
     public float NoiseSizeVal;
     public float NoiseIntensityVal;
 
@@ -74,17 +72,7 @@ public class MainActivity extends AppCompatActivity {
     NestedScrollView nestedFilterList;
     BottomSheetBehavior filterListBehavior;
 
-    //슬라이드 열기/닫기 플래그
-    boolean isPageOpen = false;
-    //슬라이드 열기 애니메이션
-    Animation translateLeftAnim;
-    //슬라이드 닫기 애니메이션
-    Animation translateRightAnim;
-    //슬라이드 레이아웃
-    LinearLayout slidingPage01;
-
-    ImageButton button1;
-    ImageButton button2;
+    ImageButton FilmBtn;
 
     //recyclerview
     private String option = "";
@@ -118,13 +106,13 @@ public class MainActivity extends AppCompatActivity {
         //seekBar
         sbBlur = (SeekBar) findViewById(R.id.sbBlur);
         sbFocus = (SeekBar) findViewById(R.id.sbFocus);
-        sbAberation = (SeekBar) findViewById(R.id.sbAberation);
+        sbAberration = (SeekBar) findViewById(R.id.sbAberation);
         sbNoiseSize = (SeekBar) findViewById(R.id.sbNoiseSize);
         sbNoiseIntensity = (SeekBar) findViewById(R.id.sbNoiseIntensity);
 
         txtBlur = (TextView) findViewById(R.id.blurVal);
         txtFocus = (TextView) findViewById(R.id.focusVal);
-        txtAberation = (TextView) findViewById(R.id.aberationVal);
+        txtAberration = (TextView) findViewById(R.id.aberationVal);
         txtNoiseSize = (TextView) findViewById(R.id.noiseSizeVal);
         txtNoiseIntensity = (TextView) findViewById(R.id.noiseIntensityVal);
 
@@ -134,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
         sbFocus.setProgress(Math.round(originalFilter.getFocus() * 100));
         txtFocus.setText(Float.toString(originalFilter.getFocus()));
 
-        sbAberation.setProgress(Math.round(originalFilter.getAberration() * 100));
-        txtAberation.setText(Float.toString(originalFilter.getAberration()));
+        sbAberration.setProgress(Math.round(originalFilter.getAberration() * 100));
+        txtAberration.setText(Float.toString(originalFilter.getAberration()));
 
         sbNoiseSize.setProgress(Math.round(originalFilter.getNoiseSize() * 100 - 25));
         txtNoiseSize.setText(Float.toString(originalFilter.getNoiseSize()));
@@ -181,22 +169,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sbAberation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sbAberration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setAberration(AberationVal);
-                update(txtAberation, AberationVal);
+                AberrationVal = (float) seekBar.getProgress() / 100;
+                originalFilter.setAberration(AberrationVal);
+                update(txtAberration, AberrationVal);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
+                AberrationVal = (float) seekBar.getProgress() / 100;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
+                AberrationVal = (float) seekBar.getProgress() / 100;
             }
         });
 
@@ -355,11 +343,11 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
         checkFirstRun(dbHelper);
 
-        button1 = (ImageButton) findViewById(R.id.FilmBtt);
+        FilmBtn = (ImageButton) findViewById(R.id.FilmBtt);
 
-        button1.setOnClickListener(new OnSingleClickListener() {
+        FilmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSingleClick(View v) {
+            public void onClick(View v) {
                 if(filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
                     filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }else{
@@ -449,15 +437,16 @@ public class MainActivity extends AppCompatActivity {
 
     //갤러리 이동
     public void onGalleryBttClicked(View v) {
-        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+//        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+//
+//        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+//
+//        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        startActivityForResult(pickerIntent, REQ_PICK_CODE);
 
-        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-
-        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(pickerIntent, REQ_PICK_CODE);
-
-//        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+       dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+       populateRecyclerView(option);
     }
 
     //갤러리 이동

@@ -4,19 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.helloworld.bartender.Item.Item;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String COLUMN_FILTER_NAME = "name";
     public static final String COLUMN_FILTER_BLUR = "blur";
     public static final String COLUMN_FILTER_FOCUS = "focus";
-    public static final String COLUMN_FILTER_ABERATION = "aberation";
+    public static final String COLUMN_FILTER_ABERRATION = "aberration";
     public static final String COLUMN_FILTER_NOISE_SIZE = "noise_size";
     public static final String COLUMN_FILTER_NOISE_INTENSITY = "noise_intensity";
 
@@ -46,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_FILTER_NAME + " TEXT NOT NULL, " +
                 COLUMN_FILTER_BLUR + " REAL NOT NULL, " +
-                COLUMN_FILTER_ABERATION + " REAL NOT NULL, " +
+                COLUMN_FILTER_ABERRATION + " REAL NOT NULL, " +
                 COLUMN_FILTER_FOCUS + " REAL NOT NULL, "+
                 COLUMN_FILTER_NOISE_SIZE+" REAL NOT NULL, "+
                 COLUMN_FILTER_NOISE_INTENSITY+" REAL NOT NULL);"
@@ -67,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(COLUMN_FILTER_NAME, filter.getFilter_name());
         values.put(COLUMN_FILTER_BLUR,filter.getBlur());
-        values.put(COLUMN_FILTER_ABERATION,filter.getAberation());
+        values.put(COLUMN_FILTER_ABERRATION,filter.getAberration());
         values.put(COLUMN_FILTER_FOCUS,filter.getFocus());
         values.put(COLUMN_FILTER_NOISE_SIZE,filter.getNoiseSize());
         values.put(COLUMN_FILTER_NOISE_INTENSITY,filter.getNoiseIntensity());
@@ -95,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 filter.setId(cursor.getLong((cursor.getColumnIndex(COLUMN_ID))));
                 filter.setFilter_name(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
                 filter.setBlur(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_BLUR)));
-                filter.setAberation(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_ABERATION)));
+                filter.setAberration(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_ABERRATION)));
                 filter.setFocus(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_FOCUS)));
                 filter.setNoiseSize(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_SIZE)));
                 filter.setNoiseIntensity(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_INTENSITY)));
@@ -122,7 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void updateFilterRecord(long filterId, Context context,Item updatedFilter){
         SQLiteDatabase db = this.getWritableDatabase();
         //you can use the constants above instead of typing the column names
-        db.execSQL("UPDATE "+TABLE_NAME+"SET name ='"+updatedFilter.getFilter_name()+"', blur ='"+updatedFilter.getBlur()+"', aberation ='"+updatedFilter.getAberation()+
+        db.execSQL("UPDATE "+TABLE_NAME+"SET name ='"+updatedFilter.getFilter_name()+"', blur ='"+updatedFilter.getBlur()+"', aberration ='"+updatedFilter.getAberration()+
                 "', focus ='"+updatedFilter.getFocus()+"', noiseSize ='"+updatedFilter.getNoiseSize()+"', noiseIntensity ='"+updatedFilter.getNoiseIntensity() +"' WHERE _id='"+ filterId+"'");
         Toast.makeText(context,"Updated successfully",Toast.LENGTH_SHORT).show();
     }

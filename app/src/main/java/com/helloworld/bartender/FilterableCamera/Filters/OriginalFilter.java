@@ -80,17 +80,18 @@ public class OriginalFilter extends FCameraFilter {
     public OriginalFilter(Context context) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
 
-        setBlur(0.1f);
+        setBlur(1.0f);
         setAberration(0.0f);
-        setFocus(1.0f);
+        setFocus(0.0f);
         setNoiseSize(1.0f);
-        setNoiseIntensity(1.0f);
+        setNoiseIntensity(0.0f);
     }
 
     @Override
     public void onDraw(int program, Size viewSize) {
+
         int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
-        GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getWidth(), 1.0f}));
+        GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
 
         int noiseLevelLocation = GLES20.glGetUniformLocation(program, "noiseLevel");
         GLES20.glUniform4fv(noiseLevelLocation, 1, FloatBuffer.wrap(nl));

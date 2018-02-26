@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 AberationVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setAberration(AberationVal);
+                originalFilter.setAberration(AberationVal*2);
                 update(txtAberation, AberationVal);
             }
 

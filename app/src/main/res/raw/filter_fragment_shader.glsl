@@ -135,26 +135,28 @@ void main ()
 
     vec2 dis = gl_FragCoord.xy/iResolution.xy;
     vec2 pixelize = dis;
-    dis *= -1.0;
     dis -= 0.5;
     vec2 res = vec2(40.0, 40.0);
-    vec3 rValue = texture2D(sTexture, texCoord-((dis/res).yx*variables.aberration)).rgb;
-    vec3 gValue = texture2D(sTexture, texCoord).rgb;
-    vec3 bValue = texture2D(sTexture, texCoord+((dis/res).yx*variables.aberration)).rgb;
 
     ////////////////////////////////색수차
-    float distance = 0.0;
-    distance += (dis.x>0.0)?dis.x:(-1.0)*dis.x;
-    distance += (dis.y>0.0)?dis.y:(-1.0)*dis.y;
-    distance *= variables.focus;
+    float radius = 0.0;
+    float distance = variables.noiseIntensity;
+    vec2 innerR = gl_FragCoord.xy/iResolution.x;
+    innerR -= vec2(0.5, (iResolution.y/iResolution.x)/2.0);
+    float x = innerR.x>0.0?innerR.x:-1.0*innerR.x;
+    float y = innerR.y>0.0?innerR.y:-1.0*innerR.y;
+    y = y>1.0?1.0:y;
+    radius = x*x+y*y;
+    radius = radius>variables.focus?radius:0.0;
+    if(radius < variables.focus)
+        radius = 0.0;
+    else if(radius >= variables.focus && radius < variables.focus+distance)
+        radius = (radius-variables.focus)/distance;
+    else if(radius >= variables.focus + distance)
+        radius = 1.0;
 
-    float ResS = iResolution.x;
-    float ResT = iResolution.y;
-
-    vec2 stp0 = vec2(4.0/ResS, 0.0);    //  x
-    vec2 st0p = vec2(0.0, 8.0/ResT);    //  y
-    vec2 stpp = vec2(1.0/ResS, 1.0/ResT);
-    vec2 stpm = vec2(1.0/ResS, -1.0/ResT);
+    vec2 stp0 = vec2(4.0/iResolution.x, 0.0)*radius;    //  x
+    vec2 st0p = vec2(0.0, 8.0/iResolution.y)*radius;    //  y
 
     vec3 target = vec3(0.0, 0.0, 0.0);
     float fi=0.0;
@@ -162,38 +164,13 @@ void main ()
     for(int i=0; i<7; i++) {
         fj = 0.0;
         for(int j=0; j<7; j++) {
-            target += texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)).rgb*mask[i*7+j];
+            target += vec3(texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)-(dis/res).yx*variables.aberration).r*mask[i*7+j],
+                            texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)).g*mask[i*7+j],
+                            texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)+(dis/res).yx*variables.aberration).b*mask[i*7+j]);
             fj+=1.0;
         }
         fi += 1.0;
     }
-/*mask[i*7+j]
-    vec3 i00 = texture2D(sTexture, texCoord).rgb;
-    int k=50;
-    float result = 0.0;
-    float mm = 1.0;         //next pixel
-    float count = variables.blur;      //0.0 ~ 1.0 blur level
-    target += (i00)*1.0;
-    result += 1.0;
-    for(int i=1; i<k; i++) {
-        vec3 im1m1 = texture2D(sTexture, texCoord-((stpp*distance)*mm)).rgb;
-        vec3 ip1p1 = texture2D(sTexture, texCoord+((stpp*distance)*mm)).rgb;
-        vec3 im1p1 = texture2D(sTexture, texCoord-((stpm*distance)*mm)).rgb;
-        vec3 ip1m1 = texture2D(sTexture, texCoord+((stpm*distance)*mm)).rgb;
-        vec3 im10 = texture2D(sTexture, texCoord-((stp0*distance)*mm)).rgb;
-        vec3 ip10 = texture2D(sTexture, texCoord+((stp0*distance)*mm)).rgb;
-        vec3 i0m1 = texture2D(sTexture, texCoord-((st0p*distance)*mm)).rgb;
-        vec3 i0p1 = texture2D(sTexture, texCoord+((st0p*distance)*mm)).rgb;
-        target += (im10 + ip10 + i0m1 + i0p1 + im1m1 + ip1m1 + ip1p1 + im1p1) * count;
-        result += count * 8.0;
-        count *= count;
-        mm+=1.0;
-    }
-    //count = ((1.0-count)/(1.0-0.5))*4.0 + 2.0;
-    target /= result;
-    */
-    //target += vec3(rValue.r, gValue.g, bValue.b);
-    //target /= 2.0;
 
     vec3 HSL = RGBtoHSL(target);
     HSL += vec3(0.0, variables.rgb.g, variables.rgb.b);
@@ -210,9 +187,7 @@ void main ()
     float blocksize = 500.0 * variables.noiseSize;
     vec2 block = floor(pixelize*blocksize);
     vec3 randomDelta = vec3((rand(block) * 2.0) - 1.0, (rand2(block) * 2.0) - 1.0, (rand3(block) * 2.0) - 1.0);
-    gl_FragColor += 0.1*vec4(randomDelta, 0.0)*variables.noiseIntensity;
-
-    //gl_FragColor = texture2D(sTexture, texCoord);
+    //gl_FragColor += 0.1*vec4(randomDelta, 0.0)*variables.noiseIntensity;
 }
 
 /*

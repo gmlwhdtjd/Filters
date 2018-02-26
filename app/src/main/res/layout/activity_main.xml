@@ -42,6 +42,7 @@
                 android:textColor="@color/white"
                 android:textSize="200sp" />
 
+
         </FrameLayout>
 
         <LinearLayout

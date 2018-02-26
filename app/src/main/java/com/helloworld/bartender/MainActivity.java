@@ -47,25 +47,6 @@ public class MainActivity extends AppCompatActivity {
     public SharedPreferences prefs;
     private int REQ_PICK_CODE = 100;
 
-    //필터 속성값들
-    private SeekBar sbBlur;
-    private SeekBar sbFocus;
-    private SeekBar sbAberation;
-    private SeekBar sbNoiseSize;
-    private SeekBar sbNoiseIntensity;
-
-    private TextView txtBlur;
-    private TextView txtFocus;
-    private TextView txtAberation;
-    private TextView txtNoiseSize;
-    private TextView txtNoiseIntensity;
-
-    public float BlurVal;
-    public float FocusVal;
-    public float AberationVal;
-    public float NoiseSizeVal;
-    public float NoiseIntensityVal;
-
     //bottom slide
     FrameLayout bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
@@ -116,129 +97,52 @@ public class MainActivity extends AppCompatActivity {
         final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
 
         //seekBar
-        sbBlur = (SeekBar) findViewById(R.id.sbBlur);
-        sbFocus = (SeekBar) findViewById(R.id.sbFocus);
-        sbAberation = (SeekBar) findViewById(R.id.sbAberation);
-        sbNoiseSize = (SeekBar) findViewById(R.id.sbNoiseSize);
-        sbNoiseIntensity = (SeekBar) findViewById(R.id.sbNoiseIntensity);
-
-        txtBlur = (TextView) findViewById(R.id.blurVal);
-        txtFocus = (TextView) findViewById(R.id.focusVal);
-        txtAberation = (TextView) findViewById(R.id.aberationVal);
-        txtNoiseSize = (TextView) findViewById(R.id.noiseSizeVal);
-        txtNoiseIntensity = (TextView) findViewById(R.id.noiseIntensityVal);
-
-        sbBlur.setProgress(Math.round(originalFilter.getBlur() * 100));
-        txtBlur.setText(Float.toString(originalFilter.getBlur()));
-
-        sbFocus.setProgress(Math.round(originalFilter.getFocus() * 100));
-        txtFocus.setText(Float.toString(originalFilter.getFocus()));
-
-        sbAberation.setProgress(Math.round(originalFilter.getAberration() * 100));
-        txtAberation.setText(Float.toString(originalFilter.getAberration()));
-
-        sbNoiseSize.setProgress(Math.round(originalFilter.getNoiseSize() * 100 - 25));
-        txtNoiseSize.setText(Float.toString(originalFilter.getNoiseSize()));
-
-        sbNoiseIntensity.setProgress(Math.round(originalFilter.getNoiseIntensity() * 100));
-        txtNoiseIntensity.setText(Float.toString(originalFilter.getNoiseIntensity()));
-
-        sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NamedSeekBar seekBarBlur = findViewById(R.id.SeekBarBlur);
+        seekBarBlur.setValue((int) ((originalFilter.getBlur() - 0.01f) * 25));
+        seekBarBlur.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                BlurVal = (float) seekBar.getProgress() / 25+0.01f;
-                originalFilter.setBlur(BlurVal);
-                update(txtBlur, BlurVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                BlurVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                BlurVal = (float) seekBar.getProgress() / 100;
+            public void onValueChanged(int value) {
+                originalFilter.setBlur((float) value / 25 + 0.01f);
             }
         });
 
-        sbFocus.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NamedSeekBar seekBarFocus = findViewById(R.id.SeekBarFocus);
+        seekBarFocus.setValue((int) (originalFilter.getFocus() * 100));
+        seekBarFocus.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                FocusVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setFocus(FocusVal);
-                update(txtFocus, FocusVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                FocusVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                FocusVal = (float) seekBar.getProgress() / 100;
+            public void onValueChanged(int value) {
+                originalFilter.setFocus((float) value / 100);
             }
         });
 
-        sbAberation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NamedSeekBar seekBarAberation = findViewById(R.id.SeekBarAberation);
+        seekBarAberation.setValue((int) (originalFilter.getAberration() * 100));
+        seekBarAberation.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setAberration(AberationVal);
-                update(txtAberation, AberationVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
+            public void onValueChanged(int value) {
+                originalFilter.setAberration((float) value / 100);
             }
         });
 
-        sbNoiseSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NamedSeekBar seekBarNoiseSize = findViewById(R.id.SeekBarNoiseSize);
+        seekBarNoiseSize.setValue((int) (originalFilter.getNoiseSize() * 100) - 25);
+        seekBarNoiseSize.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-                originalFilter.setNoiseSize(NoiseSizeVal);
-                update(txtNoiseSize, NoiseSizeVal);
-            }
+            public void onValueChanged(int value) {
+                originalFilter.setNoiseSize((float) (value + 25) / 100);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
             }
         });
 
-        sbNoiseIntensity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NamedSeekBar seekBarNoiseIntesity = findViewById(R.id.SeekBarNoiseIntesity);
+        seekBarNoiseIntesity.setValue((int) (originalFilter.getNoiseIntensity() * 100));
+        seekBarNoiseIntesity.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setNoiseIntensity(NoiseIntensityVal);
-                update(txtNoiseIntensity, NoiseIntensityVal);
-            }
+            public void onValueChanged(int value) {
+                originalFilter.setNoiseIntensity((float) value / 100);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
             }
         });
-
-
 
 
         //bottomslide
@@ -266,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 new CountDownTimer(timerValue * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        timerTextView.setText( String.format(" %d ", (millisUntilFinished/1000) + 1) );
+                        timerTextView.setText( String.valueOf((millisUntilFinished/1000) + 1));
 
                         Animation countDown = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.count_down_effect);
                         timerTextView.startAnimation(countDown);

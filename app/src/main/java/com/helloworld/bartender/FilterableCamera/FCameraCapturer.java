@@ -69,7 +69,7 @@ public class FCameraCapturer {
     private CameraCharacteristics mCameraCharacteristics;
 
     private AtomicBoolean filterChanged = new AtomicBoolean(false);
-    private FCameraFilter mCameraFilter;
+    private FCameraFilter mCameraFilter = null;
 
     private Semaphore initLock = new Semaphore(0);
     private boolean mSurfaceUpdated = false;
@@ -118,6 +118,7 @@ public class FCameraCapturer {
     }
 
     void onPause() {
+        filterChanged.set(true);
         initLock.tryAcquire();
 
         renderThread.quitSafely();

@@ -32,7 +32,6 @@ import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.Item.Item;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
 
@@ -100,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         captureEffectImageView = findViewById(R.id.captureEffectImg);
         timerTextView = findViewById(R.id.timerNumberText);
 
-        cameraFilter = new OriginalFilter(this);
-        final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
+        cameraFilter = new com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter(this);
+        final com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter originalFilter = (com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter) cameraFilter;
 
         //seekBar
         sbBlur = (SeekBar) findViewById(R.id.sbBlur);
@@ -339,9 +338,11 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManger = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManger);
 
-        populateRecyclerView(option);
+
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
+        populateRecyclerView(option);
         checkFirstRun(dbHelper);
+        populateRecyclerView(option);
 
         FilmBtn = (ImageButton) findViewById(R.id.FilmBtt);
 
@@ -417,11 +418,11 @@ public class MainActivity extends AppCompatActivity {
     public void checkFirstRun(DatabaseHelper dbHelper) {
         boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
         if (isFirstRun) {
-           dbHelper.saveFilter(new Item("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
+           dbHelper.saveFilter(new OriginalFilter("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
 
             Log.d("x","sqlinserted");
             prefs.edit().putBoolean("isFirstRun", false).apply();
@@ -437,16 +438,16 @@ public class MainActivity extends AppCompatActivity {
 
     //갤러리 이동
     public void onGalleryBttClicked(View v) {
-//        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
-//
-//        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-//
-//        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//
-//        startActivityForResult(pickerIntent, REQ_PICK_CODE);
+        Intent pickerIntent = new Intent(Intent.ACTION_PICK);
 
-       dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
-       populateRecyclerView(option);
+        pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+
+        pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(pickerIntent, REQ_PICK_CODE);
+//
+//       dbHelper.saveFilter(new OriginalFilter("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+//       populateRecyclerView(option);
     }
 
     //갤러리 이동
@@ -460,7 +461,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void update(TextView txt, float num) {
         txt.setText(new StringBuilder().append(num));
-
     }
 
 

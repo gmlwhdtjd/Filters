@@ -1,9 +1,7 @@
 package com.helloworld.bartender.adapter;
 
 import android.content.Context;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.helloworld.bartender.Item.Item;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.R;
 
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
  **/
 public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> {
 
-    private List<Item> filters;
+    private List<OriginalFilter> filters;
     private Context mContext;
     private RecyclerView mRecyclerV;
 
@@ -78,14 +76,14 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
     //item 추가
-    public void add(int position, Item filter) {
+    public void add(int position, OriginalFilter filter) {
         filters.add(position, filter);
         notifyItemInserted(position);
     }
 
 
     //dataset의 종류에 따라 다르다.
-    public horizontal_adapter(List<Item> filters, Context context, RecyclerView recyclerView) {
+    public horizontal_adapter(List<OriginalFilter> filters, Context context, RecyclerView recyclerView) {
         this.filters = filters;
         this.mContext = context;
         this.mRecyclerV = recyclerView;
@@ -109,7 +107,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         //이곳에서 dataset에서 element를 가져온다
         if (position == filters.size()) {
         } else {
-            Item filter = filters.get(position);
+            OriginalFilter filter = filters.get(position);
             holder.filterIcon.setText(filter.getFilter_name());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
         }

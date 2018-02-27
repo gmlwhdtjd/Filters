@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
@@ -64,18 +65,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public void saveFilter(OriginalFilter filter){
-        SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues valuesForType = new ContentValues();
-        ContentValues valuesForMain = new ContentValues();
+        saveMain(filter.getFilter_name(),filter.getType());
 
-        valuesForMain.put(COLUMN_FILTER_NAME, filter.getFilter_name());
-        valuesForMain.put(COLUMN_FILTER_TYPE, filter.getType());
-
-
-        db.insert(MAIN_TABLE_NAME,null,valuesForMain);
-
-        int id = FindId(filter.getFilter_name());
-
+        long id = FindIdWithName(filter.getFilter_name());
+        SQLiteDatabase db = this.getWritableDatabase();
         valuesForType.put(COLUMN_ID,id);
         valuesForType.put(COLUMN_FILTER_BLUR,filter.getBlur());
         valuesForType.put(COLUMN_FILTER_ABERRATION,filter.getAberration());
@@ -85,9 +80,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
         db.insert(TYPE1_TABLE_NAME,null,valuesForType);
         db.close();
+
     }
 
-    //정렬
+    public void saveMain(String name, String type){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues valuesForMain = new ContentValues();
+        valuesForMain.put(COLUMN_FILTER_NAME, name);
+        valuesForMain.put(COLUMN_FILTER_TYPE, type);
+        db.insert(MAIN_TABLE_NAME,null,valuesForMain);
+        db.close();
+    }
+
+
+    //Original Filter 정렬
     public List<OriginalFilter> FilterList(String option){
         String query;
         if(option.equals("")) {
@@ -98,20 +104,28 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
         //For originalfilter
         List<OriginalFilter> filterLinkedList = new LinkedList<>();
+        SQLiteDatabase Type1DB = this.getWritableDatabase();
         SQLiteDatabase db = this.getWritableDatabase();
+
         Cursor cursor = db.rawQuery(query,null);
         OriginalFilter filter;
         if(cursor.moveToFirst()){
             int i=0;
             do{
                 filter = new OriginalFilter();
-                filter.setId(cursor.getLong((cursor.getColumnIndex(COLUMN_ID))));
+                long FilterID = cursor.getLong((cursor.getColumnIndex(COLUMN_ID)));
+                filter.setId(FilterID);
                 filter.setFilter_name(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
-                filter.setBlur(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_BLUR)));
-                filter.setAberration(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_ABERRATION)));
-                filter.setFocus(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_FOCUS)));
-                filter.setNoiseSize(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_SIZE)));
-                filter.setNoiseIntensity(cursor.getFloat(cursor.getColumnIndex(COLUMN_FILTER_NOISE_INTENSITY)));
+                Cursor Type1Cursor =Type1DB.rawQuery("SELECT * FROM "+TYPE1_TABLE_NAME+" WHERE _id='"+FilterID+"'",null);
+                if(Type1Cursor.moveToFirst()) {
+                    do {
+                        filter.setBlur(Type1Cursor.getFloat(Type1Cursor.getColumnIndex(COLUMN_FILTER_BLUR)));
+                        filter.setAberration(Type1Cursor.getFloat(Type1Cursor.getColumnIndex(COLUMN_FILTER_ABERRATION)));
+                        filter.setFocus(Type1Cursor.getFloat(Type1Cursor.getColumnIndex(COLUMN_FILTER_FOCUS)));
+                        filter.setNoiseSize(Type1Cursor.getFloat(Type1Cursor.getColumnIndex(COLUMN_FILTER_NOISE_SIZE)));
+                        filter.setNoiseIntensity(Type1Cursor.getFloat(Type1Cursor.getColumnIndex(COLUMN_FILTER_NOISE_INTENSITY)));
+                    }while (Type1Cursor.moveToNext());
+                }
                 filterLinkedList.add(filter);
                 i++;
             }while(cursor.moveToNext());
@@ -128,25 +142,33 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void deleteFilterRecord(long id, Context context){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.execSQL("DELETE FROM "+TABLE_NAME+" WHERE _id='"+id+"'");
+        db.execSQL("DELETE FROM "+MAIN_TABLE_NAME+" WHERE _id='"+id+"'");
+        db.execSQL("DELETE FROM "+TYPE1_TABLE_NAME+" WHERE _id='"+id+"'");
         Toast.makeText(context,"Deleted successfully",Toast.LENGTH_SHORT).show();
+    }
+    public void updateFilterName(long filterId,Context context,String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE "+MAIN_TABLE_NAME+" SET name='"+name+"' WHERE _id='"+filterId+"'");
     }
 
     public void updateFilterRecord(long filterId, Context context,OriginalFilter updatedFilter){
         SQLiteDatabase db = this.getWritableDatabase();
         //you can use the constants above instead of typing the column names
-        db.execSQL("UPDATE "+TABLE_NAME+"SET name ='"+updatedFilter.getFilter_name()+"', blur ='"+updatedFilter.getBlur()+"', aberration ='"+updatedFilter.getAberration()+
+        db.execSQL("UPDATE "+TYPE1_TABLE_NAME+" SET blur ='"+updatedFilter.getBlur()+"', aberration ='"+updatedFilter.getAberration()+
                 "', focus ='"+updatedFilter.getFocus()+"', noiseSize ='"+updatedFilter.getNoiseSize()+"', noiseIntensity ='"+updatedFilter.getNoiseIntensity() +"' WHERE _id='"+ filterId+"'");
         Toast.makeText(context,"Updated successfully",Toast.LENGTH_SHORT).show();
     }
 
-    public int FindId(String name){
-        SQLiteDatabase dsb = this.getReadableDatabase();
-        Cursor cs = dsb.rawQuery("SELECT * FROM list WHERE name="+name+";",null);
-        int id = cs.getInt(0);
+    public long FindIdWithName(String name) {
+        SQLiteDatabase dsb = this.getWritableDatabase();
+
+        Cursor cs = dsb.rawQuery("SELECT * FROM " + MAIN_TABLE_NAME + " WHERE name='" + name + "'", null);
+        cs.moveToFirst();
+        long FilterID = cs.getLong(0);
         dsb.close();
-        return id;
+        return FilterID;
     }
+
 
 
 

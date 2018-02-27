@@ -418,11 +418,11 @@ public class MainActivity extends AppCompatActivity {
     public void checkFirstRun(DatabaseHelper dbHelper) {
         boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
         if (isFirstRun) {
-           dbHelper.saveFilter(new OriginalFilter("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new OriginalFilter("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new OriginalFilter("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new OriginalFilter("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new OriginalFilter("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
+           dbHelper.saveFilter(new OriginalFilter("originalType","sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("originalType","sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("originalType","sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("originalType","sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
+            dbHelper.saveFilter(new OriginalFilter("originalType","sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
 
             Log.d("x","sqlinserted");
             prefs.edit().putBoolean("isFirstRun", false).apply();
@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
 
         startActivityForResult(pickerIntent, REQ_PICK_CODE);
 //
-//       dbHelper.saveFilter(new OriginalFilter("last",0.5f,0.5f,0.5f,0.5f,0.5f));
+//       dbHelper.saveFilter(new OriginalFilter("originalType","last",0.5f,0.5f,0.5f,0.5f,0.5f));
 //       populateRecyclerView(option);
     }
 

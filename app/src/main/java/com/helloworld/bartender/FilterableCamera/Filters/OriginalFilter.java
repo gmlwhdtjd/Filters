@@ -108,7 +108,7 @@ public class OriginalFilter extends FCameraFilter {
         setType("originalType");
     }
 
-    public OriginalFilter(String filter_name, float blur, float focus, float aberration, float noiseSize, float noiseIntensity,String type) {
+    public OriginalFilter(String type,String filter_name, float blur, float focus, float aberration, float noiseSize, float noiseIntensity) {
         setFilter_name(filter_name);
         setBlur(blur);
         setAberration(focus);

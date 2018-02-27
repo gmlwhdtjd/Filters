@@ -35,7 +35,7 @@ public class EditView extends CoordinatorLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.layout_edit, this);
+        inflater.inflate(R.layout.layout_edit_view, this);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 

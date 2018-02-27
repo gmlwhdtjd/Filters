@@ -86,7 +86,7 @@ public class NamedSeekBar extends LinearLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_named_seekbar, this);
+        inflater.inflate(R.layout.layout_named_seekbar, this);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 

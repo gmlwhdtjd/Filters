@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.v4.widget.NestedScrollView;
 
 import android.os.CountDownTimer;
 
@@ -23,10 +22,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.FCamera;
@@ -52,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     BottomSheetBehavior bottomSheetBehavior;
 
     //filterlist slide
-    NestedScrollView nestedFilterList;
+    LinearLayout nestedFilterList;
     BottomSheetBehavior filterListBehavior;
 
     //슬라이드 열기/닫기 플래그
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     FCameraFilter cameraFilter;
     
-  int tmpColor = 255;
+    int tmpColor = 255;
 
     int tmp1 = 0;
 
@@ -95,63 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
         cameraFilter = new OriginalFilter(this);
         final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
-
-        //seekBar
-        NamedSeekBar seekBarBlur = findViewById(R.id.SeekBarBlur);
-        seekBarBlur.setValue((int) ((originalFilter.getBlur() - 0.01f) * 25));
-        seekBarBlur.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
-            @Override
-            public void onValueChanged(int value) {
-                originalFilter.setBlur((float) value / 25 + 0.01f);
-            }
-        });
-
-        NamedSeekBar seekBarFocus = findViewById(R.id.SeekBarFocus);
-        seekBarFocus.setValue((int) (originalFilter.getFocus() * 100));
-        seekBarFocus.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
-            @Override
-            public void onValueChanged(int value) {
-                originalFilter.setFocus((float) value / 100);
-            }
-        });
-
-        NamedSeekBar seekBarAberation = findViewById(R.id.SeekBarAberation);
-        seekBarAberation.setValue((int) (originalFilter.getAberration() * 100));
-        seekBarAberation.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
-            @Override
-            public void onValueChanged(int value) {
-                originalFilter.setAberration((float) value / 100);
-            }
-        });
-
-        NamedSeekBar seekBarNoiseSize = findViewById(R.id.SeekBarNoiseSize);
-        seekBarNoiseSize.setValue((int) (originalFilter.getNoiseSize() * 100) - 25);
-        seekBarNoiseSize.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
-            @Override
-            public void onValueChanged(int value) {
-                originalFilter.setNoiseSize((float) (value + 25) / 100);
-
-            }
-        });
-
-        NamedSeekBar seekBarNoiseIntesity = findViewById(R.id.SeekBarNoiseIntesity);
-        seekBarNoiseIntesity.setValue((int) (originalFilter.getNoiseIntensity() * 100));
-        seekBarNoiseIntesity.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
-            @Override
-            public void onValueChanged(int value) {
-                originalFilter.setNoiseIntensity((float) value / 100);
-
-            }
-        });
-
-
-        //bottomslide
-        bottomSheet = findViewById(R.id.bottom_sheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-        //filterList
-        nestedFilterList = (NestedScrollView) findViewById(R.id.filter_list_nested);
-        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
 
         // 카메라 관련 정의
         final FCameraView fCameraView = findViewById(R.id.cameraView);
@@ -246,8 +186,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        ((EditView) findViewById(R.id.editView)).setFilter(originalFilter);
 
-
+        //filterList
+        nestedFilterList = findViewById(R.id.filter_list);
+        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
 
         //리사이클러 뷰
         mRecyclerView= (RecyclerView) findViewById(R.id.filterList);
@@ -273,59 +216,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        filterListBehavior.setPeekHeight(0);
-
-        //bottomSlider
-        //peek = 0로 하면 첫 화면에서 안보임
-        bottomSheetBehavior.setPeekHeight(50);
-
-        //탭 메뉴
-        TabHost tabHost1 = (TabHost) findViewById(R.id.tabHost);
-        tabHost1.setup();
-        // 첫 번째 Tab. (탭 표시 텍스트:"TAB 1"), (페이지 뷰:"content1")
-        TabHost.TabSpec ts1 = tabHost1.newTabSpec("Tab Spec 1");
-        ts1.setContent(R.id.tab1);
-        ts1.setIndicator("Blur");
-        tabHost1.addTab(ts1);
-        // 두 번째 Tab. (탭 표시 텍스트:"TAB 2"), (페이지 뷰:"content2")
-        TabHost.TabSpec ts2 = tabHost1.newTabSpec("Tab Spec 2");
-        ts2.setContent(R.id.tab2);
-        ts2.setIndicator("Focus");
-        tabHost1.addTab(ts2);
-        // 세 번째 Tab. (탭 표시 텍스트:"TAB 3"), (페이지 뷰:"content3")
-        TabHost.TabSpec ts3 = tabHost1.newTabSpec("Tab Spec 3");
-        ts3.setContent(R.id.tab3);
-        ts3.setIndicator("Aberation");
-        tabHost1.addTab(ts3);
-
-        TabHost.TabSpec ts4 = tabHost1.newTabSpec("Tab Spec 4");
-        ts4.setContent(R.id.tab4);
-        ts4.setIndicator("NoiseSize");
-        tabHost1.addTab(ts4);
-
-        TabHost.TabSpec ts5 = tabHost1.newTabSpec("Tab Spec 5");
-        ts5.setContent(R.id.tab5);
-        ts5.setIndicator("NoiseIntensity");
-        tabHost1.addTab(ts5);
-
-        //bottom slide event handling
-        //slide를 내려서 상태가 바뀔때
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-
-
+        filterListBehavior.setPeekHeight(100);
     }
 
 
@@ -372,12 +263,5 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
-
-    public void update(TextView txt, float num) {
-        txt.setText(new StringBuilder().append(num));
-
-    }
-
-
 }
 

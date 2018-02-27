@@ -14,17 +14,24 @@ public abstract class FCameraFilter {
     private Context mContext;
 
     private int mVertexShaderId;
-    private int mFragmentshaderId;
+    private int mFragmentShaderId;
+
+    interface ValueType {
+        int getPageNumber();
+    }
 
     FCameraFilter(Context context, int vertexShaderId, int fragmentshaderId) {
         mContext = context;
         mVertexShaderId = vertexShaderId;
-        mFragmentshaderId = fragmentshaderId;
+        mFragmentShaderId = fragmentshaderId;
     }
 
     public int getProgram() {
-        return FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentshaderId);
+        return FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId);
     }
 
     abstract public void onDraw(int program, Size viewSize);
+
+    abstract public void setValueWithType(ValueType type, int value);
+    abstract public int getValueWithType(ValueType type);
 }

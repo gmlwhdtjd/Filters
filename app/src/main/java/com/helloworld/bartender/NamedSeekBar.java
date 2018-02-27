@@ -26,19 +26,17 @@ public class NamedSeekBar extends LinearLayout {
 
     public NamedSeekBar(Context context) {
         super(context);
-        initView();
+        init(null, 0);
     }
 
     public NamedSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView();
-        getAttrs(attrs, 0);
+        init(attrs, 0);
     }
 
     public NamedSeekBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
-        initView();
-        getAttrs(attrs, defStyle);
+        init(attrs, defStyle);
     }
 
     public void setText(String text) {
@@ -55,13 +53,7 @@ public class NamedSeekBar extends LinearLayout {
     public void setOnChangeListener(OnChangeListener onChangeListener) {
         mOnChangeListener = onChangeListener;
     }
-
-    private void initView() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_named_seekbar, this);
-    }
-
-    @Override // inflate가 완료되는 시점에 호출된다.
+    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         mTextView = findViewById(R.id.text);
@@ -92,7 +84,10 @@ public class NamedSeekBar extends LinearLayout {
         });
     }
 
-    private void getAttrs(AttributeSet attrs, int defStyle) {
+    private void init(AttributeSet attrs, int defStyle) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.view_named_seekbar, this);
+
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
         mText = typedArray.getString(R.styleable.NamedSeekBar_text);

@@ -204,11 +204,7 @@ public class FCameraCapturer {
 
         Bitmap bitmap = Bitmap.createBitmap(mImageSize.getWidth(), mImageSize.getHeight(), Bitmap.Config.ARGB_8888);
 
-        long curtime = System.currentTimeMillis();
         bitmap.copyPixelsFromBuffer(mImageBuffer);
-        curtime = System.currentTimeMillis() - curtime;
-
-        Log.d(TAG, Integer.toString(mImageSize.getWidth()) +"*"+ Integer.toString(mImageSize.getHeight()) +": " + Long.toString(curtime));
 
         try {
             //Permission Check
@@ -221,6 +217,7 @@ public class FCameraCapturer {
                         .check();
                 return;
             }
+            // TODO: 카운터를 추가해서 1초안에 여러장을 찍을 경우를 대비한다.
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             File mFile = new File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +

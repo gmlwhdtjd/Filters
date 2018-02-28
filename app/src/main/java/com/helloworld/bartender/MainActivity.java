@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         captureEffectImageView = findViewById(R.id.captureEffectImg);
         timerTextView = findViewById(R.id.timerNumberText);
 
-        cameraFilter = new OriginalFilter(this);
+        cameraFilter = new OriginalFilter(this, 1);
         final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
 
         // 카메라 관련 정의

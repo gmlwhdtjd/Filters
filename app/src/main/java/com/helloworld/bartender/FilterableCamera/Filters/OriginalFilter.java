@@ -2,6 +2,7 @@ package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.support.annotation.NonNull;
 import android.util.Size;
 
 import com.helloworld.bartender.R;
@@ -117,14 +118,18 @@ public class OriginalFilter extends FCameraFilter {
     private float[] nl = {0.1f, 0.1f, 0.1f, 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
-    public OriginalFilter(Context context) {
-        super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
+    public OriginalFilter(Context context, @NonNull Integer id) {
+        this(context, id, 0, 0, 0, 0, 0);
+    }
 
-        setValueWithType(ValueType.BLUR, 0);
-        setValueWithType(ValueType.FOCUS, 0);
-        setValueWithType(ValueType.ABERRATION, 0);
-        setValueWithType(ValueType.NOISE_SIZE, 0);
-        setValueWithType(ValueType.NOISE_INTENSITY, 0);
+    public OriginalFilter(Context context, @NonNull Integer id, int blur, int focus, int aberration, int noiseSize, int noiseIntensity) {
+        super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader, id);
+
+        setValueWithType(ValueType.BLUR, blur);
+        setValueWithType(ValueType.FOCUS, focus);
+        setValueWithType(ValueType.ABERRATION, aberration);
+        setValueWithType(ValueType.NOISE_SIZE, noiseSize);
+        setValueWithType(ValueType.NOISE_INTENSITY, noiseIntensity);
     }
 
     @Override

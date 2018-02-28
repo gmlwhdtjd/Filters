@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.v4.widget.NestedScrollView;
 
 import android.os.CountDownTimer;
 
@@ -23,10 +22,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.FCamera;
@@ -47,31 +44,12 @@ public class MainActivity extends AppCompatActivity {
     public SharedPreferences prefs;
     private int REQ_PICK_CODE = 100;
 
-    //필터 속성값들
-    private SeekBar sbBlur;
-    private SeekBar sbFocus;
-    private SeekBar sbAberation;
-    private SeekBar sbNoiseSize;
-    private SeekBar sbNoiseIntensity;
-
-    private TextView txtBlur;
-    private TextView txtFocus;
-    private TextView txtAberation;
-    private TextView txtNoiseSize;
-    private TextView txtNoiseIntensity;
-
-    public float BlurVal;
-    public float FocusVal;
-    public float AberationVal;
-    public float NoiseSizeVal;
-    public float NoiseIntensityVal;
-
     //bottom slide
     FrameLayout bottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
 
     //filterlist slide
-    NestedScrollView nestedFilterList;
+    LinearLayout nestedFilterList;
     BottomSheetBehavior filterListBehavior;
 
     //슬라이드 열기/닫기 플래그
@@ -95,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     FCameraFilter cameraFilter;
     
-  int tmpColor = 255;
+    int tmpColor = 255;
 
     int tmp1 = 0;
 
@@ -115,140 +93,6 @@ public class MainActivity extends AppCompatActivity {
         cameraFilter = new OriginalFilter(this);
         final OriginalFilter originalFilter = (OriginalFilter) cameraFilter;
 
-        //seekBar
-        sbBlur = (SeekBar) findViewById(R.id.sbBlur);
-        sbFocus = (SeekBar) findViewById(R.id.sbFocus);
-        sbAberation = (SeekBar) findViewById(R.id.sbAberation);
-        sbNoiseSize = (SeekBar) findViewById(R.id.sbNoiseSize);
-        sbNoiseIntensity = (SeekBar) findViewById(R.id.sbNoiseIntensity);
-
-        txtBlur = (TextView) findViewById(R.id.blurVal);
-        txtFocus = (TextView) findViewById(R.id.focusVal);
-        txtAberation = (TextView) findViewById(R.id.aberationVal);
-        txtNoiseSize = (TextView) findViewById(R.id.noiseSizeVal);
-        txtNoiseIntensity = (TextView) findViewById(R.id.noiseIntensityVal);
-
-        sbBlur.setProgress(Math.round(originalFilter.getBlur() * 100));
-        txtBlur.setText(Float.toString(originalFilter.getBlur()));
-
-        sbFocus.setProgress(Math.round(originalFilter.getFocus() * 100));
-        txtFocus.setText(Float.toString(originalFilter.getFocus()));
-
-        sbAberation.setProgress(Math.round(originalFilter.getAberration() * 100));
-        txtAberation.setText(Float.toString(originalFilter.getAberration()));
-
-        sbNoiseSize.setProgress(Math.round(originalFilter.getNoiseSize() * 100 - 25));
-        txtNoiseSize.setText(Float.toString(originalFilter.getNoiseSize()));
-
-        sbNoiseIntensity.setProgress(Math.round(originalFilter.getNoiseIntensity() * 100));
-        txtNoiseIntensity.setText(Float.toString(originalFilter.getNoiseIntensity()));
-
-        sbBlur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                BlurVal = (float) seekBar.getProgress() / 25+0.01f;
-                originalFilter.setBlur(BlurVal);
-                update(txtBlur, BlurVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                BlurVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                BlurVal = (float) seekBar.getProgress() / 100;
-            }
-        });
-
-        sbFocus.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                FocusVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setFocus(FocusVal);
-                update(txtFocus, FocusVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                FocusVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                FocusVal = (float) seekBar.getProgress() / 100;
-            }
-        });
-
-        sbAberation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setAberration(AberationVal);
-                update(txtAberation, AberationVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                AberationVal = (float) seekBar.getProgress() / 100;
-            }
-        });
-
-        sbNoiseSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-                originalFilter.setNoiseSize(NoiseSizeVal);
-                update(txtNoiseSize, NoiseSizeVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                NoiseSizeVal = (float) (seekBar.getProgress() + 25) / 100;
-            }
-        });
-
-        sbNoiseIntensity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-                originalFilter.setNoiseIntensity(NoiseIntensityVal);
-                update(txtNoiseIntensity, NoiseIntensityVal);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                NoiseIntensityVal = (float) seekBar.getProgress() / 100;
-            }
-        });
-
-
-
-
-        //bottomslide
-        bottomSheet = findViewById(R.id.bottom_sheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-
-        //filterList
-        nestedFilterList = (NestedScrollView) findViewById(R.id.filter_list_nested);
-        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
-
         // 카메라 관련 정의
         final FCameraView fCameraView = findViewById(R.id.cameraView);
         fCameraView.setFilter(cameraFilter);
@@ -266,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 new CountDownTimer(timerValue * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        timerTextView.setText( String.format(" %d ", (millisUntilFinished/1000) + 1) );
+                        timerTextView.setText( String.valueOf((millisUntilFinished/1000) + 1));
 
                         Animation countDown = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.count_down_effect);
                         timerTextView.startAnimation(countDown);
@@ -342,8 +186,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        ((EditView) findViewById(R.id.editView)).setFilter(originalFilter);
 
-
+        //filterList
+        nestedFilterList = findViewById(R.id.filter_list);
+        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
 
         //리사이클러 뷰
         mRecyclerView= (RecyclerView) findViewById(R.id.filterList);
@@ -369,59 +216,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        filterListBehavior.setPeekHeight(0);
-
-        //bottomSlider
-        //peek = 0로 하면 첫 화면에서 안보임
-        bottomSheetBehavior.setPeekHeight(50);
-
-        //탭 메뉴
-        TabHost tabHost1 = (TabHost) findViewById(R.id.tabHost);
-        tabHost1.setup();
-        // 첫 번째 Tab. (탭 표시 텍스트:"TAB 1"), (페이지 뷰:"content1")
-        TabHost.TabSpec ts1 = tabHost1.newTabSpec("Tab Spec 1");
-        ts1.setContent(R.id.tab1);
-        ts1.setIndicator("Blur");
-        tabHost1.addTab(ts1);
-        // 두 번째 Tab. (탭 표시 텍스트:"TAB 2"), (페이지 뷰:"content2")
-        TabHost.TabSpec ts2 = tabHost1.newTabSpec("Tab Spec 2");
-        ts2.setContent(R.id.tab2);
-        ts2.setIndicator("Focus");
-        tabHost1.addTab(ts2);
-        // 세 번째 Tab. (탭 표시 텍스트:"TAB 3"), (페이지 뷰:"content3")
-        TabHost.TabSpec ts3 = tabHost1.newTabSpec("Tab Spec 3");
-        ts3.setContent(R.id.tab3);
-        ts3.setIndicator("Aberation");
-        tabHost1.addTab(ts3);
-
-        TabHost.TabSpec ts4 = tabHost1.newTabSpec("Tab Spec 4");
-        ts4.setContent(R.id.tab4);
-        ts4.setIndicator("NoiseSize");
-        tabHost1.addTab(ts4);
-
-        TabHost.TabSpec ts5 = tabHost1.newTabSpec("Tab Spec 5");
-        ts5.setContent(R.id.tab5);
-        ts5.setIndicator("NoiseIntensity");
-        tabHost1.addTab(ts5);
-
-        //bottom slide event handling
-        //slide를 내려서 상태가 바뀔때
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-
-
+        filterListBehavior.setPeekHeight(100);
     }
 
 
@@ -468,12 +263,5 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
-
-    public void update(TextView txt, float num) {
-        txt.setText(new StringBuilder().append(num));
-
-    }
-
-
 }
 

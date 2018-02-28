@@ -120,7 +120,7 @@ public class FCameraView extends GLSurfaceView {
         private FCameraRenderer mCameraRender;
 
         private AtomicBoolean filterChanged =  new AtomicBoolean(false);
-        private FCameraFilter mCameraFilter;
+        private FCameraFilter mCameraFilter = null;
 
         private SurfaceTexture mInputSurfaceTexture;
 

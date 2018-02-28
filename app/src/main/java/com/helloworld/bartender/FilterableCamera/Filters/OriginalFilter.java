@@ -26,6 +26,79 @@ public class OriginalFilter extends FCameraFilter {
     private float u[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
     private float v[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
 
+    public enum ValueType implements FCameraFilter.ValueType {
+        BLUR,
+        FOCUS,
+        ABERRATION,
+        NOISE_SIZE,
+        NOISE_INTENSITY;
+
+        @Override
+        public int getPageNumber() {
+            switch (this) {
+                case BLUR:
+                case FOCUS:
+                    return 0;
+                case ABERRATION:
+                    return 1;
+                case NOISE_SIZE:
+                case NOISE_INTENSITY:
+                    return 2;
+                default:
+                    return -1;
+            }
+        }
+    }
+
+    @Override
+    public void setValueWithType(FCameraFilter.ValueType type, int value) {
+        if (type instanceof ValueType) {
+            ValueType valueType = (ValueType) type;
+            switch (valueType) {
+                case BLUR:
+                    blur =  (float) value / 25 + 0.0001f;
+                    setMask(blur);
+                    break;
+                case FOCUS:
+                    focus = (float) value / 100;
+                    break;
+                case ABERRATION:
+                    aberration = (float) value / 100;
+                    break;
+                case NOISE_SIZE:
+                    noiseSize = (float) value / 100;
+                    break;
+                case NOISE_INTENSITY:
+                    noiseIntensity = (float) value / 100;
+                    break;
+            }
+        }
+        else
+            throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
+    }
+
+    @Override
+    public int getValueWithType(FCameraFilter.ValueType type) {
+        if (type instanceof ValueType) {
+            ValueType valueType = (ValueType) type;
+            switch (valueType) {
+                case BLUR:
+                    return (int) (blur * 25);
+                case FOCUS:
+                    return (int) (focus * 100);
+                case ABERRATION:
+                    return (int) (aberration * 100);
+                case NOISE_SIZE:
+                    return (int) (noiseSize * 100);
+                case NOISE_INTENSITY:
+                    return (int) (noiseIntensity * 100);
+                default:
+                    return 0;
+            }
+        } else
+            throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
+    }
+
     private void setMask(float sigma) {
         float result = 0.0f;
         for (int i = 0; i < 7; i++) {
@@ -41,50 +114,17 @@ public class OriginalFilter extends FCameraFilter {
         }
     }
 
-    public float getBlur() {
-        return blur;
-    }
-    public float getAberration() {
-        return aberration;
-    }
-    public float getFocus() {
-        return focus;
-    }
-    public float getNoiseSize() {
-        return noiseSize;
-    }
-    public float getNoiseIntensity() {
-        return noiseIntensity;
-    }
-
-    public void setBlur(float num) {
-        blur = num;
-        setMask(blur);
-    }
-    public void setAberration(float num) {
-        aberration = num;
-    }
-    public void setFocus(float num) {
-        focus = num;
-    }
-    public void setNoiseSize(float num) {
-            noiseSize = num;
-        }
-    public void setNoiseIntensity(float num) {
-            noiseIntensity = num;
-        }
-
     private float[] nl = {0.1f, 0.1f, 0.1f, 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
 
-        setBlur(0.1f);
-        setAberration(0.0f);
-        setFocus(1.0f);
-        setNoiseSize(1.0f);
-        setNoiseIntensity(1.0f);
+        setValueWithType(ValueType.BLUR, 0);
+        setValueWithType(ValueType.FOCUS, 0);
+        setValueWithType(ValueType.ABERRATION, 0);
+        setValueWithType(ValueType.NOISE_SIZE, 0);
+        setValueWithType(ValueType.NOISE_INTENSITY, 0);
     }
 
     @Override
@@ -102,19 +142,19 @@ public class OriginalFilter extends FCameraFilter {
         int rgbLocation = GLES20.glGetUniformLocation(program, "variables.rgb");
         GLES20.glUniform3fv(rgbLocation, 1, FloatBuffer.wrap(rgb));
 
-        int blurLocation = GLES20.glGetUniformLocation(program, "variables.blur");
+        int blurLocation = GLES20.glGetUniformLocation(program, "variables.BLUR");
         GLES20.glUniform1f(blurLocation, blur);
 
-        int abeLocation = GLES20.glGetUniformLocation(program, "variables.aberration");
+        int abeLocation = GLES20.glGetUniformLocation(program, "variables.ABERRATION");
         GLES20.glUniform1f(abeLocation, aberration);
 
-        int focusLocation = GLES20.glGetUniformLocation(program, "variables.focus");
+        int focusLocation = GLES20.glGetUniformLocation(program, "variables.FOCUS");
         GLES20.glUniform1f(focusLocation, focus);
 
-        int nsLocation = GLES20.glGetUniformLocation(program, "variables.noiseSize");
+        int nsLocation = GLES20.glGetUniformLocation(program, "variables.NOISE_SIZE");
         GLES20.glUniform1f(nsLocation, noiseSize);
 
-        int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
+        int niLocation = GLES20.glGetUniformLocation(program, "variables.NOISE_INTENSITY");
         GLES20.glUniform1f(niLocation, noiseIntensity);
 
         int maskLocation = GLES20.glGetUniformLocation(program, "mask");

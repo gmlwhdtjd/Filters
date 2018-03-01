@@ -62,6 +62,14 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
                     }
                 });
+
+                filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        Toast.makeText(horizontal_adapter.this.mContext, "Long Clicjked", Toast.LENGTH_LONG).show();
+                        return true;
+                    }
+                });
             }
 
         }

@@ -257,11 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
     //갤러리 이동
     public void onEndBtnClicked(View v) {
-        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
     }
 }
 

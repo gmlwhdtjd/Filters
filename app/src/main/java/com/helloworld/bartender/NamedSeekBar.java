@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -53,15 +56,36 @@ public class NamedSeekBar extends LinearLayout {
     public void setOnChangeListener(OnChangeListener onChangeListener) {
         mOnChangeListener = onChangeListener;
     }
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        mTextView = findViewById(R.id.text);
-        mValueView = findViewById(R.id.value);
-        mSeekBar = findViewById(R.id.seekBar);
 
-        setText(mText);
-        setValue(mValue);
+    private void init(AttributeSet attrs, int defStyle) {
+        this.setOrientation(LinearLayout.VERTICAL);
+        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+        RelativeLayout relativeLayout = new RelativeLayout(getContext());
+        relativeLayout.setPadding(20, 0 ,20 ,0);
+        this.addView(relativeLayout);
+
+        mTextView = new TextView(getContext());
+        relativeLayout.addView(mTextView);
+
+        mValueView = new TextView(getContext());
+        mValueView.setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_END);
+        mValueView.setLayoutParams(params);
+        relativeLayout.addView(mValueView);
+
+        mSeekBar = new SeekBar(getContext());
+        mSeekBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mSeekBar.setMax(100);
+        this.addView(mSeekBar);
+
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
+
+        setText(typedArray.getString(R.styleable.NamedSeekBar_text));
+        setValue(typedArray.getInt(R.styleable.NamedSeekBar_value, 0));
+
+        typedArray.recycle();
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -82,18 +106,6 @@ public class NamedSeekBar extends LinearLayout {
                 setValue(seekBar.getProgress());
             }
         });
-    }
-
-    private void init(AttributeSet attrs, int defStyle) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.layout_named_seekbar, this);
-
-        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
-
-        mText = typedArray.getString(R.styleable.NamedSeekBar_text);
-        mValue = typedArray.getInteger(R.styleable.NamedSeekBar_value, 0);
-
-        typedArray.recycle();
     }
 
     public interface OnChangeListener {

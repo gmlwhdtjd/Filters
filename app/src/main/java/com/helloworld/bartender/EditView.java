@@ -153,4 +153,7 @@ public class EditView extends CoordinatorLayout {
         ts5.setIndicator("NoiseIntensity");
         tabHost1.addTab(ts5);
     }
+    
+
+
 }

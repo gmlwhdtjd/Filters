@@ -16,7 +16,7 @@ import static java.lang.Math.exp;
  */
 
 public class OriginalFilter extends FCameraFilter {
-    private float [] rgb = {0.0f, 0.0f, 0.0f};
+    private float[] rgb = {0.0f, 0.0f, 0.0f};
     private float blur;
     private float aberration;
     private float focus;
@@ -24,8 +24,8 @@ public class OriginalFilter extends FCameraFilter {
     private float noiseIntensity;
 
     private float[] mask = new float[49];
-    private float u[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
-    private float v[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
+    private float u[] = {-3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f};
+    private float v[] = {-3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f};
 
     public enum ValueType implements FCameraFilter.ValueType {
         BLUR,
@@ -57,7 +57,7 @@ public class OriginalFilter extends FCameraFilter {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
                 case BLUR:
-                    blur =  (float) value / 25 + 0.0001f;
+                    blur = (float) value / 25 + 0.0001f;
                     setMask(blur);
                     break;
                 case FOCUS:
@@ -73,8 +73,7 @@ public class OriginalFilter extends FCameraFilter {
                     noiseIntensity = (float) value / 100;
                     break;
             }
-        }
-        else
+        } else
             throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
     }
 
@@ -104,13 +103,13 @@ public class OriginalFilter extends FCameraFilter {
         float result = 0.0f;
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
-                mask[(i*7)+j] = (float) (exp(-((u[i]*u[i]) + (v[j]*v[j])) / (2.0f * sigma*sigma)) / (2.0f * 3.14159265358979323846f *sigma*sigma));
-                result += mask[(i*7)+j];
+                mask[(i * 7) + j] = (float) (exp(-((u[i] * u[i]) + (v[j] * v[j])) / (2.0f * sigma * sigma)) / (2.0f * 3.14159265358979323846f * sigma * sigma));
+                result += mask[(i * 7) + j];
             }
         }
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
-                mask[(i*7)+j] /= result;
+                mask[(i * 7) + j] /= result;
             }
         }
     }
@@ -118,13 +117,14 @@ public class OriginalFilter extends FCameraFilter {
     private float[] nl = {0.1f, 0.1f, 0.1f, 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
-    public OriginalFilter(Context context, @NonNull Integer id) {
-        this(context, id, 0, 0, 0, 0, 0);
+    public OriginalFilter(Context context, Integer id) {
+        this(context, id, "default",0, 0, 0, 0, 0);
     }
 
-    public OriginalFilter(Context context, @NonNull Integer id, int blur, int focus, int aberration, int noiseSize, int noiseIntensity) {
+    public OriginalFilter(Context context, Integer id, String name, int blur, int focus, int aberration, int noiseSize, int noiseIntensity) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader, id);
 
+        setName(name);
         setValueWithType(ValueType.BLUR, blur);
         setValueWithType(ValueType.FOCUS, focus);
         setValueWithType(ValueType.ABERRATION, aberration);

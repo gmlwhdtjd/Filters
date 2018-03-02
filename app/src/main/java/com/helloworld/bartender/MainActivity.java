@@ -1,11 +1,11 @@
 package com.helloworld.bartender;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 
 import android.os.CountDownTimer;
@@ -22,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
@@ -31,7 +30,6 @@ import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.Item.Item;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
 
@@ -200,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
         populateRecyclerView(option);
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
-        checkFirstRun(dbHelper);
 
         button1 = (ImageButton) findViewById(R.id.FilmBtt);
 
@@ -220,25 +217,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //첫 실행시 기본 필터 추가
-    public void checkFirstRun(DatabaseHelper dbHelper) {
-        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
-        if (isFirstRun) {
-           dbHelper.saveFilter(new Item("sample1",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample2",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample3",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample4",0.5f,0.5f,0.5f,0.5f,0.5f));
-            dbHelper.saveFilter(new Item("sample5",0.5f,0.5f,0.5f,0.5f,0.5f));
-
-            Log.d("x","sqlinserted");
-            prefs.edit().putBoolean("isFirstRun", false).apply();
-        }
-    }
 
     //populate recyclerview
     private void populateRecyclerView(String option){
         dbHelper = new DatabaseHelper(this);
-        adapter = new horizontal_adapter(dbHelper.FilterList(option),this,mRecyclerView);
+        adapter = new horizontal_adapter(dbHelper.getFilterList(this,option),this,mRecyclerView);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -255,13 +238,7 @@ public class MainActivity extends AppCompatActivity {
 //        dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
     }
 
-    //갤러리 이동
     public void onEndBtnClicked(View v) {
-        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
     }
 }
 

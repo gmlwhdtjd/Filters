@@ -3,6 +3,7 @@ package com.helloworld.bartender;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
 public class Guide_page extends AppCompatActivity {
     private ViewPager viewPager;
@@ -37,9 +41,9 @@ public class Guide_page extends AppCompatActivity {
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
+        }else {
+            addDefaultFilters(this);
         }
-
-        //db생성
 
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
@@ -200,6 +204,16 @@ public class Guide_page extends AppCompatActivity {
             View view = (View) object;
             container.removeView(view);
         }
+    }
+
+    private void addDefaultFilters(Context context){
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample1",50,50,50,50,50));
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",50,50,50,50,50));
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",50,50,50,50,50));
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",50,50,50,50,50));
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",50,50,50,50,50));
+
     }
 }
 

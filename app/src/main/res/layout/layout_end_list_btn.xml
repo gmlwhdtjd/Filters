@@ -13,5 +13,6 @@
         android:onClick="onEndBtnClicked"
         android:padding="20dp"
         android:adjustViewBounds="true"
-        app:srcCompat="@drawable/ic_edit" />
+        app:srcCompat="@android:drawable/ic_input_add" />
+
 </LinearLayout>

@@ -54,11 +54,7 @@ public class EditView extends CoordinatorLayout {
         super.onFinishInflate();
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
-
-        //bottomSlider
-        //peek = 0로 하면 첫 화면에서 안보임
-        bottomSheetBehavior.setPeekHeight(50);
-
+        bottomSheetBehavior.setPeekHeight(0); //peek = 0로 하면 첫 화면에서 안보임
     }
 
     public void changeState() {

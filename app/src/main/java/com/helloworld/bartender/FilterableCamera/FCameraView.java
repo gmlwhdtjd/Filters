@@ -120,8 +120,8 @@ public class FCameraView extends GLSurfaceView {
     private class CameraViewRenderer implements GLSurfaceView.Renderer {
         private FCameraRenderer mCameraRender;
 
-        private Boolean filterChanged = false;
-        private FCameraFilter mCameraFilter;
+        private AtomicBoolean filterChanged =  new AtomicBoolean(false);
+        private FCameraFilter mCameraFilter = null;
 
         private SurfaceTexture mInputSurfaceTexture;
 
@@ -140,13 +140,13 @@ public class FCameraView extends GLSurfaceView {
         private void onPause() {
             mSurfaceUpdated = false;
             mInitState.set(false);
-            filterChanged = true;
+            filterChanged.set(true);
             mCameraRender.clear();
         }
 
         private void setFilter(FCameraFilter filter) {
             mCameraFilter = filter;
-            filterChanged = true;;
+            filterChanged.set(true);
         }
 
         private void setCameraCharacteristics(CameraCharacteristics characteristics) throws NullPointerException {
@@ -189,10 +189,9 @@ public class FCameraView extends GLSurfaceView {
             if (!mInitState.get())
                 return;
 
-            if (filterChanged) {
+            if (filterChanged.getAndSet(false))
                 mCameraRender.setFilter(mCameraFilter);
-                filterChanged = false;
-            }
+
 
             synchronized (mOnFrameAvailableListener) {
                 if (mSurfaceUpdated) {

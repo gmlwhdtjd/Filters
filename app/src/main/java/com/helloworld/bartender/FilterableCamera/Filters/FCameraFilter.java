@@ -1,6 +1,8 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
@@ -13,18 +15,41 @@ public abstract class FCameraFilter {
 
     private Context mContext;
 
-    private int mVertexShaderId;
-    private int mFragmentshaderId;
+    private final Integer mId;
+    private String mName;
 
-    FCameraFilter(Context context, int vertexShaderId, int fragmentshaderId) {
+    private int mVertexShaderId;
+    private int mFragmentShaderId;
+
+    interface ValueType {
+        int getPageNumber();
+    }
+
+    FCameraFilter(Context context,
+                  int vertexShaderId, int fragmentshaderId,
+                  @NonNull Integer id) {
         mContext = context;
         mVertexShaderId = vertexShaderId;
-        mFragmentshaderId = fragmentshaderId;
+        mFragmentShaderId = fragmentshaderId;
+        mId = id;
     }
 
     public int getProgram() {
-        return FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentshaderId);
+        return FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId);
+    }
+
+    public String getName() {
+        return mName;
+    }
+    public Integer getId() {
+        return mId;
+    }
+    public void setName(String name) {
+        mName = name;
     }
 
     abstract public void onDraw(int program, Size viewSize);
+
+    abstract public void setValueWithType(ValueType type, int value);
+    abstract public int getValueWithType(ValueType type);
 }

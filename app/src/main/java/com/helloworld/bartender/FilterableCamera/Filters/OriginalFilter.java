@@ -7,6 +7,7 @@ import android.util.Size;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import static java.lang.Math.exp;
 
@@ -22,21 +23,22 @@ public class OriginalFilter extends FCameraFilter {
     private float noiseSize;
     private float noiseIntensity;
 
-    private float[] mask = new float[49];
-    private float u[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
-    private float v[] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
+    private float[] mask = new float[25];
+    private float u[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    private float v[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
 
     private void setMask(float sigma) {
         float result = 0.0f;
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                mask[(i*7)+j] = (float) (exp(-((u[i]*u[i]) + (v[j]*v[j])) / (2.0f * sigma*sigma)) / (2.0f * 3.14159265358979323846f *sigma*sigma));
-                result += mask[(i*7)+j];
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                mask[(i*5)+j] = (float) (exp(-((u[i]*u[i]) + (v[j]*v[j])) / (2.0f * sigma*sigma)) / (2.0f * 3.14159265358979323846f *sigma*sigma));
+                result += mask[(i*5)+j];
             }
         }
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                mask[(i*7)+j] /= result;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                mask[(i*5)+j] /= result;
             }
         }
     }
@@ -74,13 +76,13 @@ public class OriginalFilter extends FCameraFilter {
             noiseIntensity = num;
         }
 
-    private float[] nl = {0.1f, 0.1f, 0.1f, 0.0f};
+    private float[] nl = {(float)Math.random(), (float)Math.random(), (float)Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader);
 
-        setBlur(1.0f);
+        setBlur(0.1f);
         setAberration(0.0f);
         setFocus(0.0f);
         setNoiseSize(1.0f);
@@ -94,7 +96,8 @@ public class OriginalFilter extends FCameraFilter {
         GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
 
         int noiseLevelLocation = GLES20.glGetUniformLocation(program, "noiseLevel");
-        GLES20.glUniform4fv(noiseLevelLocation, 1, FloatBuffer.wrap(nl));
+        GLES20.glUniform3fv(noiseLevelLocation, 1, FloatBuffer.wrap(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()}));
+
 
         float time = ((float) (System.currentTimeMillis() - START_TIME)) / 1000.0f;
         int iGlobalTimeLocation = GLES20.glGetUniformLocation(program, "iGlobalTime");
@@ -119,7 +122,7 @@ public class OriginalFilter extends FCameraFilter {
         GLES20.glUniform1f(niLocation, noiseIntensity);
 
         int maskLocation = GLES20.glGetUniformLocation(program, "mask");
-        GLES20.glUniform1fv(maskLocation, 49, FloatBuffer.wrap(mask));
+        GLES20.glUniform1fv(maskLocation, 25, FloatBuffer.wrap(mask));
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }

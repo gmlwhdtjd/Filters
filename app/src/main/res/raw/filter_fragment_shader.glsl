@@ -1,11 +1,13 @@
 #extension GL_OES_EGL_image_external : require
 precision mediump float;
 uniform vec3 iResolution;
-uniform vec4 noiseLevel;
+uniform vec3 noiseLevel;
 uniform float iGlobalTime;
 uniform samplerExternalOES sTexture;
 varying vec2 texCoord;
-uniform float mask[49];
+uniform float mask[25];
+uniform vec3 randomRGB;
+
 struct Filter_Var {
     vec3 rgb;
     float blur;
@@ -18,15 +20,20 @@ struct Filter_Var {
 
 uniform Filter_Var variables;
 
+float PHI = 1.61803398874989484820459 * 00000.1; // Golden Ratio
+float PI  = 3.14159265358979323846264 * 00000.1; // PI
+float SRT = 1.41421356237309504880169 * 10000.0; // Square Root of Two
+
 float rand(vec2 co) {
-       return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453 * iGlobalTime);
+       return fract(sin(dot(co.xy, vec2(PHI, PI))) * SRT * iGlobalTime * noiseLevel.x);
 }
 float rand2(vec2 co) {
-      return fract(cos(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453 * iGlobalTime);
+       return fract(sin(dot(co.xy, vec2(PHI, PI))) * SRT * iGlobalTime * noiseLevel.y);
 }
 float rand3(vec2 co) {
-      return fract(sin(dot(co.xy, vec2(93.6249, 63.014))) * 92740.1048 * iGlobalTime);
+       return fract(sin(dot(co.xy, vec2(PHI, PI))) * SRT * iGlobalTime * noiseLevel.z);
 }
+
 float min(float a, float b, float c) {
     float result;
     if(a>=b) result = b;
@@ -140,33 +147,26 @@ void main ()
 
     ////////////////////////////////색수차
     float radius = 0.0;
-    float distance = variables.noiseIntensity;
     vec2 innerR = gl_FragCoord.xy/iResolution.x;
     innerR -= vec2(0.5, (iResolution.y/iResolution.x)/2.0);
     float x = innerR.x>0.0?innerR.x:-1.0*innerR.x;
     float y = innerR.y>0.0?innerR.y:-1.0*innerR.y;
     y = y>1.0?1.0:y;
     radius = x*x+y*y;
-    radius = radius>variables.focus?radius:0.0;
-    if(radius < variables.focus)
-        radius = 0.0;
-    else if(radius >= variables.focus && radius < variables.focus+distance)
-        radius = (radius-variables.focus)/distance;
-    else if(radius >= variables.focus + distance)
-        radius = 1.0;
+    radius = radius>variables.focus?1.0:radius/variables.focus;
 
-    vec2 stp0 = vec2(4.0/iResolution.x, 0.0)*radius;    //  x
-    vec2 st0p = vec2(0.0, 8.0/iResolution.y)*radius;    //  y
+    vec2 stp0 = vec2(1.0/400.0, 0.0)*radius;    //  x
+    vec2 st0p = vec2(0.0, 1.0/400.0)*radius;    //  y
 
     vec3 target = vec3(0.0, 0.0, 0.0);
     float fi=0.0;
     float fj = 0.0;
-    for(int i=0; i<7; i++) {
+    for(int i=0; i<5; i++) {
         fj = 0.0;
-        for(int j=0; j<7; j++) {
-            target += vec3(texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)-(dis/res).yx*variables.aberration).r*mask[i*7+j],
-                            texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)).g*mask[i*7+j],
-                            texture2D(sTexture, texCoord+((fj-3.0)*stp0)+((fi-3.0)*st0p)+(dis/res).yx*variables.aberration).b*mask[i*7+j]);
+        for(int j=0; j<5; j++) {
+            target += vec3(texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)-(dis/res).yx*variables.aberration).r*mask[i*5+j],
+                            texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)).g*mask[i*5+j],
+                            texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)+(dis/res).yx*variables.aberration).b*mask[i*5+j]);
             fj+=1.0;
         }
         fi += 1.0;
@@ -182,12 +182,18 @@ void main ()
     float filterRatio = 0.0;
     vec3 HSLfilter = vec3(variables.rgb.r, 0.7, 0.7);
     target = (1.0-filterRatio)*target + filterRatio*HSLtoRGB(HSLfilter);
-    gl_FragColor = vec4(target, 1.0);
+    // gl_FragColor = vec4(target, 1.0);
 
     float blocksize = 500.0 * variables.noiseSize;
-    vec2 block = floor(pixelize*blocksize);
-    vec3 randomDelta = vec3((rand(block) * 2.0) - 1.0, (rand2(block) * 2.0) - 1.0, (rand3(block) * 2.0) - 1.0);
-    //gl_FragColor += 0.1*vec4(randomDelta, 0.0)*variables.noiseIntensity;
+    vec2 block = pixelize.xy*iGlobalTime;
+    vec3 randomDelta = vec3(rand(block)*2.0-1.0);
+    target += vec3(randomDelta)*variables.noiseIntensity;
+    target = vec3(target.x>1.0?1.0:target.x, target.y>1.0?1.0:target.y, target.z>1.0?1.0:target.z);
+    target = vec3(target.x<0.0?0.0:target.x, target.y<0.0?0.0:target.y, target.z<0.0?0.0:target.z);
+
+
+    gl_FragColor = vec4(target, 1.0);
+    //gl_FragColor = texture2D(sTexture, texCoord.xy);
 }
 
 /*

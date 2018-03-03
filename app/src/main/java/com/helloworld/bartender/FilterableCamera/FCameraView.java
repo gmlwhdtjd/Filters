@@ -21,6 +21,7 @@ import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 

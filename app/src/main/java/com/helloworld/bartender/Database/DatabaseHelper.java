@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
@@ -69,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //id가 존재하고 type이 다르면 기존 type테이블에 있는 튜플 삭제
         if (filter.getId() != null) {
             String type = FindTypeWithId(db, filter.getId());
-            if (filter.getClass().getSimpleName() != type) {
+            if (!filter.getClass().getSimpleName().equals(type)) {
                 String sql = "DELETE FROM " + type + " WHERE " + COLUMN_ID + "='" + filter.getId().toString() + "'";
                 db.execSQL(sql);
             }

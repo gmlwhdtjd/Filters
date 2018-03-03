@@ -111,8 +111,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    filter.getId();
-                    Log.d("check Id", "Clcicked");
                     lastSelectedPosition = position;
                     notifyDataSetChanged();
                     filter.setName("Changed");

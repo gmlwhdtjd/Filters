@@ -2,13 +2,14 @@ package com.helloworld.bartender.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
-
+import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.R;
 
@@ -49,16 +50,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtn);
 
             if (viewType == R.layout.layout_filter_icon) {
-                filterIcon.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        lastSelectedPosition = getAdapterPosition();
-                        notifyDataSetChanged();
-                        Toast.makeText(horizontal_adapter.this.mContext, filterIcon.getText(), Toast.LENGTH_LONG).show();
-
-                    }
-                });
-
                 filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -109,13 +100,26 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
     //뷰안에 content를 바꾼다.(LayoutManger에 의해 실행)
-    public void onBindViewHolder(horizontalViewHolder holder, int position) {
+    public void onBindViewHolder(final horizontalViewHolder holder, final int position) {
+        final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         //이곳에서 dataset에서 element를 가져온다
         if (position == filters.size()) {
         } else {
-            FCameraFilter filter = filters.get(position);
+            final FCameraFilter filter = filters.get(position);
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
+            holder.filterIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    filter.getId();
+                    Log.d("check Id", "Clcicked");
+                    lastSelectedPosition = position;
+                    notifyDataSetChanged();
+                    filter.setName("Changed");
+                    dbHelper.saveFilter(filter);
+                    Toast.makeText(horizontal_adapter.this.mContext, filter.getName(), Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
 

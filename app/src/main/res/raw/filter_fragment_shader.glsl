@@ -12,10 +12,10 @@ struct Filter_Var {
     vec3 rgb;
     float blur;
     float filterRatio;
-    float aberration;
-    float focus;
-    float noiseSize;
-    float noiseIntensity;
+    float ABERRATION;
+    float FOCUS;
+    float NOISE_SIZE;
+    float NOISE_INTENSITY;
 };
 
 uniform Filter_Var variables;
@@ -153,7 +153,7 @@ void main ()
     float y = innerR.y>0.0?innerR.y:-1.0*innerR.y;
     y = y>1.0?1.0:y;
     radius = x*x+y*y;
-    radius = radius>variables.focus?1.0:radius/variables.focus;
+    radius = radius>variables.FOCUS?1.0:radius/variables.FOCUS;
 
     vec2 stp0 = vec2(1.0/400.0, 0.0)*radius;    //  x
     vec2 st0p = vec2(0.0, 1.0/400.0)*radius;    //  y
@@ -164,9 +164,9 @@ void main ()
     for(int i=0; i<5; i++) {
         fj = 0.0;
         for(int j=0; j<5; j++) {
-            target += vec3(texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)-(dis/res).yx*variables.aberration).r*mask[i*5+j],
+            target += vec3(texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)-(dis/res).yx*variables.ABERRATION).r*mask[i*5+j],
                             texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)).g*mask[i*5+j],
-                            texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)+(dis/res).yx*variables.aberration).b*mask[i*5+j]);
+                            texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)+(dis/res).yx*variables.ABERRATION).b*mask[i*5+j]);
             fj+=1.0;
         }
         fi += 1.0;
@@ -184,10 +184,10 @@ void main ()
     target = (1.0-filterRatio)*target + filterRatio*HSLtoRGB(HSLfilter);
     // gl_FragColor = vec4(target, 1.0);
 
-    float blocksize = 500.0 * variables.noiseSize;
+    float blocksize = 500.0 * variables.NOISE_SIZE;
     vec2 block = pixelize.xy*iGlobalTime;
     vec3 randomDelta = vec3(rand(block)*2.0-1.0);
-    target += vec3(randomDelta)*variables.noiseIntensity;
+    target += vec3(randomDelta)*variables.NOISE_INTENSITY;
     target = vec3(target.x>1.0?1.0:target.x, target.y>1.0?1.0:target.y, target.z>1.0?1.0:target.z);
     target = vec3(target.x<0.0?0.0:target.x, target.y<0.0?0.0:target.y, target.z<0.0?0.0:target.z);
 

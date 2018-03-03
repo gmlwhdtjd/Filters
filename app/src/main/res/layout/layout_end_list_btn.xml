@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:onClick="onEndBtnClicked"
         android:padding="20dp"
         android:adjustViewBounds="true"
         app:srcCompat="@android:drawable/ic_input_add" />

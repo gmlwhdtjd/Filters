@@ -30,21 +30,45 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:id="@+id/imageButton"
+                        android:id="@+id/editCloseBtt"
                         android:layout_width="@android:dimen/app_icon_size"
                         android:layout_height="@android:dimen/app_icon_size"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
                         android:backgroundTint="@android:color/transparent"
                         android:scaleType="fitCenter"
                         app:srcCompat="@drawable/ic_cancel" />
+
+                    <TextView
+                        android:id="@+id/filterNameView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toEndOf="@+id/editCloseBtt"
+                        android:textAllCaps="false"
+                        android:textSize="18sp"
+                        android:textStyle="italic" />
+
+                    <Button
+                        android:id="@+id/editSaveBtt"
+                        style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="8dp"
+                        android:text="Save"
+                        android:textStyle="italic" />
+
                 </RelativeLayout>
 
                 <FrameLayout
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp">
-
-                </FrameLayout>
+                    android:layout_height="200dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:padding="20dp" />
 
                 <TabWidget
                     android:id="@android:id/tabs"

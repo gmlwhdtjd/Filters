@@ -120,13 +120,13 @@ public class OriginalFilter extends FCameraFilter {
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context, Integer id) {
-        this(context, id, "default", 0, 0, 0, 0, 0);
+        this(context, id, "Default", 0, 0, 0, 0, 0);
     }
 
     public OriginalFilter(Context context, Integer id, String name, int blur, int focus, int aberration, int noiseSize, int noiseIntensity) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader, id);
         
-      setName(name);
+        setName(name);
         setValueWithType(ValueType.BLUR, blur);
         setValueWithType(ValueType.FOCUS, focus);
         setValueWithType(ValueType.ABERRATION, aberration);
@@ -171,5 +171,4 @@ public class OriginalFilter extends FCameraFilter {
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
-
 }

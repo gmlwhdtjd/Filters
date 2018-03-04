@@ -1,8 +1,6 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
@@ -27,7 +25,7 @@ public abstract class FCameraFilter {
 
     FCameraFilter(Context context,
                   int vertexShaderId, int fragmentshaderId,
-                  @NonNull Integer id) {
+                  Integer id) {
         mContext = context;
         mVertexShaderId = vertexShaderId;
         mFragmentShaderId = fragmentshaderId;

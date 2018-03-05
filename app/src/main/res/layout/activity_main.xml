@@ -92,7 +92,7 @@
             android:id="@+id/FilterListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignEnd="@id/cameraFrame"/>
+            android:layout_alignBottom="@id/cameraFrame"/>
 
         <LinearLayout
             android:id="@id/bottomLinear"

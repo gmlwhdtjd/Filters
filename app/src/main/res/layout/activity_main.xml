@@ -42,9 +42,6 @@
                 android:textColor="@color/white"
                 android:textSize="200sp" />
 
-            <include layout="@layout/layout_filter_list_view" />
-
-
         </FrameLayout>
 
         <LinearLayout
@@ -90,6 +87,12 @@
                 app:srcCompat="@drawable/ic_setting" />
 
         </LinearLayout>
+
+        <com.helloworld.bartender.FilterListView
+            android:id="@+id/FilterListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@id/cameraFrame"/>
 
         <LinearLayout
             android:id="@id/bottomLinear"

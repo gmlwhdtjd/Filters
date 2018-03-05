@@ -37,20 +37,15 @@ import com.helloworld.bartender.adapter.horizontal_adapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    public SharedPreferences prefs;
     private int REQ_PICK_CODE = 100;
-
-    //recyclerview
-    private String option = "";
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManger;
-    private DatabaseHelper dbHelper;
-    private horizontal_adapter adapter;
 
     // 카메라 관련
     private FCameraView fCameraView;
     private FCameraCapturer fCameraCapturer;
     private FCamera fCamera;
+
+    private int cameraFlashState = 0;
+    private int cameraTimerState = 0;
 
     // 카메라 캡쳐 관련
     private TextView timerTextView;
@@ -69,16 +64,9 @@ public class MainActivity extends AppCompatActivity {
     // EditView
     private EditView editView;
 
-    //filterlist slide
-    BottomSheetBehavior filterListBehavior;
-
-    //
     FCameraFilter cameraFilter;
 
     int tmpColor = 255;
-
-    int cameraFlashState = 0;
-    int cameraTimerState = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,47 +211,5 @@ public class MainActivity extends AppCompatActivity {
         fCameraView.setFilter(cameraFilter);
         fCameraCapturer.setFilter(cameraFilter);
         ((EditView) findViewById(R.id.editView)).setFilter(cameraFilter);
-
-        //------------------------------------------------------------------------------------------
-
-        //filterList
-        filterListBehavior = BottomSheetBehavior.from(findViewById(R.id.filterListLayout));
-
-        //리사이클러 뷰
-        mRecyclerView = (RecyclerView) findViewById(R.id.filterList);
-        //  mRecyclerView.setHasFixedSize(true);
-        mLayoutManger = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManger);
-
-        populateRecyclerView(option);
-        prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
-
-        final ImageButton filterListBtt = findViewById(R.id.filterListBtt);
-        filterListBtt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                    filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    filterListBtt.setImageResource(R.drawable.ic_up_to_down);
-                    filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
-                } else {
-                    filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    filterListBtt.setImageResource(R.drawable.ic_down_to_up);
-                    filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
-                }
-            }
-        });
-
-        filterListBehavior.setPeekHeight(100);
-    }
-
-
-    //populate recyclerview
-    private void populateRecyclerView(String option) {
-        dbHelper = new DatabaseHelper(this);
-        adapter = new horizontal_adapter(dbHelper.getFilterList(this, option), this, mRecyclerView);
-        mRecyclerView.setAdapter(adapter);
     }
 }

@@ -1,9 +1,9 @@
 package com.helloworld.bartender;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 
 import android.support.design.widget.BottomSheetBehavior;
@@ -13,12 +13,10 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,20 +37,15 @@ import com.helloworld.bartender.adapter.horizontal_adapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    public SharedPreferences prefs;
     private int REQ_PICK_CODE = 100;
-
-    //recyclerview
-    private String option = "";
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManger;
-    private DatabaseHelper dbHelper;
-    private horizontal_adapter adapter;
 
     // 카메라 관련
     private FCameraView fCameraView;
     private FCameraCapturer fCameraCapturer;
     private FCamera fCamera;
+
+    private int cameraFlashState = 0;
+    private int cameraTimerState = 0;
 
     // 카메라 캡쳐 관련
     private TextView timerTextView;
@@ -71,19 +64,9 @@ public class MainActivity extends AppCompatActivity {
     // EditView
     private EditView editView;
 
-    //filterlist slide
-    LinearLayout nestedFilterList;
-    BottomSheetBehavior filterListBehavior;
-
-    //
     FCameraFilter cameraFilter;
 
     int tmpColor = 255;
-
-    int tmp1 = 0;
-
-    int timerStatus = 0;
-    int timerValue = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tmp1 = (tmp1 + 1) % 3;
-                switch (tmp1) {
+                cameraFlashState = (cameraFlashState + 1) % 3;
+                switch (cameraFlashState) {
                     case 0:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_flash_auto);
                         break;
@@ -141,23 +124,22 @@ public class MainActivity extends AppCompatActivity {
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timerStatus = (timerStatus + 1) % 4;
-                switch (timerStatus) {
+                switch (cameraTimerState) {
                     case 0:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_off);
-                        timerValue = 0;
-                        break;
-                    case 1:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_3);
-                        timerValue = 3;
-                        break;
-                    case 2:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_5);
-                        timerValue = 5;
+                        cameraTimerState = 3;
                         break;
                     case 3:
+                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_5);
+                        cameraTimerState = 5;
+                        break;
+                    case 5:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_10);
-                        timerValue = 10;
+                        cameraTimerState = 10;
+                        break;
+                    case 10:
+                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_off);
+                        cameraTimerState = 0;
                         break;
                 }
             }
@@ -188,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 cameraCaptureBtt.setClickable(false);
 
-                new CountDownTimer(timerValue * 1000 - 1, 1000) {
+                new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         timerTextView.setText(String.valueOf((millisUntilFinished / 1000) + 1));
@@ -229,45 +211,5 @@ public class MainActivity extends AppCompatActivity {
         fCameraView.setFilter(cameraFilter);
         fCameraCapturer.setFilter(cameraFilter);
         ((EditView) findViewById(R.id.editView)).setFilter(cameraFilter);
-
-        //------------------------------------------------------------------------------------------
-
-        //filterList
-        nestedFilterList = findViewById(R.id.filter_list);
-        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
-
-        //리사이클러 뷰
-        mRecyclerView = (RecyclerView) findViewById(R.id.filterList);
-        //  mRecyclerView.setHasFixedSize(true);
-        mLayoutManger = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManger);
-
-        populateRecyclerView(option);
-        prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
-
-//        button1 = (ImageButton) findViewById(R.id.editBtt);
-//
-//        button1.setOnClickListener(new OnSingleClickListener() {
-//            @Override
-//            public void onSingleClick(View v) {
-//                if(filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
-//                    filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                }else{
-//                    filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//                }
-//
-//            }
-//        });
-
-        filterListBehavior.setPeekHeight(100);
-    }
-
-
-    //populate recyclerview
-    private void populateRecyclerView(String option) {
-        dbHelper = new DatabaseHelper(this);
-        adapter = new horizontal_adapter(dbHelper.getFilterList(this, option), this, mRecyclerView);
-        mRecyclerView.setAdapter(adapter);
     }
 }
-

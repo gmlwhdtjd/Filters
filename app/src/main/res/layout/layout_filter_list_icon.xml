@@ -12,11 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:drawableTop="@drawable/custom_radio_btn"
         android:button="@null"
         android:checked="false"
+        android:drawableTop="@drawable/custom_radio_btn"
         android:padding="10dp"
         android:text="test"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@color/white" />
 
 </LinearLayout>

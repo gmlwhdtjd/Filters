@@ -74,8 +74,6 @@ public class FilterListView extends CoordinatorLayout {
                 changeState();
             }
         });
-
-        filterListBehavior.setPeekHeight(100);
     }
 
     public void changeState() {

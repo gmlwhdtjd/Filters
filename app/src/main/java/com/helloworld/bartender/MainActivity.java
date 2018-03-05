@@ -37,8 +37,6 @@ import com.helloworld.bartender.adapter.horizontal_adapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int REQ_PICK_CODE = 100;
-
     // 카메라 관련
     private FCameraView fCameraView;
     private FCameraCapturer fCameraCapturer;
@@ -153,13 +151,13 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+                Intent pickerIntent = new Intent(Intent.ACTION_VIEW);
 
                 pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 
                 pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                startActivityForResult(pickerIntent, REQ_PICK_CODE);
+                startActivity(pickerIntent);
 
 //              dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
             }

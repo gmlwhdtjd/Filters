@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,15 +35,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(" CREATE TABLE " + TABLE_MAIN_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_FILTER_NAME + " TEXT NOT NULL, "+
+                COLUMN_FILTER_NAME + " TEXT NOT NULL, " +
                 COLUMN_FILTER_TYPE + " TEXT NOT NULL);"
         );
 
-        String query =" CREATE TABLE " + TYPE1_TABLE_NAME + " (" +
+        String query = " CREATE TABLE " + TYPE1_TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, ";
 
-        for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
-            query += valueType.toString()+" INTEGER NOT NULL, ";
+        for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+            query += valueType.toString() + " INTEGER NOT NULL, ";
         }
         query += "FOREIGN KEY(" + COLUMN_ID + ") REFERENCES " + TABLE_MAIN_NAME + "(" + COLUMN_ID + ") ON DELETE CASCADE); ";
 
@@ -59,28 +62,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void saveFilter(FCameraFilter filter) {
-        //id!=null일떄 필터 수정
 
-
-        //id==null일떄 필터 추가
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         ContentValues valuesForMain = new ContentValues();
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        //id가 존재하고 type이 다르면 기존 type테이블에 있는 튜플 삭제
+        if (filter.getId() != null) {
+            String type = FindTypeWithId(db, filter.getId());
+            if (!filter.getClass().getSimpleName().equals(type)) {
+                String sql = "DELETE FROM " + type + " WHERE " + COLUMN_ID + "='" + filter.getId().toString() + "'";
+                db.execSQL(sql);
+            }
+        }
+
+        valuesForMain.put(COLUMN_ID, filter.getId());
         valuesForMain.put(COLUMN_FILTER_NAME, filter.getName());
         valuesForMain.put(COLUMN_FILTER_TYPE, filter.getClass().getSimpleName());
-        db.insert(TABLE_MAIN_NAME,null,valuesForMain);
 
-        if (filter instanceof OriginalFilter) {
-            values.put(COLUMN_ID, FindIdWithName(db,filter.getName()));
-            for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
-                values.put(valueType.toString(), filter.getValueWithType(valueType));
-            }
-            db.insert(TYPE1_TABLE_NAME, null, values);
-            db.close();
+        //id null이면 튜플 생성, id가 존재하면 튜플 update
+        db.replace(TABLE_MAIN_NAME, null, valuesForMain);
+
+        //type에 따라 테이블과 속성이 바뀜
+        switch (filter.getClass().getSimpleName()) {
+            case TYPE1_TABLE_NAME:
+                values.put(COLUMN_ID, FindIdWithName(db, filter.getName()));
+                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                    values.put(valueType.toString(), filter.getValueWithType(valueType));
+                }
+                db.replace(TYPE1_TABLE_NAME, null, values);
+                break;
+            default:
+                break;
         }
-    }
+        db.close();
 
+    }
 
 
     //정렬
@@ -90,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query = "SELECT * FROM " + TABLE_MAIN_NAME;
         } else {
             query = "SELECT * FROM " + TABLE_MAIN_NAME + " ORDER BY " + option;
-    }
+        }
         List<FCameraFilter> filterLinkedList = new LinkedList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -105,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     case TYPE1_TABLE_NAME:
                         FCameraFilter filter = new OriginalFilter(context, id);
                         filter.setName(name);
-                        Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_TABLE_NAME + " WHERE _id=" + id, null);
+                        Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_TABLE_NAME + " WHERE " + COLUMN_ID + "=" + id, null);
                         typeCursor.moveToFirst();
                         for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                             filter.setValueWithType(valueType, typeCursor.getInt(typeCursor.getColumnIndex(valueType.toString())));
@@ -134,32 +151,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        db.execSQL("DELETE FROM " + TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
 //        Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
 //    }
-//
-//    public void updateFilterRecord(long filterId, Context context, Item updatedFilter) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        //you can use the constants above instead of typing the column names
-//        db.execSQL("UPDATE " + TABLE_MAIN_NAME + "SET name ='" + updatedFilter.getFilter_name() + "', blur ='" + updatedFilter.getBlur() + "', aberation ='" + updatedFilter.getAberation() +
-//                "', focus ='" + updatedFilter.getFocus() + "', noiseSize ='" + updatedFilter.getNoiseSize() + "', noiseIntensity ='" + updatedFilter.getNoiseIntensity() + "' WHERE _id='" + filterId + "'");
-//        Toast.makeText(context, "Updated successfully", Toast.LENGTH_SHORT).show();
-//    }
 
 
-    public Integer FindIdWithName(SQLiteDatabase db,String name) {
-        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE name='" + name + "'", null);
+    public Integer FindIdWithName(SQLiteDatabase db, String name) {
+        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_FILTER_NAME+"='" + name + "'", null);
         cs.moveToFirst();
         Integer FilterID = cs.getInt(0);
 
         return FilterID;
     }
 
-    public void EnalbeFk(){
+    public String FindTypeWithId(SQLiteDatabase db, int id) {
+        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_ID+"='" + id + "'", null);
+        cs.moveToFirst();
+        String type = cs.getString(cs.getColumnIndex(COLUMN_FILTER_TYPE));
+        return type;
+    }
+
+    public void EnalbeFk() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.rawQuery("PRAGMA foreign_keys = ON", null);
         db.close();
 
     }
-
-
 
 
 }

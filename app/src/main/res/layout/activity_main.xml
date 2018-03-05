@@ -42,6 +42,8 @@
                 android:textColor="@color/white"
                 android:textSize="200sp" />
 
+            <include layout="@layout/layout_filter_list_view" />
+
 
         </FrameLayout>
 
@@ -88,10 +90,6 @@
                 app:srcCompat="@drawable/ic_setting" />
 
         </LinearLayout>
-
-       <include
-           layout="@layout/layout_filter_list"
-           />
 
         <LinearLayout
             android:id="@id/bottomLinear"

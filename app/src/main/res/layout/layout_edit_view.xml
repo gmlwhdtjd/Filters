@@ -66,8 +66,6 @@
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:padding="20dp" />
 
                 <TabWidget

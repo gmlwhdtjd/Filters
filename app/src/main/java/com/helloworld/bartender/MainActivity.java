@@ -3,6 +3,7 @@ package com.helloworld.bartender;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 
 import android.support.design.widget.BottomSheetBehavior;
@@ -69,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private EditView editView;
 
     //filterlist slide
-    LinearLayout nestedFilterList;
     BottomSheetBehavior filterListBehavior;
 
     //
@@ -77,10 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
     int tmpColor = 255;
 
-    int tmp1 = 0;
-
-    int timerStatus = 0;
-    int timerValue = 0;
+    int cameraFlashState = 0;
+    int cameraTimerState = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tmp1 = (tmp1 + 1) % 3;
-                switch (tmp1) {
+                cameraFlashState = (cameraFlashState + 1) % 3;
+                switch (cameraFlashState) {
                     case 0:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_flash_auto);
                         break;
@@ -138,23 +136,22 @@ public class MainActivity extends AppCompatActivity {
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timerStatus = (timerStatus + 1) % 4;
-                switch (timerStatus) {
+                switch (cameraTimerState) {
                     case 0:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_off);
-                        timerValue = 0;
-                        break;
-                    case 1:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_3);
-                        timerValue = 3;
-                        break;
-                    case 2:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_5);
-                        timerValue = 5;
+                        cameraTimerState = 3;
                         break;
                     case 3:
+                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_5);
+                        cameraTimerState = 5;
+                        break;
+                    case 5:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_10);
-                        timerValue = 10;
+                        cameraTimerState = 10;
+                        break;
+                    case 10:
+                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_off);
+                        cameraTimerState = 0;
                         break;
                 }
             }
@@ -185,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 cameraCaptureBtt.setClickable(false);
 
-                new CountDownTimer(timerValue * 1000 - 1, 1000) {
+                new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         timerTextView.setText(String.valueOf((millisUntilFinished / 1000) + 1));
@@ -230,8 +227,7 @@ public class MainActivity extends AppCompatActivity {
         //------------------------------------------------------------------------------------------
 
         //filterList
-        nestedFilterList = findViewById(R.id.filter_list);
-        filterListBehavior = BottomSheetBehavior.from(nestedFilterList);
+        filterListBehavior = BottomSheetBehavior.from(findViewById(R.id.filterListLayout));
 
         //리사이클러 뷰
         mRecyclerView = (RecyclerView) findViewById(R.id.filterList);
@@ -242,19 +238,23 @@ public class MainActivity extends AppCompatActivity {
         populateRecyclerView(option);
         prefs = getSharedPreferences("Prefs", MODE_PRIVATE);
 
-//        button1 = (ImageButton) findViewById(R.id.editBtt);
-//
-//        button1.setOnClickListener(new OnSingleClickListener() {
-//            @Override
-//            public void onSingleClick(View v) {
-//                if(filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
-//                    filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                }else{
-//                    filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-//                }
-//
-//            }
-//        });
+        final ImageButton filterListBtt = findViewById(R.id.filterListBtt);
+        filterListBtt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                    filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    filterListBtt.setImageResource(R.drawable.ic_up_to_down);
+                    filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
+                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+                } else {
+                    filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    filterListBtt.setImageResource(R.drawable.ic_down_to_up);
+                    filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
+                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+                }
+            }
+        });
 
         filterListBehavior.setPeekHeight(100);
     }

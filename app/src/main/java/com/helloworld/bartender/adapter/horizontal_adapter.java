@@ -32,7 +32,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
-        return (position == filters.size()) ? R.layout.layout_end_list_btn : R.layout.layout_filter_icon;
+        return (position == filters.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
 
 
@@ -46,9 +46,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             super(itemView);
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
-            endBtn = (ImageButton) itemView.findViewById(R.id.endBtn);
+            endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
 
-            if (viewType == R.layout.layout_filter_icon) {
+            if (viewType == R.layout.layout_filter_list_icon) {
                 filterIcon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -100,10 +100,10 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public horizontal_adapter.horizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //뷰 생성
         View view;
-        if (viewType == R.layout.layout_filter_icon) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_icon, parent, false);
+        if (viewType == R.layout.layout_filter_list_icon) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_icon, parent, false);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_end_list_btn, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_end_btt, parent, false);
         }
         return new horizontalViewHolder(view,viewType);
     }

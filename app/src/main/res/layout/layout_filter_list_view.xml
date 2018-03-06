@@ -9,12 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:behavior_peekHeight="28dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <ImageButton
             android:id="@+id/filterListBtt"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="28dp"
             android:layout_gravity="center"
             android:background="@drawable/ic_up_shadow"
             app:srcCompat="@drawable/ic_up_to_down" />
@@ -22,7 +23,7 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="@color/transBlack">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/filterList"

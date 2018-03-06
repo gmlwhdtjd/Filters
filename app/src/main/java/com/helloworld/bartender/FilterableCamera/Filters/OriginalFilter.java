@@ -29,30 +29,30 @@ public class OriginalFilter extends FCameraFilter {
     private float noiseIntensity;
 
     private float[] mask = new float[25];
-    private float u[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
-    private float v[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    private float u[] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    private float v[] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
 
     private void setMask(float sigma) {
         float result = 0.0f;
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                mask[(i*5)+j] = (float) (exp(-((u[i]*u[i]) + (v[j]*v[j])) / (2.0f * sigma*sigma)) / (2.0f * 3.14159265358979323846f *sigma*sigma));
-                result += mask[(i*5)+j];
+                mask[(i * 5) + j] = (float) (exp(-((u[i] * u[i]) + (v[j] * v[j])) / (2.0f * sigma * sigma)) / (2.0f * 3.14159265358979323846f * sigma * sigma));
+                result += mask[(i * 5) + j];
             }
         }
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                mask[(i*5)+j] /= result;
+                mask[(i * 5) + j] /= result;
             }
         }
     }
 
     public enum ValueType implements FCameraFilter.ValueType {
+        COLOR_RATIO,
         RGB_R,
         RGB_G,
         RGB_B,
-        COLOR_RATIO,
         BRIGHTNESS,
         SATURATION,
         BLUR,
@@ -62,26 +62,26 @@ public class OriginalFilter extends FCameraFilter {
         NOISE_INTENSITY;
 
         @Override
-        public int getPageNumber() {
+        public String getPageName() {
             switch (this) {
+                case COLOR_RATIO:
                 case RGB_R:
                 case RGB_G:
                 case RGB_B:
-                    return 0;
-                case COLOR_RATIO:
+                    return "color";
                 case BRIGHTNESS:
                 case SATURATION:
-                    return 1;
+                    return "colorDetails";
                 case BLUR:
                 case FOCUS:
-                    return 2;
+                    return "focus";
                 case ABERRATION:
-                    return 3;
+                    return "aberration";
                 case NOISE_SIZE:
                 case NOISE_INTENSITY:
-                    return 4;
+                    return "noise";
                 default:
-                    return -1;
+                    return "default";
             }
         }
     }
@@ -136,17 +136,17 @@ public class OriginalFilter extends FCameraFilter {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
                 case RGB_R:
-                    return (int) (rgb[0]*255);
+                    return (int) (rgb[0] * 255);
                 case RGB_G:
-                    return (int) (rgb[1]*255);
+                    return (int) (rgb[1] * 255);
                 case RGB_B:
-                    return (int) (rgb[2]*255);
+                    return (int) (rgb[2] * 255);
                 case COLOR_RATIO:
-                    return (int) (colorRatio*100);
+                    return (int) (colorRatio * 100);
                 case BRIGHTNESS:
-                    return (int) (brightness*100);
+                    return (int) (brightness * 100);
                 case SATURATION:
-                    return (int) (saturation*100);
+                    return (int) (saturation * 100);
                 case BLUR:
                     return (int) (blur * 25);
                 case FOCUS:
@@ -163,13 +163,16 @@ public class OriginalFilter extends FCameraFilter {
         } else
             throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
     }
-  
-    private float[] nl = {(float)Math.random(), (float)Math.random(), (float)Math.random(), 0.0f};
+
+    private float[] nl = {(float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context, Integer id) {
         this(context, id, "Default", 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0);
     }
+
+
+    // TODO : 변수 받아오는 작업을 Array로 해야하나?
 
     public OriginalFilter(Context context, Integer id, String name,
                           int red, int green, int blue,
@@ -178,7 +181,7 @@ public class OriginalFilter extends FCameraFilter {
                           int aberration,
                           int noiseSize, int noiseIntensity) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader, id);
-        
+
         setName(name);
         setValueWithType(ValueType.RGB_R, red);
         setValueWithType(ValueType.RGB_G, green);

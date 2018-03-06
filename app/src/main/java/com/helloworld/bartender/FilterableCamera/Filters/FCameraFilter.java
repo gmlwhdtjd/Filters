@@ -20,7 +20,7 @@ public abstract class FCameraFilter {
     private int mFragmentShaderId;
 
     interface ValueType {
-        int getPageNumber();
+        String getPageName();
     }
 
     FCameraFilter(Context context,

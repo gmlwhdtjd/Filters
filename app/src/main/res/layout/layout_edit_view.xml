@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:layout_behavior="@string/lockable_bottom_sheet_behavior">
 
         <TabHost
             android:id="@+id/tabHost"
@@ -65,7 +65,7 @@
                 <FrameLayout
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="250dp"
                     android:padding="20dp" />
 
                 <TabWidget

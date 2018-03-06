@@ -16,13 +16,15 @@ import android.widget.TextView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
+import java.util.HashMap;
+
 /**
  * Created by huijonglee on 2018. 2. 27..
  */
 
 public class EditView extends CoordinatorLayout {
 
-    BottomSheetBehavior bottomSheetBehavior;
+    LockableBottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
 
     TextView filterNameView;
@@ -58,8 +60,9 @@ public class EditView extends CoordinatorLayout {
         super.onFinishInflate();
         filterNameView = findViewById(R.id.filterNameView);
 
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior = (LockableBottomSheetBehavior) BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.setPeekHeight(0); //peek = 0로 하면 첫 화면에서 안보임
+        bottomSheetBehavior.setLocked(true);
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
@@ -88,37 +91,49 @@ public class EditView extends CoordinatorLayout {
         mFilter = filter;
         filterNameView.setText(mFilter.getName());
 
+        // TODO : 필터를 새로 적용할때 레이아웃이 꼬이지 않게 해야한다.
+
         TabHost tabHost = findViewById(R.id.tabHost);
         tabHost.setup();
 
-        // TODO : 페이지에 따라 nameSeekbar 추가해야함
         if (filter instanceof OriginalFilter) {
 
             FrameLayout tabContent = findViewById(android.R.id.tabcontent);
+            tabContent.removeAllViews();
+            HashMap<String, LinearLayout> tabs = new HashMap<>();
 
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
-                LinearLayout tab = new LinearLayout(getContext());
-                tab.setId(View.generateViewId());
-                tab.setGravity(Gravity.CENTER);
-                tabContent.addView(tab);
+                if (!tabs.containsKey(valueType.getPageName())) {
+                    LinearLayout tab = new LinearLayout(getContext());
+                    tab.setId(View.generateViewId());
+                    tab.setGravity(Gravity.CENTER);
+                    tab.setOrientation(LinearLayout.VERTICAL);
+                    tabContent.addView(tab);
 
-                TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.toString());
-                tmpTabSpec.setContent(tab.getId());
-                tmpTabSpec.setIndicator(valueType.toString());
-                tabHost.addTab(tmpTabSpec);
+                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName());
+                    tmpTabSpec.setContent(tab.getId());
+                    tmpTabSpec.setIndicator(valueType.getPageName());
+                    tabHost.addTab(tmpTabSpec);
 
-                NamedSeekBar tmpSeekBar = new NamedSeekBar(getContext());
-                tmpSeekBar.setText(valueType.toString());
-                tmpSeekBar.setValue(mFilter.getValueWithType(valueType));
-                tmpSeekBar.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
+                    tabs.put(valueType.getPageName(), tab);
+                }
+
+                NamedSeekBar curSeekBar = new NamedSeekBar(getContext());
+                curSeekBar.setText(valueType.toString());
+                if (valueType.toString().startsWith("RGB"))
+                    curSeekBar.setMax(255);
+                else
+                    curSeekBar.setMax(100);
+                curSeekBar.setValue(mFilter.getValueWithType(valueType));
+                curSeekBar.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
 
                     @Override
                     public void onValueChanged(int value) {
                         mFilter.setValueWithType(valueType, value);
                     }
                 });
-                tab.addView(tmpSeekBar);
+                tabs.get(valueType.getPageName()).addView(curSeekBar);
             }
         }
     }

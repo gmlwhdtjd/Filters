@@ -44,6 +44,10 @@ public class NamedSeekBar extends LinearLayout {
         mTextView.setText(text);
     }
 
+    public void setMax(int value) {
+        mSeekBar.setMax(value);
+    }
+
     public void setValue(int value) {
         mValue = value;
         mSeekBar.setProgress(mValue);
@@ -74,7 +78,6 @@ public class NamedSeekBar extends LinearLayout {
 
         mSeekBar = new SeekBar(getContext());
         mSeekBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        mSeekBar.setMax(100);
         this.addView(mSeekBar);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);

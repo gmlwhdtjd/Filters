@@ -2,7 +2,9 @@ package com.helloworld.bartender;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -60,10 +62,10 @@ public class NamedSeekBar extends LinearLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         this.setOrientation(LinearLayout.VERTICAL);
-        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f));
+        this.setGravity(Gravity.CENTER);
 
         RelativeLayout relativeLayout = new RelativeLayout(getContext());
-        relativeLayout.setPadding(20, 0 ,20 ,0);
         this.addView(relativeLayout);
 
         mTextView = new TextView(getContext());
@@ -78,6 +80,8 @@ public class NamedSeekBar extends LinearLayout {
 
         mSeekBar = new SeekBar(getContext());
         mSeekBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+//        Drawable a = getResources().getDrawable(R.drawable.ic_setting);
+//        mSeekBar.setThumb(a);
         this.addView(mSeekBar);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);

@@ -29,6 +29,8 @@ public class EditView extends CoordinatorLayout {
 
     TextView filterNameView;
 
+    OnSaveListener mOnSaveListener;
+
     public EditView(Context context) {
         super(context);
         init(null, 0);
@@ -67,6 +69,7 @@ public class EditView extends CoordinatorLayout {
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO : Cancel
                 changeState();
             }
         });
@@ -75,6 +78,10 @@ public class EditView extends CoordinatorLayout {
             @Override
             public void onClick(View v) {
                 // TODO : Save
+                changeState();
+
+                if (mOnSaveListener != null)
+                    mOnSaveListener.onSaved();
             }
         });
     }
@@ -87,40 +94,42 @@ public class EditView extends CoordinatorLayout {
         }
     }
 
+    public void setOnSaveListener(OnSaveListener onSaveListener) {
+        mOnSaveListener = onSaveListener;
+    }
+
     public void setFilter(FCameraFilter filter) {
         mFilter = filter;
         filterNameView.setText(mFilter.getName());
 
-        // TODO : 필터를 새로 적용할때 레이아웃이 꼬이지 않게 해야한다.
-
         TabHost tabHost = findViewById(R.id.tabHost);
         tabHost.setup();
+        tabHost.clearAllTabs();
 
         if (filter instanceof OriginalFilter) {
-
             FrameLayout tabContent = findViewById(android.R.id.tabcontent);
             tabContent.removeAllViews();
             HashMap<String, LinearLayout> tabs = new HashMap<>();
 
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
-                if (!tabs.containsKey(valueType.getPageName())) {
+                if (!tabs.containsKey(valueType.getPageName(getContext()))) {
                     LinearLayout tab = new LinearLayout(getContext());
                     tab.setId(View.generateViewId());
                     tab.setGravity(Gravity.CENTER);
                     tab.setOrientation(LinearLayout.VERTICAL);
                     tabContent.addView(tab);
 
-                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName());
+                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
                     tmpTabSpec.setContent(tab.getId());
-                    tmpTabSpec.setIndicator(valueType.getPageName());
+                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
                     tabHost.addTab(tmpTabSpec);
 
-                    tabs.put(valueType.getPageName(), tab);
+                    tabs.put(valueType.getPageName(getContext()), tab);
                 }
 
                 NamedSeekBar curSeekBar = new NamedSeekBar(getContext());
-                curSeekBar.setText(valueType.toString());
+                curSeekBar.setText(valueType.getValueName(getContext()));
                 if (valueType.toString().startsWith("RGB"))
                     curSeekBar.setMax(255);
                 else
@@ -133,8 +142,12 @@ public class EditView extends CoordinatorLayout {
                         mFilter.setValueWithType(valueType, value);
                     }
                 });
-                tabs.get(valueType.getPageName()).addView(curSeekBar);
+                tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
+    }
+
+    public interface OnSaveListener {
+        void onSaved();
     }
 }

@@ -11,6 +11,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.Popup;
 import com.helloworld.bartender.R;
 
 import java.util.List;
@@ -48,16 +49,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
-
-            if (viewType == R.layout.layout_filter_list_icon) {
-                filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        Toast.makeText(horizontal_adapter.this.mContext, "Long Clicjked", Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                });
-            }
 
         }
     }
@@ -102,6 +93,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰안에 content를 바꾼다.(LayoutManger에 의해 실행)
     public void onBindViewHolder(final horizontalViewHolder holder, final int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+        final Popup popup = new Popup(mContext);
         //이곳에서 dataset에서 element를 가져온다
         if (position == filters.size()) {
         } else {
@@ -116,6 +108,14 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     filter.setName("Changed");
                     dbHelper.saveFilter(filter);
                     Toast.makeText(horizontal_adapter.this.mContext, filter.getName(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+            holder.filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    popup.show(v);
+                    return true;
                 }
             });
         }

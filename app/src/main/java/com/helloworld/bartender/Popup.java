@@ -1,6 +1,8 @@
 package com.helloworld.bartender;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,7 @@ public class Popup {
 
         this.addItem(Item1);
         this.addItem(Item2);
+
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
@@ -69,6 +72,9 @@ public class Popup {
         popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setContentView(rootView);
+        popupWindow.setFocusable(true);
+
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         int[] location = new int[2];
         v.getLocationOnScreen(location);

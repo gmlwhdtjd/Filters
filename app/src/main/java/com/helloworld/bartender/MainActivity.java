@@ -188,16 +188,16 @@ public class MainActivity extends AppCompatActivity {
         setCameraFilter(cameraFilter);
     }
 
-    public void setCameraFilter(FCameraFilter filter){
+    public void setCameraFilter(final FCameraFilter filter){
         fCameraView.setFilter(filter);
         fCameraCapturer.setFilter(filter);
         editView.setFilter(filter);
-        changeCaptureInnerColor(cameraFilter);
+        changeCaptureInnerColor(filter);
       
         editView.setOnSaveListener(new EditView.OnSaveListener() {
             @Override
             public void onSaved() {
-                changeCaptureInnerColor(cameraFilter);
+                changeCaptureInnerColor(filter);
             }
         });
     }

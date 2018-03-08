@@ -3,7 +3,7 @@
     android:id="@+id/tv_popup_item"
     android:background="@android:color/transparent"
     android:gravity="center"
-    android:textColor="@color/white"
+    android:textColor="@color/main_white"
     android:padding="10dp"
     android:textStyle="bold"
     android:layout_width="wrap_content"

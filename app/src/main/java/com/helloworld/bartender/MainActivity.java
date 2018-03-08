@@ -185,12 +185,15 @@ public class MainActivity extends AppCompatActivity {
 
         // 초기 필터 세팅
         cameraFilter = new OriginalFilter(this, 1);
+        setCameraFilter(cameraFilter);
+    }
 
-        fCameraView.setFilter(cameraFilter);
-        fCameraCapturer.setFilter(cameraFilter);
-        editView.setFilter(cameraFilter);
+    public void setCameraFilter(FCameraFilter filter){
+        fCameraView.setFilter(filter);
+        fCameraCapturer.setFilter(filter);
+        editView.setFilter(filter);
         changeCaptureInnerColor(cameraFilter);
-
+      
         editView.setOnSaveListener(new EditView.OnSaveListener() {
             @Override
             public void onSaved() {

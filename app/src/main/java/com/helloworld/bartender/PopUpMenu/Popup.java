@@ -10,9 +10,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.helloworld.bartender.OnClickListner.OnPopupItemClickListener;
 import com.helloworld.bartender.R;
 
 /**
@@ -24,6 +21,11 @@ public class Popup {
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
     private LayoutInflater inflater;
+
+    public interface OnPopupItemClickListener {
+        public abstract void onItemClick(int itemId);
+    }
+
 
     public Popup(final Context context) {
         super();

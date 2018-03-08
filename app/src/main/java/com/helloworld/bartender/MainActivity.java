@@ -21,8 +21,6 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
-//TODO:
-
 public class MainActivity extends AppCompatActivity {
 
     // 카메라 관련
@@ -190,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         fCameraView.setFilter(cameraFilter);
         fCameraCapturer.setFilter(cameraFilter);
-        ((EditView) findViewById(R.id.editView)).setFilter(cameraFilter);
+        editView.setFilter(cameraFilter);
         changeCaptureInnerColor(cameraFilter);
 
         editView.setOnSaveListener(new EditView.OnSaveListener() {

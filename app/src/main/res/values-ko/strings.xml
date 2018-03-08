@@ -1,0 +1,21 @@
+<resources>
+    <!--Original Filter-->
+    <string name="OriginalFilter_Page_1">색상</string>
+    <string name="OriginalFilter_Page_2">빛</string>
+    <string name="OriginalFilter_Page_3">초점</string>
+    <string name="OriginalFilter_Page_4">빛번짐</string>
+    <string name="OriginalFilter_Page_5">노이즈</string>
+
+    <string name="OriginalFilter_COLOR_RATIO">강도</string>
+    <string name="OriginalFilter_RGB_R">빨강</string>
+    <string name="OriginalFilter_RGB_G">초록</string>
+    <string name="OriginalFilter_RGB_B">파랑</string>
+    <string name="OriginalFilter_BRIGHTNESS">밝기</string>
+    <string name="OriginalFilter_SATURATION">채도</string>
+    <string name="OriginalFilter_BLUR">강도</string>
+    <string name="OriginalFilter_FOCUS">반경</string>
+    <string name="OriginalFilter_ABERRATION">강도</string>
+    <string name="OriginalFilter_NOISE_SIZE">크기</string>
+    <string name="OriginalFilter_NOISE_INTENSITY">강도</string>
+
+</resources>

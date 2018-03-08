@@ -23,7 +23,7 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/transBlack">
+            android:background="@color/filter_list_background">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/filterList"

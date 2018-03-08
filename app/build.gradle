@@ -27,5 +27,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
-//    compile 'org.adw.library:discrete-seekbar:1.0.1'  //사용 가능성이 있으므로 남겨둠
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
 }

@@ -2,6 +2,7 @@ package com.helloworld.bartender;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 
 public class EditView extends CoordinatorLayout {
 
-    LockableBottomSheetBehavior bottomSheetBehavior;
+    BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
 
     TextView filterNameView;
@@ -62,9 +63,21 @@ public class EditView extends CoordinatorLayout {
         super.onFinishInflate();
         filterNameView = findViewById(R.id.filterNameView);
 
-        bottomSheetBehavior = (LockableBottomSheetBehavior) BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.setPeekHeight(0); //peek = 0로 하면 첫 화면에서 안보임
-        bottomSheetBehavior.setLocked(true);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            }
+        });
+        //bottomSheetBehavior.setLocked(true);
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
@@ -130,11 +143,25 @@ public class EditView extends CoordinatorLayout {
 
                 NamedSeekBar curSeekBar = new NamedSeekBar(getContext());
                 curSeekBar.setText(valueType.getValueName(getContext()));
-                if (valueType.toString().startsWith("RGB"))
-                    curSeekBar.setMax(255);
-                else
-                    curSeekBar.setMax(100);
+
+                switch (valueType) {
+                    case RGB_R:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_red));
+                        curSeekBar.setMax(255);
+                        break;
+                    case RGB_G:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_green));
+                        curSeekBar.setMax(255);
+                        break;
+                    case RGB_B:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
+                        curSeekBar.setMax(255);
+                        break;
+                    default:
+                        curSeekBar.setMax(100);
+                }
                 curSeekBar.setValue(mFilter.getValueWithType(valueType));
+
                 curSeekBar.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
 
                     @Override
@@ -142,6 +169,7 @@ public class EditView extends CoordinatorLayout {
                         mFilter.setValueWithType(valueType, value);
                     }
                 });
+
                 tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }

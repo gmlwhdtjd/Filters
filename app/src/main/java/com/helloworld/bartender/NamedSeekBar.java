@@ -2,13 +2,14 @@ package com.helloworld.bartender;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 /**
  * Created by huijonglee on 2018. 2. 26..
@@ -19,7 +20,7 @@ public class NamedSeekBar extends LinearLayout {
     TextView mTextView;
     TextView mValueView;
 
-    SeekBar mSeekBar;
+    DiscreteSeekBar mSeekBar;
 
     String mText;
     int mValue;
@@ -62,8 +63,8 @@ public class NamedSeekBar extends LinearLayout {
 
     private void init(AttributeSet attrs, int defStyle) {
         this.setOrientation(LinearLayout.VERTICAL);
-        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f));
         this.setGravity(Gravity.CENTER);
+        this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1));
 
         RelativeLayout relativeLayout = new RelativeLayout(getContext());
         this.addView(relativeLayout);
@@ -78,10 +79,10 @@ public class NamedSeekBar extends LinearLayout {
         mValueView.setLayoutParams(params);
         relativeLayout.addView(mValueView);
 
-        mSeekBar = new SeekBar(getContext());
+        mSeekBar = new DiscreteSeekBar(getContext());
         mSeekBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-//        Drawable a = getResources().getDrawable(R.drawable.ic_setting);
-//        mSeekBar.setThumb(a);
+//        mSeekBar.setIndicatorPopupEnabled(false);
+        setColor(getResources().getColor(R.color.main_back));
         this.addView(mSeekBar);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
@@ -91,25 +92,30 @@ public class NamedSeekBar extends LinearLayout {
 
         typedArray.recycle();
 
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                setValue(i);
+            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+                setValue(value);
                 if (mOnChangeListener != null) {
-                    mOnChangeListener.onValueChanged(i);
+                    mOnChangeListener.onValueChanged(value);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
                 setValue(seekBar.getProgress());
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
                 setValue(seekBar.getProgress());
             }
         });
+    }
+
+    public void setColor(int color) {
+        mSeekBar.setScrubberColor(color);
+        mSeekBar.setThumbColor(color, color);
     }
 
     public interface OnChangeListener {

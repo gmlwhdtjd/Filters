@@ -23,4 +23,8 @@
         <item name="android:button">@drawable/custom_radio_btn</item>
     </style>
 
+    <style name="popup_animation">
+        <item name="android:windowEnterAnimation">@anim/fade_in_animation</item>
+    </style>
+
 </resources>

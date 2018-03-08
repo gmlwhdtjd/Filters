@@ -205,9 +205,13 @@ public class MainActivity extends AppCompatActivity {
 
         // 초기 필터 세팅
         cameraFilter = new OriginalFilter(this, 1);
+        setCameraFilter(cameraFilter);
+    }
 
-        fCameraView.setFilter(cameraFilter);
-        fCameraCapturer.setFilter(cameraFilter);
-        ((EditView) findViewById(R.id.editView)).setFilter(cameraFilter);
+    public void setCameraFilter(FCameraFilter filter){
+        fCameraView.setFilter(filter);
+        fCameraCapturer.setFilter(filter);
+        ((EditView) findViewById(R.id.editView)).setFilter(filter);
+
     }
 }

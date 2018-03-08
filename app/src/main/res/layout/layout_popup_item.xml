@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_popup_item"
-    android:background="#FFA0A0A0"
+    android:background="@android:color/transparent"
     android:gravity="center"
     android:padding="10dp"
     android:textStyle="bold"

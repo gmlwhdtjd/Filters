@@ -11,7 +11,7 @@ import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
 
 public abstract class FCameraFilter {
 
-    private Context mContext;
+    public Context mContext;
 
     private final Integer mId;
     private String mName;
@@ -20,7 +20,8 @@ public abstract class FCameraFilter {
     private int mFragmentShaderId;
 
     interface ValueType {
-        String getPageName();
+        String getPageName(Context context);
+        String getValueName(Context context);
     }
 
     FCameraFilter(Context context,
@@ -30,6 +31,10 @@ public abstract class FCameraFilter {
         mVertexShaderId = vertexShaderId;
         mFragmentShaderId = fragmentshaderId;
         mId = id;
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
     public int getProgram() {

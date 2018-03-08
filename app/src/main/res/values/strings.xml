@@ -11,5 +11,24 @@
     <string name="tedpermission_confirm">Confirm</string>
 
     <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
+    
+    <!--Original Filter-->
+    <string name="OriginalFilter_Page_1">Color</string>
+    <string name="OriginalFilter_Page_2">Light</string>
+    <string name="OriginalFilter_Page_3">Focus</string>
+    <string name="OriginalFilter_Page_4">Aberration</string>
+    <string name="OriginalFilter_Page_5">Noise</string>
+
+    <string name="OriginalFilter_COLOR_RATIO">Ratio</string>
+    <string name="OriginalFilter_RGB_R">Red</string>
+    <string name="OriginalFilter_RGB_G">Green</string>
+    <string name="OriginalFilter_RGB_B">Blue</string>
+    <string name="OriginalFilter_BRIGHTNESS">Bright</string>
+    <string name="OriginalFilter_SATURATION">Saturation</string>
+    <string name="OriginalFilter_BLUR">Intensity</string>
+    <string name="OriginalFilter_FOCUS">Radius</string>
+    <string name="OriginalFilter_ABERRATION">Intensity</string>
+    <string name="OriginalFilter_NOISE_SIZE">Size</string>
+    <string name="OriginalFilter_NOISE_INTENSITY">Intensity</string>
 
 </resources>

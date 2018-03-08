@@ -1,15 +1,12 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.opengl.GLES20;
-import android.support.annotation.NonNull;
 import android.util.Size;
 
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
-import java.util.Random;
 
 import static java.lang.Math.exp;
 
@@ -62,28 +59,59 @@ public class OriginalFilter extends FCameraFilter {
         NOISE_INTENSITY;
 
         @Override
-        public String getPageName() {
+        public String getPageName(Context context) {
             switch (this) {
                 case COLOR_RATIO:
                 case RGB_R:
                 case RGB_G:
                 case RGB_B:
-                    return "color";
+                    return context.getString(R.string.OriginalFilter_Page_1);
                 case BRIGHTNESS:
                 case SATURATION:
-                    return "colorDetails";
+                    return context.getString(R.string.OriginalFilter_Page_2);
                 case BLUR:
                 case FOCUS:
-                    return "focus";
+                    return context.getString(R.string.OriginalFilter_Page_3);
                 case ABERRATION:
-                    return "aberration";
+                    return context.getString(R.string.OriginalFilter_Page_4);
                 case NOISE_SIZE:
                 case NOISE_INTENSITY:
-                    return "noise";
+                    return context.getString(R.string.OriginalFilter_Page_5);
                 default:
                     return "default";
             }
         }
+
+        @Override
+        public String getValueName(Context context) {
+            switch (this) {
+                case COLOR_RATIO:
+                    return context.getString(R.string.OriginalFilter_COLOR_RATIO);
+                case RGB_R:
+                    return context.getString(R.string.OriginalFilter_RGB_R);
+                case RGB_G:
+                    return context.getString(R.string.OriginalFilter_RGB_G);
+                case RGB_B:
+                    return context.getString(R.string.OriginalFilter_RGB_B);
+                case BRIGHTNESS:
+                    return context.getString(R.string.OriginalFilter_BRIGHTNESS);
+                case SATURATION:
+                    return context.getString(R.string.OriginalFilter_SATURATION);
+                case BLUR:
+                    return context.getString(R.string.OriginalFilter_BLUR);
+                case FOCUS:
+                    return context.getString(R.string.OriginalFilter_FOCUS);
+                case ABERRATION:
+                    return context.getString(R.string.OriginalFilter_ABERRATION);
+                case NOISE_SIZE:
+                    return context.getString(R.string.OriginalFilter_NOISE_SIZE);
+                case NOISE_INTENSITY:
+                    return context.getString(R.string.OriginalFilter_NOISE_INTENSITY);
+                default:
+                    return "default";
+            }
+        }
+
     }
 
     @Override
@@ -91,6 +119,9 @@ public class OriginalFilter extends FCameraFilter {
         if (type instanceof ValueType) {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
+                case COLOR_RATIO:
+                    colorRatio = (float) value / 100;
+                    break;
                 case RGB_R:
                     rgb[0] = (float) value / 255;
                     break;
@@ -99,9 +130,6 @@ public class OriginalFilter extends FCameraFilter {
                     break;
                 case RGB_B:
                     rgb[2] = (float) value / 255;
-                    break;
-                case COLOR_RATIO:
-                    colorRatio = (float) value / 100;
                     break;
                 case BRIGHTNESS:
                     brightness = (float) value / 100;
@@ -135,14 +163,14 @@ public class OriginalFilter extends FCameraFilter {
         if (type instanceof ValueType) {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
+                case COLOR_RATIO:
+                    return (int) (colorRatio * 100);
                 case RGB_R:
                     return (int) (rgb[0] * 255);
                 case RGB_G:
                     return (int) (rgb[1] * 255);
                 case RGB_B:
                     return (int) (rgb[2] * 255);
-                case COLOR_RATIO:
-                    return (int) (colorRatio * 100);
                 case BRIGHTNESS:
                     return (int) (brightness * 100);
                 case SATURATION:
@@ -168,15 +196,18 @@ public class OriginalFilter extends FCameraFilter {
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context, Integer id) {
-        this(context, id, "Default", 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0);
+        this(context, id,
+                "Default",
+                0, 255, 255, 255,
+                0, 0,
+                0, 0,
+                0,
+                0, 0);
     }
 
-
-    // TODO : 변수 받아오는 작업을 Array로 해야하나?
-
     public OriginalFilter(Context context, Integer id, String name,
-                          int red, int green, int blue,
-                          int colorRatio, int brightness, int saturation,
+                          int colorRatio, int red, int green, int blue,
+                          int brightness, int saturation,
                           int blur, int focus,
                           int aberration,
                           int noiseSize, int noiseIntensity) {

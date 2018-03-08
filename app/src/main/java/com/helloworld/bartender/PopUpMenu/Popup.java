@@ -1,6 +1,7 @@
 package com.helloworld.bartender.PopUpMenu;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -10,6 +11,10 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterListView;
+import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 /**
@@ -21,17 +26,23 @@ public class Popup {
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
     private LayoutInflater inflater;
+    private int filterID;
+    private DatabaseHelper dbHelper;
 
     public interface OnPopupItemClickListener {
         public abstract void onItemClick(int itemId);
     }
 
 
-    public Popup(final Context context) {
+    public Popup(final Context context, final int filterID) {
         super();
+        this.filterID = filterID;
         this.popupWindow = new PopupWindow(context);
+
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
+        dbHelper = new DatabaseHelper(context);
+
         PopupOption option1 = new PopupOption(0, "삭제");
         PopupOption option2 = new PopupOption(1, "복제");
         PopupOption option3 = new PopupOption(2, "공유");
@@ -48,9 +59,14 @@ public class Popup {
                 switch (itemId) {
                     case 0:
                         //DELETE
+                        // TODO: delete시 기존에 사용하고 있던 필터는 어떻게 할것인가,
+                        dbHelper.deleteFilterRecord(filterID,context);
+                        FilterListView filterListView=((MainActivity) context).findViewById(R.id.FilterListView);
+                        filterListView.populateRecyclerView(""); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
                         break;
                     case 1:
                         //PASTE
+                        //TODO: 복제시 이름
                         break;
                     case 2:
                         //Share

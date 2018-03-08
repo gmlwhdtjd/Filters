@@ -49,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(query);
 
-
     }
 
     @Override
@@ -69,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //id가 존재하고 type이 다르면 기존 type테이블에 있는 튜플 삭제
         if (filter.getId() != null) {
-            String type = FindTypeWithId(db, filter.getId());
+            String type = findTypeWithId(db, filter.getId());
             if (!filter.getClass().getSimpleName().equals(type)) {
                 String sql = "DELETE FROM " + type + " WHERE " + COLUMN_ID + "='" + filter.getId().toString() + "'";
                 db.execSQL(sql);
@@ -86,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //type에 따라 테이블과 속성이 바뀜
         switch (filter.getClass().getSimpleName()) {
             case TYPE1_TABLE_NAME:
-                values.put(COLUMN_ID, FindIdWithName(db, filter.getName()));
+                values.put(COLUMN_ID, findIdWithName(db, filter.getName()));
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                     values.put(valueType.toString(), filter.getValueWithType(valueType));
                 }
@@ -145,15 +144,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //        return receivedFilter;
 //    }
 //
-//    public void deleteFilterRecord(long id, Context context) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        db.execSQL("DELETE FROM " + TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
-//        Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
-//    }
 
 
-    public Integer FindIdWithName(SQLiteDatabase db, String name) {
+    public void deleteFilterRecord(int id, Context context){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM "+ TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
+    }
+
+
+
+    public Integer findIdWithName(SQLiteDatabase db, String name) {
         Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_FILTER_NAME+"='" + name + "'", null);
         cs.moveToFirst();
         Integer FilterID = cs.getInt(0);
@@ -161,14 +161,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return FilterID;
     }
 
-    public String FindTypeWithId(SQLiteDatabase db, int id) {
+    public String findTypeWithId(SQLiteDatabase db, int id) {
         Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_ID+"='" + id + "'", null);
         cs.moveToFirst();
         String type = cs.getString(cs.getColumnIndex(COLUMN_FILTER_TYPE));
         return type;
     }
 
-    public void EnalbeFk() {
+    public void enalbeFk() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.rawQuery("PRAGMA foreign_keys = ON", null);
         db.close();

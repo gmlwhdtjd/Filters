@@ -116,7 +116,7 @@ public class Popup {
 
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popupWindow.setOutsideTouchable(true);
-        popupWindow.setAnimationStyle(R.style.popup_animation);
+        popupWindow.setAnimationStyle(R.style.animation_popup);
 
         int[] location = new int[2];
         v.getLocationOnScreen(location);

@@ -29,9 +29,10 @@ public class Popup {
 
     public Popup(final Context context) {
         super();
-        this.popupWindow = new PopupWindow(context);
+        popupWindow = new PopupWindow(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
+        popupWindow.setAnimationStyle(R.style.animation_popup);
         PopupOption option1 = new PopupOption(0, "삭제");
         PopupOption option2 = new PopupOption(1, "복제");
         PopupOption option3 = new PopupOption(2, "공유");

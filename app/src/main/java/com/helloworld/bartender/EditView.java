@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
@@ -96,10 +97,10 @@ public class EditView extends CoordinatorLayout {
             public void onClick(View v) {
                 // TODO : Save
                 changeState();
-
                 //update
                 dbHelper.saveFilter(mFilter);
-
+                FilterListView filterListView= ((MainActivity) getContext()).findViewById(R.id.FilterListView);
+                filterListView.populateRecyclerView("");
                 if (mOnSaveListener != null)
                     mOnSaveListener.onSaved();
             }

@@ -97,11 +97,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰안에 content를 바꾼다.(LayoutManger에 의해 실행)
     public void onBindViewHolder(final horizontalViewHolder holder, final int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
-        final Popup popup = new Popup(mContext);
         //이곳에서 dataset에서 element를 가져온다
         if (position == filterList.size()) {
         } else {
             final FCameraFilter filter = filterList.get(position);
+            final Popup popup = new Popup(mContext,filter.getId());
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {

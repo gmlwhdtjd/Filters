@@ -92,7 +92,7 @@ public class FilterListView extends CoordinatorLayout {
     }
 
     //populate recyclerview
-    private void populateRecyclerView(String option) {
+    public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         horizontal_adapter adapter = new horizontal_adapter(dbHelper.getFilterList(getContext(), option), getContext(), filterList);
         filterList.setAdapter(adapter);

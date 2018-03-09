@@ -2,6 +2,7 @@ package com.helloworld.bartender.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +33,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private Context mContext;
     private RecyclerView mRecyclerV;
     private int lastSelectedPosition = -1;
-
-    //필터 attribute
+    private Vibrator vibe;
 
     //뷰타입 확인
     @Override
@@ -79,6 +79,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         this.filterList = filterList;
         this.mContext = context;
         this.mRecyclerV = recyclerView;
+        vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
 
@@ -101,7 +102,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         if (position == filterList.size()) {
         } else {
             final FCameraFilter filter = filterList.get(position);
-            final Popup popup = new Popup(mContext,filter.getId());
+            final Popup popup = new Popup(mContext,filter);
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +121,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             holder.filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    vibe.vibrate(1000);
                     popup.show(v);
                     return true;
                 }

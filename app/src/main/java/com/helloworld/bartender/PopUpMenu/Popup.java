@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterListView;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
@@ -26,7 +27,7 @@ public class Popup {
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
     private LayoutInflater inflater;
-    private int filterID;
+    private FCameraFilter selectedFilter;
     private DatabaseHelper dbHelper;
 
     public interface OnPopupItemClickListener {
@@ -34,9 +35,9 @@ public class Popup {
     }
 
 
-    public Popup(final Context context, final int filterID) {
+    public Popup(final Context context, final FCameraFilter selectedFilter) {
         super();
-        this.filterID = filterID;
+        this.selectedFilter = selectedFilter;
         this.popupWindow = new PopupWindow(context);
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -48,25 +49,27 @@ public class Popup {
         PopupOption option3 = new PopupOption(2, "공유");
 
         this.addItem(option1);
-//        this.addSeperator();
+        this.addSeperator();
         this.addItem(option2);
-//        this.addSeperator();
+        this.addSeperator();
         this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
+                FilterListView filterListView=((MainActivity) context).findViewById(R.id.FilterListView);
                 switch (itemId) {
                     case 0:
                         //DELETE
-                        // TODO: delete시 기존에 사용하고 있던 필터는 어떻게 할것인가,
-                        dbHelper.deleteFilterRecord(filterID,context);
-                        FilterListView filterListView=((MainActivity) context).findViewById(R.id.FilterListView);
+                        // TODO: delete시 현재 사용중인 필터를 default필터로 변경
+                        dbHelper.deleteFilterRecord(selectedFilter.getId());
                         filterListView.populateRecyclerView(""); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
                         break;
                     case 1:
                         //PASTE
-                        //TODO: 복제시 이름
+                        //TODO: 복제시 이름 카운트??
+                        dbHelper.pasteFilter(selectedFilter);
+                        filterListView.populateRecyclerView("");
                         break;
                     case 2:
                         //Share

@@ -40,7 +40,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
-        if (position == filterList.size()) {
+        if (position == filterList.size()+1) {
             return R.layout.layout_filter_list_end_btt;
         } else if (position == 0) {
             return R.layout.layout_default_filter_icon;
@@ -111,11 +111,12 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void onBindViewHolder(final horizontalViewHolder holder, int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         //이곳에서 dataset에서 element를 가져온다
-        if (position == filterList.size()) {
+        if (position == filterList.size()+1) {
             holder.endBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     FCameraFilter newFilter = new OriginalFilter(mContext, null);
+                    lastSelectedPosition = -1;
                     ((MainActivity) mContext).setCameraFilter(newFilter);
                     editView = ((MainActivity) mContext).findViewById(R.id.editView);
                     editView.changeState();
@@ -135,7 +136,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
-            final FCameraFilter filter = filterList.get(position);
+            final FCameraFilter filter = filterList.get(position-1);
             final Popup popup = new Popup(mContext, filter);
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
@@ -167,7 +168,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     //뷰안에 dataset의 사이즈를 반환한다.(LayoutManger에 의해 실행)
     public int getItemCount() {
-        return filterList.size() + 2;
+        return filterList.size()+2;
     }
 
 }

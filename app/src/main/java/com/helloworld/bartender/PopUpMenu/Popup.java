@@ -61,7 +61,7 @@ public class Popup {
                 switch (itemId) {
                     case 0:
                         //DELETE
-                        // TODO: delete시 현재 사용중인 필터를 default필터로 변경
+                        // TODO: delete시 현재 사용중인 필터를 default필터로 변경, 삭제시 기본필터로 변경, 삭제시 애니메이션
                         dbHelper.deleteFilterRecord(selectedFilter.getId());
                         filterListView.populateRecyclerView(""); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
                         break;

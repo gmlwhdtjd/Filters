@@ -29,7 +29,9 @@
                 android:id="@+id/filterList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="horizontal" />
+                android:scrollbars="horizontal"
+                android:layoutAnimation="@anim/layout_filter_list_slide"
+                />
 
         </android.support.v4.widget.NestedScrollView>
     </LinearLayout>

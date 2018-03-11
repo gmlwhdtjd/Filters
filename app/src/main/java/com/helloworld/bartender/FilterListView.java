@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
@@ -55,6 +57,10 @@ public class FilterListView extends CoordinatorLayout {
         typedArray.recycle();
     }
 
+    public void notifyFilterList(){
+        filterList.getAdapter().notifyDataSetChanged();
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -65,6 +71,9 @@ public class FilterListView extends CoordinatorLayout {
         filterList = findViewById(R.id.filterList);
         mLayoutManger = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         filterList.setLayoutManager(mLayoutManger);
+        int resId = R.anim.layout_filter_list_slide;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), resId);
+        filterList.setLayoutAnimation(animation);
 
         populateRecyclerView(option);
 
@@ -75,19 +84,51 @@ public class FilterListView extends CoordinatorLayout {
                 changeState();
             }
         });
+
+        filterListBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                    filterListBtt.setImageResource(R.drawable.ic_up_to_down);
+                    filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
+                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+               //     runLayoutAnimation(filterList);
+                }
+                else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    filterListBtt.setImageResource(R.drawable.ic_down_to_up);
+                    filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
+                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+    }
+
+    private void runLayoutAnimation(final RecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_filter_list_slide);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     public void changeState() {
         if (filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            filterListBtt.setImageResource(R.drawable.ic_up_to_down);
-            filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
-            ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+//            filterListBtt.setImageResource(R.drawable.ic_up_to_down);
+//            filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
+//            ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
         } else {
             filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            filterListBtt.setImageResource(R.drawable.ic_down_to_up);
-            filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
-            ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+//            filterListBtt.setImageResource(R.drawable.ic_down_to_up);
+//            filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
+//            ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
         }
     }
 
@@ -97,5 +138,6 @@ public class FilterListView extends CoordinatorLayout {
         horizontal_adapter adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
         filterList.setAdapter(adapter);
     }
+
 
 }

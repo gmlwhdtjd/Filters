@@ -10,7 +10,7 @@
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/main_white"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <TabHost
@@ -58,6 +58,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="8dp"
                         android:text="Save"
+                        android:textColor="@color/main_back"
                         android:textStyle="italic" />
 
                 </RelativeLayout>
@@ -66,7 +67,7 @@
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:padding="20dp" />
+                    android:paddingHorizontal="20dp" />
 
                 <TabWidget
                     android:id="@android:id/tabs"

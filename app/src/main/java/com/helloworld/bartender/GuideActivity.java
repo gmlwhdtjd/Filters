@@ -40,7 +40,7 @@ public class GuideActivity extends AppCompatActivity {
             launchHomeScreen();
             finish();
         }else {
-            addDefaultFilters(this);
+            setDefaultSetting(this);
         }
 
         // Making notification bar transparent
@@ -204,13 +204,13 @@ public class GuideActivity extends AppCompatActivity {
         }
     }
 
-    private void addDefaultFilters(Context context){
+    private void setDefaultSetting(Context context){
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample1",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-
+        dbHelper.enalbeFk();
     }
 }

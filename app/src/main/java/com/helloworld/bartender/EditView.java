@@ -2,6 +2,7 @@ package com.helloworld.bartender;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
+import java.util.HashMap;
+
 /**
  * Created by huijonglee on 2018. 2. 27..
  */
@@ -26,6 +29,8 @@ public class EditView extends CoordinatorLayout {
     FCameraFilter mFilter;
 
     TextView filterNameView;
+
+    OnSaveListener mOnSaveListener;
 
     public EditView(Context context) {
         super(context);
@@ -60,10 +65,24 @@ public class EditView extends CoordinatorLayout {
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.setPeekHeight(0); //peek = 0로 하면 첫 화면에서 안보임
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            }
+        });
+        //bottomSheetBehavior.setLocked(true);
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO : Cancel
                 changeState();
             }
         });
@@ -72,6 +91,10 @@ public class EditView extends CoordinatorLayout {
             @Override
             public void onClick(View v) {
                 // TODO : Save
+                changeState();
+
+                if (mOnSaveListener != null)
+                    mOnSaveListener.onSaved();
             }
         });
     }
@@ -84,42 +107,75 @@ public class EditView extends CoordinatorLayout {
         }
     }
 
+    public void setOnSaveListener(OnSaveListener onSaveListener) {
+        mOnSaveListener = onSaveListener;
+    }
+
     public void setFilter(FCameraFilter filter) {
         mFilter = filter;
         filterNameView.setText(mFilter.getName());
 
         TabHost tabHost = findViewById(R.id.tabHost);
         tabHost.setup();
+        tabHost.clearAllTabs();
 
-        // TODO : 페이지에 따라 nameSeekbar 추가해야함
         if (filter instanceof OriginalFilter) {
-
             FrameLayout tabContent = findViewById(android.R.id.tabcontent);
+            tabContent.removeAllViews();
+            HashMap<String, LinearLayout> tabs = new HashMap<>();
 
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
-                LinearLayout tab = new LinearLayout(getContext());
-                tab.setId(View.generateViewId());
-                tab.setGravity(Gravity.CENTER);
-                tabContent.addView(tab);
+                if (!tabs.containsKey(valueType.getPageName(getContext()))) {
+                    LinearLayout tab = new LinearLayout(getContext());
+                    tab.setId(View.generateViewId());
+                    tab.setGravity(Gravity.CENTER);
+                    tab.setOrientation(LinearLayout.VERTICAL);
+                    tabContent.addView(tab);
 
-                TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.toString());
-                tmpTabSpec.setContent(tab.getId());
-                tmpTabSpec.setIndicator(valueType.toString());
-                tabHost.addTab(tmpTabSpec);
+                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
+                    tmpTabSpec.setContent(tab.getId());
+                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
+                    tabHost.addTab(tmpTabSpec);
 
-                NamedSeekBar tmpSeekBar = new NamedSeekBar(getContext());
-                tmpSeekBar.setText(valueType.toString());
-                tmpSeekBar.setValue(mFilter.getValueWithType(valueType));
-                tmpSeekBar.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
+                    tabs.put(valueType.getPageName(getContext()), tab);
+                }
+
+                NamedSeekBar curSeekBar = new NamedSeekBar(getContext());
+                curSeekBar.setText(valueType.getValueName(getContext()));
+
+                switch (valueType) {
+                    case RGB_R:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_red));
+                        curSeekBar.setMax(255);
+                        break;
+                    case RGB_G:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_green));
+                        curSeekBar.setMax(255);
+                        break;
+                    case RGB_B:
+                        curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
+                        curSeekBar.setMax(255);
+                        break;
+                    default:
+                        curSeekBar.setMax(100);
+                }
+                curSeekBar.setValue(mFilter.getValueWithType(valueType));
+
+                curSeekBar.setOnChangeListener(new NamedSeekBar.OnChangeListener() {
 
                     @Override
                     public void onValueChanged(int value) {
                         mFilter.setValueWithType(valueType, value);
                     }
                 });
-                tab.addView(tmpSeekBar);
+
+                tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
+    }
+
+    public interface OnSaveListener {
+        void onSaved();
     }
 }

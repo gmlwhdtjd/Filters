@@ -217,7 +217,8 @@ public class FCameraCapturer {
                         .check();
                 return;
             }
-            // TODO: 카운터를 추가해서 1초안에 여러장을 찍을 경우를 대비한다.
+            // TODO : 카운터를 추가해서 1초안에 여러장을 찍을 경우를 대비한다.
+            // TODO : 저장 위치 설정.
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             File mFile = new File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +

@@ -3,6 +3,7 @@ package com.helloworld.bartender;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -74,8 +75,6 @@ public class FilterListView extends CoordinatorLayout {
                 changeState();
             }
         });
-
-        filterListBehavior.setPeekHeight(100);
     }
 
     public void changeState() {
@@ -93,7 +92,7 @@ public class FilterListView extends CoordinatorLayout {
     }
 
     //populate recyclerview
-    private void populateRecyclerView(String option) {
+    public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
         horizontal_adapter adapter = new horizontal_adapter(dbHelper.getFilterList(getContext(), option), getContext(), filterList);
         filterList.setAdapter(adapter);

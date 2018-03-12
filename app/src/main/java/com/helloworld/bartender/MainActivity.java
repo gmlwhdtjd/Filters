@@ -1,43 +1,27 @@
 package com.helloworld.bartender;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
-
-import android.support.design.widget.BottomSheetBehavior;
-
 import android.os.CountDownTimer;
-
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.adapter.horizontal_adapter;
 
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
-//TODO:
-
 public class MainActivity extends AppCompatActivity {
-
-    private int REQ_PICK_CODE = 100;
 
     // 카메라 관련
     private FCameraView fCameraView;
@@ -65,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private EditView editView;
 
     FCameraFilter cameraFilter;
-
-    int tmpColor = 255;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,13 +135,13 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickerIntent = new Intent(Intent.ACTION_PICK);
+                Intent pickerIntent = new Intent(Intent.ACTION_VIEW);
 
                 pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 
                 pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                startActivityForResult(pickerIntent, REQ_PICK_CODE);
+                startActivity(pickerIntent);
 
 //              dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
             }
@@ -189,10 +171,6 @@ public class MainActivity extends AppCompatActivity {
                         captureEffectImg.startAnimation(captuer);
 
                         cameraCaptureBtt.setClickable(true);
-
-                        // Todo: 임시적인 효과를 위한 코드 -> 나중에 지우고 다른 부분에서 구현할 필요가 있음
-                        ((ImageView) findViewById(R.id.cameraCaptureInnerImg)).setColorFilter(Color.argb(150, tmpColor, tmpColor, tmpColor));
-                        tmpColor = (tmpColor + 50) % 255;
                     }
                 }.start();
             }
@@ -207,9 +185,35 @@ public class MainActivity extends AppCompatActivity {
 
         // 초기 필터 세팅
         cameraFilter = new OriginalFilter(this, 1);
+        setCameraFilter(cameraFilter);
+    }
 
-        fCameraView.setFilter(cameraFilter);
-        fCameraCapturer.setFilter(cameraFilter);
-        ((EditView) findViewById(R.id.editView)).setFilter(cameraFilter);
+    public void setCameraFilter(final FCameraFilter filter){
+        fCameraView.setFilter(filter);
+        fCameraCapturer.setFilter(filter);
+        editView.setFilter(filter);
+        changeCaptureInnerColor(filter);
+      
+        editView.setOnSaveListener(new EditView.OnSaveListener() {
+            @Override
+            public void onSaved() {
+                changeCaptureInnerColor(filter);
+            }
+        });
+    }
+
+    public void changeCaptureInnerColor(FCameraFilter filter) {
+        if (filter instanceof OriginalFilter) {
+            ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+            float[] hsb = new float[3];
+            Color.RGBToHSV(
+                    filter.getValueWithType(OriginalFilter.ValueType.RGB_R),
+                    filter.getValueWithType(OriginalFilter.ValueType.RGB_G),
+                    filter.getValueWithType(OriginalFilter.ValueType.RGB_B),
+                    hsb);
+            hsb[1] = hsb[1] < 0.2f ? hsb[1] : 0.2f;
+            hsb[2] = 0.90f;
+            cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsb));
+        }
     }
 }

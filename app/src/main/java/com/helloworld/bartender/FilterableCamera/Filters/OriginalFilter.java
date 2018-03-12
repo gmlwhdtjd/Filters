@@ -1,21 +1,12 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
-import android.support.annotation.NonNull;
 import android.util.Size;
-
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
-import java.util.Random;
 
-import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static java.lang.Math.exp;
 
 /**
@@ -34,30 +25,30 @@ public class OriginalFilter extends FCameraFilter {
     private float noiseIntensity;
 
     private float[] mask = new float[25];
-    private float u[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
-    private float v[] = { -2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    private float u[] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
+    private float v[] = {-2.0f, -1.0f, 0.0f, 1.0f, 2.0f};
 
     private void setMask(float sigma) {
         float result = 0.0f;
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                mask[(i*5)+j] = (float) (exp(-((u[i]*u[i]) + (v[j]*v[j])) / (2.0f * sigma*sigma)) / (2.0f * 3.14159265358979323846f *sigma*sigma));
-                result += mask[(i*5)+j];
+                mask[(i * 5) + j] = (float) (exp(-((u[i] * u[i]) + (v[j] * v[j])) / (2.0f * sigma * sigma)) / (2.0f * 3.14159265358979323846f * sigma * sigma));
+                result += mask[(i * 5) + j];
             }
         }
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                mask[(i*5)+j] /= result;
+                mask[(i * 5) + j] /= result;
             }
         }
     }
 
     public enum ValueType implements FCameraFilter.ValueType {
+        COLOR_RATIO,
         RGB_R,
         RGB_G,
         RGB_B,
-        COLOR_RATIO,
         BRIGHTNESS,
         SATURATION,
         BLUR,
@@ -67,28 +58,59 @@ public class OriginalFilter extends FCameraFilter {
         NOISE_INTENSITY;
 
         @Override
-        public int getPageNumber() {
+        public String getPageName(Context context) {
             switch (this) {
+                case COLOR_RATIO:
                 case RGB_R:
                 case RGB_G:
                 case RGB_B:
-                    return 0;
-                case COLOR_RATIO:
+                    return context.getString(R.string.OriginalFilter_Page_1);
                 case BRIGHTNESS:
                 case SATURATION:
-                    return 1;
+                    return context.getString(R.string.OriginalFilter_Page_2);
                 case BLUR:
                 case FOCUS:
-                    return 2;
+                    return context.getString(R.string.OriginalFilter_Page_3);
                 case ABERRATION:
-                    return 3;
+                    return context.getString(R.string.OriginalFilter_Page_4);
                 case NOISE_SIZE:
                 case NOISE_INTENSITY:
-                    return 4;
+                    return context.getString(R.string.OriginalFilter_Page_5);
                 default:
-                    return -1;
+                    return "default";
             }
         }
+
+        @Override
+        public String getValueName(Context context) {
+            switch (this) {
+                case COLOR_RATIO:
+                    return context.getString(R.string.OriginalFilter_COLOR_RATIO);
+                case RGB_R:
+                    return context.getString(R.string.OriginalFilter_RGB_R);
+                case RGB_G:
+                    return context.getString(R.string.OriginalFilter_RGB_G);
+                case RGB_B:
+                    return context.getString(R.string.OriginalFilter_RGB_B);
+                case BRIGHTNESS:
+                    return context.getString(R.string.OriginalFilter_BRIGHTNESS);
+                case SATURATION:
+                    return context.getString(R.string.OriginalFilter_SATURATION);
+                case BLUR:
+                    return context.getString(R.string.OriginalFilter_BLUR);
+                case FOCUS:
+                    return context.getString(R.string.OriginalFilter_FOCUS);
+                case ABERRATION:
+                    return context.getString(R.string.OriginalFilter_ABERRATION);
+                case NOISE_SIZE:
+                    return context.getString(R.string.OriginalFilter_NOISE_SIZE);
+                case NOISE_INTENSITY:
+                    return context.getString(R.string.OriginalFilter_NOISE_INTENSITY);
+                default:
+                    return "default";
+            }
+        }
+
     }
 
     @Override
@@ -96,6 +118,9 @@ public class OriginalFilter extends FCameraFilter {
         if (type instanceof ValueType) {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
+                case COLOR_RATIO:
+                    colorRatio = (float) value / 100;
+                    break;
                 case RGB_R:
                     rgb[0] = (float) value / 255;
                     break;
@@ -104,9 +129,6 @@ public class OriginalFilter extends FCameraFilter {
                     break;
                 case RGB_B:
                     rgb[2] = (float) value / 255;
-                    break;
-                case COLOR_RATIO:
-                    colorRatio = (float) value / 100;
                     break;
                 case BRIGHTNESS:
                     brightness = (float) value / 100;
@@ -140,18 +162,18 @@ public class OriginalFilter extends FCameraFilter {
         if (type instanceof ValueType) {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
-                case RGB_R:
-                    return (int) (rgb[0]*255);
-                case RGB_G:
-                    return (int) (rgb[1]*255);
-                case RGB_B:
-                    return (int) (rgb[2]*255);
                 case COLOR_RATIO:
-                    return (int) (colorRatio*100);
+                    return (int) (colorRatio * 100);
+                case RGB_R:
+                    return (int) (rgb[0] * 255);
+                case RGB_G:
+                    return (int) (rgb[1] * 255);
+                case RGB_B:
+                    return (int) (rgb[2] * 255);
                 case BRIGHTNESS:
-                    return (int) (brightness*100);
+                    return (int) (brightness * 100);
                 case SATURATION:
-                    return (int) (saturation*100);
+                    return (int) (saturation * 100);
                 case BLUR:
                     return (int) (blur * 25);
                 case FOCUS:
@@ -168,22 +190,28 @@ public class OriginalFilter extends FCameraFilter {
         } else
             throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
     }
-  
-    private float[] nl = {(float)Math.random(), (float)Math.random(), (float)Math.random(), 0.0f};
+
+    private float[] nl = {(float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
     public OriginalFilter(Context context, Integer id) {
-        this(context, id, "Default", 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0);
+        this(context, id,
+                "Default",
+                0, 255, 255, 255,
+                0, 0,
+                0, 0,
+                0,
+                0, 0);
     }
 
     public OriginalFilter(Context context, Integer id, String name,
-                          int red, int green, int blue,
-                          int colorRatio, int brightness, int saturation,
+                          int colorRatio, int red, int green, int blue,
+                          int brightness, int saturation,
                           int blur, int focus,
                           int aberration,
                           int noiseSize, int noiseIntensity) {
         super(context, R.raw.filter_vertex_shader, R.raw.filter_fragment_shader, id);
-        
+
         setName(name);
         setValueWithType(ValueType.RGB_R, red);
         setValueWithType(ValueType.RGB_G, green);

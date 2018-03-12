@@ -1,8 +1,12 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.support.annotation.NonNull;
 import android.util.Size;
 
@@ -11,6 +15,7 @@ import com.helloworld.bartender.R;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
+import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static java.lang.Math.exp;
 
 /**
@@ -191,6 +196,7 @@ public class OriginalFilter extends FCameraFilter {
         setValueWithType(ValueType.ABERRATION, aberration);
         setValueWithType(ValueType.NOISE_SIZE, noiseSize);
         setValueWithType(ValueType.NOISE_INTENSITY, noiseIntensity);
+
     }
 
     @Override

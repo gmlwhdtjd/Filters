@@ -46,7 +46,6 @@ public class FCameraView extends GLSurfaceView {
 
     public FCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         mRenderer = new CameraViewRenderer();
 
         this.setEGLContextClientVersion ( 2 );

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
@@ -26,9 +27,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_FILTER_NAME = "name";
     public static final String COLUMN_FILTER_TYPE = "type";
+    public Context mContext;
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -80,12 +83,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valuesForMain.put(COLUMN_FILTER_TYPE, filter.getClass().getSimpleName());
 
         //id null이면 튜플 생성, id가 존재하면 튜플 update
-        db.replace(TABLE_MAIN_NAME, null, valuesForMain);
+        int lastInsertedId = (int)db.replace(TABLE_MAIN_NAME, null, valuesForMain);
+
+        Log.d("lastinsertedid",String.valueOf(lastInsertedId));
 
         //type에 따라 테이블과 속성이 바뀜
         switch (filter.getClass().getSimpleName()) {
             case TYPE1_TABLE_NAME:
-                values.put(COLUMN_ID, findIdWithName(db, filter.getName()));
+                values.put(COLUMN_ID,lastInsertedId);
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                     values.put(valueType.toString(), filter.getValueWithType(valueType));
                 }
@@ -98,9 +103,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void pasteFilter(FCameraFilter receivedFilter) {
+        FCameraFilter newFilter = null;
+        switch (receivedFilter.getClass().getSimpleName()) {
+            case TYPE1_TABLE_NAME:
+                newFilter = new OriginalFilter(mContext, null);
+                for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
+                    newFilter.setValueWithType(valueType,receivedFilter.getValueWithType(valueType));
+                }
+                newFilter.setName("CopyOf"+receivedFilter.getName());
+                saveFilter(newFilter);
+            default:
+                break;
+        }
+    }
+
 
     //정렬
-    public List<FCameraFilter> getFilterList(Context context, String option) {
+    public List<FCameraFilter> getFilterList(String option) {
         String query;
         if (option.equals("")) {
             query = "SELECT * FROM " + TABLE_MAIN_NAME;
@@ -119,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String name = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME));
                 switch (type) {
                     case TYPE1_TABLE_NAME:
-                        FCameraFilter filter = new OriginalFilter(context, id);
+                        FCameraFilter filter = new OriginalFilter(mContext, id);
                         filter.setName(name);
                         Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_TABLE_NAME + " WHERE " + COLUMN_ID + "=" + id, null);
                         typeCursor.moveToFirst();
@@ -139,30 +159,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return filterLinkedList;
     }
 
-//    public Item getFilter(long id) {
-//        Item receivedFilter = new Item();
-//        return receivedFilter;
-//    }
-//
 
-
-    public void deleteFilterRecord(int id, Context context){
+    public void deleteFilterRecord(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM "+ TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
-    }
-
-
-
-    public Integer findIdWithName(SQLiteDatabase db, String name) {
-        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_FILTER_NAME+"='" + name + "'", null);
-        cs.moveToFirst();
-        Integer FilterID = cs.getInt(0);
-
-        return FilterID;
+        db.execSQL("DELETE FROM " + TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
     }
 
     public String findTypeWithId(SQLiteDatabase db, int id) {
-        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE "+COLUMN_ID+"='" + id + "'", null);
+        Cursor cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE " + COLUMN_ID + "='" + id + "'", null);
         cs.moveToFirst();
         String type = cs.getString(cs.getColumnIndex(COLUMN_FILTER_TYPE));
         return type;

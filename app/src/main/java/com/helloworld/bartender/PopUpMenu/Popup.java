@@ -49,9 +49,9 @@ public class Popup {
         PopupOption option3 = new PopupOption(2, "공유");
 
         this.addItem(option1);
-        this.addSeperator();
+     //   this.addSeperator();
         this.addItem(option2);
-        this.addSeperator();
+     //   this.addSeperator();
         this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {

@@ -82,22 +82,43 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fCamera.switchCameraFacing();
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                        break;
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                        break;
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                        break;
+                }
             }
         });
 
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cameraFlashState = (cameraFlashState + 1) % 3;
-                switch (cameraFlashState) {
-                    case 0:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_flash_auto);
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        fCamera.setFlashSetting(FCamera.Flash.OFF);
                         break;
-                    case 1:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_flash_off);
+                    case OFF:
+                        fCamera.setFlashSetting(FCamera.Flash.ON);
                         break;
-                    case 2:
-                        ((ImageButton) v).setImageResource(R.drawable.ic_camera_flash_on);
+                    case ON:
+                        fCamera.setFlashSetting(FCamera.Flash.AUTO);
+                        break;
+                }
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                        break;
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                        break;
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
                         break;
                 }
             }
@@ -135,13 +156,13 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickerIntent = new Intent(Intent.ACTION_VIEW);
+                Intent AlbumIntent = new Intent(Intent.ACTION_VIEW);
 
-                pickerIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                AlbumIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
 
-                pickerIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                AlbumIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                startActivity(pickerIntent);
+                startActivity(AlbumIntent);
 
 //              dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
             }

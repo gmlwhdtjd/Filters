@@ -9,11 +9,13 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
@@ -27,6 +29,7 @@ public class EditView extends CoordinatorLayout {
 
     BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
+    DatabaseHelper dbHelper;
 
     TextView filterNameView;
 
@@ -52,6 +55,8 @@ public class EditView extends CoordinatorLayout {
         inflater.inflate(R.layout.layout_edit_view, this);
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
+
+        dbHelper = new DatabaseHelper(getContext());
 
         // TODO : 변수 세팅
 
@@ -92,7 +97,10 @@ public class EditView extends CoordinatorLayout {
             public void onClick(View v) {
                 // TODO : Save
                 changeState();
-
+                //update
+                dbHelper.saveFilter(mFilter);
+                FilterListView filterListView= ((MainActivity) getContext()).findViewById(R.id.FilterListView);
+                filterListView.populateRecyclerView("");
                 if (mOnSaveListener != null)
                     mOnSaveListener.onSaved();
             }

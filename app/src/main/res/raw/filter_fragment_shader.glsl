@@ -190,10 +190,10 @@ void main ()
     vec3 RGBfilter = vec3(variables.rgb.r, variables.rgb.g, variables.rgb.b);
     target = (1.0-variables.colorRatio)*target + variables.colorRatio*RGBfilter;
 
-    float blocksize = 500.0 * variables.noiseSize;
-    vec3 randomDelta = vec3(gold_noise(pixelize, iGlobalTime+PHI));
-    vec4 noisetexture = texture2D(sNoiseTexture, fract(texCoord * iGlobalTime));
-    target += vec3(noisetexture.r*2.0-1.0, noisetexture.g*2.0-1.0, noisetexture.b*2.0-1.0)*variables.noiseIntensity;
+//    float blocksize = 500.0 * variables.noiseSize;
+//    vec3 randomDelta = vec3(gold_noise(pixelize, iGlobalTime+PHI));
+//    vec4 noisetexture = texture2D(sNoiseTexture, fract(texCoord * iGlobalTime));
+//    target += vec3(noisetexture.r*2.0-1.0, noisetexture.g*2.0-1.0, noisetexture.b*2.0-1.0)*variables.noiseIntensity;
 
     gl_FragColor = vec4(target, 1.0);
 

@@ -1,11 +1,16 @@
 package com.helloworld.bartender.FilterableCamera;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -27,6 +32,7 @@ class FCameraRenderer {
     private FCameraFilter mFilter;
     private int mProgram;
     private boolean initStatus = false;
+    private Context mContext;
 
     FCameraRenderer() {
     }

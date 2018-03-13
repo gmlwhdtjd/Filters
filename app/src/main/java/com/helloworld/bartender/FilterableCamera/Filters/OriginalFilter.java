@@ -119,7 +119,7 @@ public class OriginalFilter extends FCameraFilter {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
                 case COLOR_RATIO:
-                    colorRatio = (float) value / 100;
+                    colorRatio = (float) value / 200;
                     break;
                 case RGB_R:
                     rgb[0] = (float) value / 255;
@@ -163,7 +163,7 @@ public class OriginalFilter extends FCameraFilter {
             ValueType valueType = (ValueType) type;
             switch (valueType) {
                 case COLOR_RATIO:
-                    return (int) (colorRatio * 100);
+                    return (int) (colorRatio * 200);
                 case RGB_R:
                     return (int) (rgb[0] * 255);
                 case RGB_G:

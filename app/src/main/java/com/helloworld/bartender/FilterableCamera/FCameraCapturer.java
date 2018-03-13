@@ -20,6 +20,7 @@ import android.view.Surface;
 import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.R;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
@@ -222,6 +223,7 @@ public class FCameraCapturer {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             File mFile = new File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
+//                            File.separator + mContext.getString(R.string.app_name) +
                             File.separator +"IMG_"+ timeStamp + ".jpg");
 
             FileOutputStream fos = new FileOutputStream(mFile);

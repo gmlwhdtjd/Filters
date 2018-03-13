@@ -188,6 +188,14 @@ public class FCamera implements LifecycleObserver {
      */
     private boolean mFlashSupported;
 
+    private Flash mFlashSetting;
+
+    public enum Flash {
+        AUTO,
+        ON,
+        OFF
+    }
+
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
@@ -253,7 +261,7 @@ public class FCamera implements LifecycleObserver {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == 0) {
+                    if (afState == null) {
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
@@ -368,6 +376,18 @@ public class FCamera implements LifecycleObserver {
         mCameraFacing = !mCameraFacing;
 
         openCamera(mFCameraView.getWidth(), mFCameraView.getHeight());
+    }
+
+    public void setFlashSetting(Flash flash) {
+        if (mFlashSupported) {
+            mFlashSetting = flash;
+        }
+        else
+            mFlashSetting = Flash.OFF;
+    }
+
+    public Flash getFlashSetting() {
+        return mFlashSetting;
     }
 
     /**
@@ -543,6 +563,10 @@ public class FCamera implements LifecycleObserver {
                 // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
+                if (mFlashSupported)
+                    mFlashSetting = Flash.AUTO;
+                else
+                    mFlashSetting = Flash.OFF;
 
                 mCameraId = cameraId;
                 return;
@@ -738,6 +762,7 @@ public class FCamera implements LifecycleObserver {
             // This is how to tell the camera to trigger.
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
                     CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+            setAutoFlash(mPreviewRequestBuilder);
             // Tell #mCaptureCallback to wait for the precapture sequence to be set.
             mState = STATE_WAITING_PRECAPTURE;
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,

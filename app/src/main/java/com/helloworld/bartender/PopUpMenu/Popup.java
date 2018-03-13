@@ -4,10 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -23,6 +26,8 @@ import com.helloworld.bartender.R;
  */
 
 public class Popup {
+    private Context mContext;
+    
     private PopupWindow popupWindow;
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
@@ -31,33 +36,34 @@ public class Popup {
     private DatabaseHelper dbHelper;
 
     public interface OnPopupItemClickListener {
-        public abstract void onItemClick(int itemId);
+        void onItemClick(int itemId);
     }
 
 
-    public Popup(final Context context, final FCameraFilter selectedFilter) {
+    public Popup(Context context, final FCameraFilter selectedFilter) {
         super();
+        mContext = context;
         this.selectedFilter = selectedFilter;
-        this.popupWindow = new PopupWindow(context);
+        this.popupWindow = new PopupWindow(mContext);
 
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
-        dbHelper = new DatabaseHelper(context);
+        dbHelper = new DatabaseHelper(mContext);
 
         PopupOption option1 = new PopupOption(0, "삭제");
         PopupOption option2 = new PopupOption(1, "복제");
         PopupOption option3 = new PopupOption(2, "공유");
 
         this.addItem(option1);
-     //   this.addSeperator();
+        this.addSeperator();
         this.addItem(option2);
-     //   this.addSeperator();
+        this.addSeperator();
         this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
-                FilterListView filterListView=((MainActivity) context).findViewById(R.id.FilterListView);
+                FilterListView filterListView=((MainActivity) mContext).findViewById(R.id.FilterListView);
                 switch (itemId) {
                     case 0:
                         //DELETE
@@ -101,8 +107,11 @@ public class Popup {
     }
 
     public void addSeperator() {
-        View seperator = (View) inflater.inflate(R.layout.layout_popup_seperator, null);
-        rootView.addView(seperator);
+        ImageView tmp = new ImageView(mContext);
+        tmp.setImageResource(R.drawable.popup_seperator);
+        tmp.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        tmp.setScaleType(ImageView.ScaleType.FIT_XY);
+        rootView.addView(tmp);
     }
 
 

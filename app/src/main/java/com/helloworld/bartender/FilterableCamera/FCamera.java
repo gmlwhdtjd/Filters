@@ -848,7 +848,7 @@ public class FCamera implements LifecycleObserver {
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (mFlashSupported) {
             requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                    CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
         }
     }
 

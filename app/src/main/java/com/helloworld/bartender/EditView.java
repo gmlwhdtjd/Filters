@@ -1,15 +1,19 @@
 package com.helloworld.bartender;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Filter;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
@@ -31,7 +35,7 @@ public class EditView extends CoordinatorLayout {
     FCameraFilter mFilter;
     DatabaseHelper dbHelper;
 
-    TextView filterNameView;
+    TextView editNameView;
 
     OnSaveListener mOnSaveListener;
 
@@ -66,7 +70,6 @@ public class EditView extends CoordinatorLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        filterNameView = findViewById(R.id.filterNameView);
 
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.setPeekHeight(0); //peek = 0로 하면 첫 화면에서 안보임
@@ -82,7 +85,38 @@ public class EditView extends CoordinatorLayout {
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
         });
-        //bottomSheetBehavior.setLocked(true);
+
+        editNameView = findViewById(R.id.editNameView);
+        editNameView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Change Filter Name");
+
+                float dp = getResources().getDisplayMetrics().density;
+
+                FrameLayout changeView= new FrameLayout(getContext());
+                changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
+
+                final EditText input = new EditText(getContext());
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                changeView.addView(input);
+
+                builder.setView(changeView);
+
+                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mFilter.setName(input.getText().toString());
+                        editNameView.setText(mFilter.getName());
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+
+                builder.show();
+            }
+        });
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
@@ -121,7 +155,7 @@ public class EditView extends CoordinatorLayout {
 
     public void setFilter(FCameraFilter filter) {
         mFilter = filter;
-        filterNameView.setText(mFilter.getName());
+        editNameView.setText(mFilter.getName());
 
         TabHost tabHost = findViewById(R.id.tabHost);
         tabHost.setup();

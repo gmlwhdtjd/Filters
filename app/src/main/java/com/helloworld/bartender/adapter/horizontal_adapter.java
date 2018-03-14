@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
+import com.helloworld.bartender.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
 import com.helloworld.bartender.FilterableCamera.FCameraView;
@@ -40,13 +41,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
-        if (position == filterList.size()+1) {
-            return R.layout.layout_filter_list_end_btt;
-        } else if (position == 0) {
-            return R.layout.layout_default_filter_icon;
-        } else {
-            return R.layout.layout_filter_list_icon;
-        }
+        return (position == filterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
 
 
@@ -62,23 +57,27 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
-            defaultFilterIcon = (RadioButton) itemView.findViewById(R.id.defaultFilterIcon);
         }
     }
 
     //item 삭제
     public void remove(int position) {
+
         try {
-            filterList.remove(position);
+            filterList.remove(position - 1);
             notifyItemRemoved(position);
+            notifyItemRangeChanged(position, filterList.size());
+
         } catch (IndexOutOfBoundsException ex) {
             ex.printStackTrace();
         }
     }
 
     //item 추가
-    public void add(int position, FCameraFilter filter) {
+    public void add(FCameraFilter filter) {
+        int position = filterList.size();
         filterList.add(position, filter);
+        this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
     }
 
@@ -98,8 +97,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         View view;
         if (viewType == R.layout.layout_filter_list_icon) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_icon, parent, false);
-        } else if (viewType == R.layout.layout_default_filter_icon) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_default_filter_icon, parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_end_btt, parent, false);
         }
@@ -111,7 +108,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void onBindViewHolder(final horizontalViewHolder holder, int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         //이곳에서 dataset에서 element를 가져온다
-        if (position == filterList.size()+1) {
+        if (position == filterList.size()) {
             holder.endBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,22 +119,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     editView.changeState();
                 }
             });
-        } else if (position == 0) {
-            //default Filter
-            final FCameraFilter defaultFilter = new OriginalFilter(mContext, null);
-            holder.defaultFilterIcon.setText("Default");
-            holder.defaultFilterIcon.setChecked(lastSelectedPosition == position);
-            holder.defaultFilterIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lastSelectedPosition = holder.getAdapterPosition();
-                    ((MainActivity) mContext).setCameraFilter(defaultFilter);
-                    notifyDataSetChanged();
-                }
-            });
         } else {
-            final FCameraFilter filter = filterList.get(position-1);
-            final Popup popup = new Popup(mContext, filter);
+            final FCameraFilter filter = filterList.get(position);
+            final Popup popup = new Popup(mContext, filter, position);
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == position);
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +152,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     //뷰안에 dataset의 사이즈를 반환한다.(LayoutManger에 의해 실행)
     public int getItemCount() {
-        return filterList.size()+2;
+        return filterList.size() + 1;
     }
 
 }

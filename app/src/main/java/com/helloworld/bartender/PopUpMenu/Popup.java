@@ -40,7 +40,7 @@ public class Popup {
     }
 
 
-    public Popup(Context context, final FCameraFilter selectedFilter) {
+    public Popup(Context context, final FCameraFilter selectedFilter , final int selectedPosition) {
         super();
         mContext = context;
         this.selectedFilter = selectedFilter;
@@ -69,13 +69,13 @@ public class Popup {
                         //DELETE
                         // TODO: delete시 현재 사용중인 필터를 default필터로 변경, 삭제시 기본필터로 변경, 삭제시 애니메이션
                         dbHelper.deleteFilterRecord(selectedFilter.getId());
-                        filterListView.populateRecyclerView(""); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
+                        filterListView.getHorizontalAdapter().remove(selectedPosition); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
                         break;
                     case 1:
                         //PASTE
                         //TODO: 복제시 이름 카운트??
-                        dbHelper.pasteFilter(selectedFilter);
-                        filterListView.populateRecyclerView("");
+                        FCameraFilter pastedFilter = dbHelper.pasteFilter(selectedFilter);
+                        filterListView.getHorizontalAdapter().add(pastedFilter);
                         break;
                     case 2:
                         //Share

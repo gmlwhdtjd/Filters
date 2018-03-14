@@ -16,6 +16,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
 /**
@@ -30,6 +31,7 @@ public class FilterListView extends CoordinatorLayout {
     private RecyclerView filterList;
     private LinearLayoutManager mLayoutManger;
     private ImageButton filterListBtt;
+    private horizontal_adapter adapter;
 
     public FilterListView(Context context) {
         super(context);
@@ -135,8 +137,12 @@ public class FilterListView extends CoordinatorLayout {
     //populate recyclerview
     public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        horizontal_adapter adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
+        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
         filterList.setAdapter(adapter);
+    }
+
+    public horizontal_adapter getHorizontalAdapter(){
+        return adapter;
     }
 
 

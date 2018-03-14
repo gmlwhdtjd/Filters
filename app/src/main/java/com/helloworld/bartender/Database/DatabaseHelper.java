@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,6 +33,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        if(!db.isReadOnly()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                String query = String.format("PRAGMA foreign_keys = %s", "ON");
+                db.execSQL(query);
+            } else {
+                db.setForeignKeyConstraintsEnabled(true);
+            }
+        }
     }
 
     @Override
@@ -63,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void saveFilter(FCameraFilter filter) {
+    public int saveFilter(FCameraFilter filter) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -101,10 +115,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.close();
 
+        return lastInsertedId;
+
     }
 
-    public void pasteFilter(FCameraFilter receivedFilter) {
+    public FCameraFilter pasteFilter(FCameraFilter receivedFilter) {
         FCameraFilter newFilter = null;
+        FCameraFilter pastedFilter = null;
+        int pastedFilterId;
         switch (receivedFilter.getClass().getSimpleName()) {
             case TYPE1_TABLE_NAME:
                 newFilter = new OriginalFilter(mContext, null);
@@ -112,10 +130,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     newFilter.setValueWithType(valueType,receivedFilter.getValueWithType(valueType));
                 }
                 newFilter.setName("CopyOf"+receivedFilter.getName());
-                saveFilter(newFilter);
+                pastedFilterId=saveFilter(newFilter);
+                pastedFilter = new OriginalFilter(mContext,pastedFilterId);
+                for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
+                    pastedFilter.setValueWithType(valueType,newFilter.getValueWithType(valueType));
+                }
+                pastedFilter.setName(newFilter.getName());
+                break;
             default:
                 break;
         }
+        return pastedFilter;
     }
 
 
@@ -171,13 +196,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String type = cs.getString(cs.getColumnIndex(COLUMN_FILTER_TYPE));
         return type;
     }
-
-    public void enalbeFk() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.rawQuery("PRAGMA foreign_keys = ON", null);
-        db.close();
-
-    }
-
 
 }

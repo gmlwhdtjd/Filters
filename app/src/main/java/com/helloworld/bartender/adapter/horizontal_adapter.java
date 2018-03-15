@@ -1,6 +1,5 @@
 package com.helloworld.bartender.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
@@ -12,16 +11,13 @@ import android.widget.RadioButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
-import com.helloworld.bartender.FilterListView;
-import com.helloworld.bartender.FilterableCamera.FCamera;
-import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
-import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.PopUpMenu.Popup;
 import com.helloworld.bartender.R;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -29,7 +25,7 @@ import java.util.List;
  * Created by 김현식 on 2018-01-29.
  * swiping 추가 implement 밑 그밑 주석
  **/
-public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> {
+public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> implements ItemTouchHelperAdapter {
 
     private List<FCameraFilter> filterList;
     private Context mContext;
@@ -42,6 +38,23 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     @Override
     public int getItemViewType(int position) {
         return (position == filterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(filterList, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(filterList, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+        }
+        return true;
     }
 
 
@@ -79,6 +92,12 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         filterList.add(position, filter);
         this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
+    }
+
+    public void update(FCameraFilter filter){
+        int position = filterList.indexOf(filter);
+        filterList.set(position,filter);
+        notifyItemChanged(position);
     }
 
 

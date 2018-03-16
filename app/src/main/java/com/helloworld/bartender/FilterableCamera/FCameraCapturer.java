@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
+import android.media.Image;
+import android.media.ImageReader;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.os.Environment;
@@ -64,10 +68,13 @@ public class FCameraCapturer {
 
     private FCameraRenderer mCameraRender;
 
-    private SurfaceTexture mInputSurfaceTexture;
+//    private SurfaceTexture mInputSurfaceTexture;
 
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
+
+    private ImageReader mImageReader;
+    private Bitmap mNextImageBitmap;
 
     private AtomicBoolean filterChanged = new AtomicBoolean(false);
     private FCameraFilter mCameraFilter = null;
@@ -87,11 +94,26 @@ public class FCameraCapturer {
         }
     };
 
-    private final SurfaceTexture.OnFrameAvailableListener mOnFrameAvailableListener
-            = new SurfaceTexture.OnFrameAvailableListener() {
+//    private final SurfaceTexture.OnFrameAvailableListener mOnFrameAvailableListener
+//            = new SurfaceTexture.OnFrameAvailableListener() {
+//        @Override
+//        public synchronized void onFrameAvailable(SurfaceTexture surfaceTexture) {
+//            mSurfaceUpdated = true;
+//            onDraw();
+//        }
+//    };
+
+    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
+            = new ImageReader.OnImageAvailableListener() {
+
         @Override
-        public synchronized void onFrameAvailable(SurfaceTexture surfaceTexture) {
-            mSurfaceUpdated = true;
+        public void onImageAvailable(ImageReader reader) {
+            Image image = reader.acquireLatestImage();
+            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.capacity()];
+            buffer.get(bytes);
+            mNextImageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+            mSurfaceUpdated = false;
             onDraw();
         }
     };
@@ -134,7 +156,7 @@ public class FCameraCapturer {
 
     Surface getInputSurface() {
         initLock.acquireUninterruptibly();
-        Surface tmp = new Surface(mInputSurfaceTexture);
+        Surface tmp = mImageReader.getSurface();
         initLock.release();
 
         return tmp;
@@ -162,13 +184,22 @@ public class FCameraCapturer {
                 else
                     mCameraRender.setBuffers(orientation, FCameraRenderer.flip_UD);
 
-                mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
                 if (orientation == 90 || orientation == 270)
-                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getHeight(), mImageSize.getWidth());
+                    mImageReader = ImageReader.newInstance(mImageSize.getWidth(), mImageSize.getHeight(),
+                            ImageFormat.JPEG, /*maxImages*/2);
                 else
-                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getWidth(), mImageSize.getHeight());
+                    mImageReader = ImageReader.newInstance(mImageSize.getHeight(), mImageSize.getWidth(),
+                            ImageFormat.JPEG, /*maxImages*/2);
 
-                mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
+                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, renderHandler);
+
+//                mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
+//                if (orientation == 90 || orientation == 270)
+//                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getHeight(), mImageSize.getWidth());
+//                else
+//                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getWidth(), mImageSize.getHeight());
+//
+//                mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
 
                 initLock.release();
             }
@@ -182,14 +213,14 @@ public class FCameraCapturer {
                 if (filterChanged.getAndSet(false))
                     mCameraRender.setFilter(mCameraFilter);
 
-                synchronized (mOnFrameAvailableListener) {
-                    if (mSurfaceUpdated) {
-                        mInputSurfaceTexture.updateTexImage();
+                synchronized (mOnImageAvailableListener) {
+                    if (mSurfaceUpdated)
                         mSurfaceUpdated = false;
-                    }
+                    else
+                        return;
                 }
 
-                mCameraRender.onDraw();
+                mCameraRender.onDraw(/* mNextImageBitmap */);
 
                 saveImage();
 

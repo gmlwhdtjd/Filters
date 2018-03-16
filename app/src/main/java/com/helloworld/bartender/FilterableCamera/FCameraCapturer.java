@@ -66,7 +66,7 @@ public class FCameraCapturer {
     private EGLContext eglContext;
     private EGLSurface eglSurface;
 
-    private FCameraRenderer mCameraRender;
+    private FCameraImageRenderer mCameraRender;
 
 //    private SurfaceTexture mInputSurfaceTexture;
 
@@ -174,7 +174,7 @@ public class FCameraCapturer {
 
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
-                mCameraRender = new FCameraRenderer();
+                mCameraRender = new FCameraImageRenderer();
                 mCameraRender.initRender();
                 mCameraRender.setViewSize(mImageSize.getWidth(), mImageSize.getHeight());
 
@@ -220,7 +220,7 @@ public class FCameraCapturer {
                         return;
                 }
 
-                mCameraRender.onDraw(/* mNextImageBitmap */);
+                mCameraRender.onDraw(mNextImageBitmap);
 
                 saveImage();
 

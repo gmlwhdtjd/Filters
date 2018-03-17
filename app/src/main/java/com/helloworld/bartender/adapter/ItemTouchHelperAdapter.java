@@ -22,4 +22,6 @@ public interface ItemTouchHelperAdapter{
      */
     boolean onItemMove(int fromPosition, int toPosition);
 
+    boolean onItemMoveFinished(int fromPosition, int toPosition);
+
 }

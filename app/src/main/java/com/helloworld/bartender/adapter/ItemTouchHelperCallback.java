@@ -3,6 +3,7 @@ package com.helloworld.bartender.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.adapter.ItemTouchHelperAdapter;
 
 /**
@@ -56,6 +57,12 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
 
         super.onSelectedChanged(viewHolder, actionState);
+    }
+
+    @Override
+    public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+        mAdapter.onItemMoveFinished(fromPos,toPos);
     }
 
     @Override

@@ -16,6 +16,9 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,11 +89,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int saveFilter(FCameraFilter filter){
         SQLiteDatabase db = this.getReadableDatabase();
         int position;
+        //update
         if(filter.getId() != null){
             Cursor cs = db.rawQuery("SELECT position FROM " + TABLE_MAIN_NAME + " WHERE " + COLUMN_ID + "='" + filter.getId() + "'", null);
             cs.moveToFirst();
             position = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
         }else{
+            //add
             FilterListView filterListView=((MainActivity) mContext).findViewById(R.id.FilterListView);
             position = filterListView.getHorizontalAdapter().getItemCount()-1;
         }
@@ -113,7 +118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         valuesForMain.put(COLUMN_ID, filter.getId());
-        valuesForMain.put(COLUMN_FILTER_NAME, filter.getName());
+        valuesForMain.put(COLUMN_FILTER_NAME, EncodeFilterName(filter.getName()));
         valuesForMain.put(COLUMN_FILTER_TYPE, filter.getClass().getSimpleName());
         valuesForMain.put(COLUMN_FILTER_POS,position);
 
@@ -194,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 String type = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_TYPE));
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
-                String name = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME));
+                String name = DecodeFilterName(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
                 switch (type) {
                     case TYPE1_TABLE_NAME:
                         FCameraFilter filter = new OriginalFilter(mContext, id);
@@ -239,31 +244,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void chagePositionByDrag(int fromPos, int toPos){
         SQLiteDatabase db = this.getWritableDatabase();
-
-        db.execSQL("SELECT * FROM "+ TABLE_MAIN_NAME+" WHERE position='"+fromPos +"'");
+        Cursor cs = db.rawQuery("SELECT * FROM "+ TABLE_MAIN_NAME+" WHERE position='"+fromPos +"'",null);
+        cs.moveToFirst();
+        int fromId = cs.getInt(cs.getColumnIndex(COLUMN_ID));
 
         //fromPOs의 id를 받아서 저장한 후 fromPos와 toPos사이의 pos를 전부 바꾼후 마지막으로 저장한 값을 바꾼다.
 
         if(fromPos > toPos) {
-
-
-            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE position='" + fromPos + "'");
-
-            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position > " + position + " ORDER BY position", null);
-            if (cursor.moveToFirst()) {
+            cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position >= " + toPos + " AND position < "+ fromPos + " ORDER BY position", null);
+            if (cs.moveToLast()) {
                 do {
-                    int newPosition = cursor.getInt(cursor.getColumnIndex(COLUMN_FILTER_POS));
-                    db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition - 1) + "' WHERE position='" + newPosition + "'");
-                } while (cursor.moveToNext());
+                    int newPosition = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
+                    db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition + 1) + "' WHERE position='" + newPosition + "'");
+                } while (cs.moveToPrevious());
             }
-
+            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE _id='" + fromId + "'");
 
         }else if(toPos > fromPos){
-            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE position='" + fromPos + "'");
-
-
+            cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position <= " + toPos + " AND position > "+ fromPos + " ORDER BY position", null);
+            if (cs.moveToFirst()) {
+                do {
+                    int newPosition = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
+                    db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition - 1) + "' WHERE position='" + newPosition + "'");
+                } while (cs.moveToNext());
+            }
+            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE _id='" + fromId + "'");
         }
+    }
 
+    public String EncodeFilterName(String name){
+        String encodedName="";
+        try {
+            encodedName = URLEncoder.encode(name, "utf-8");
+        }catch (UnsupportedEncodingException e) {
+            Log.e("Encoding",e.toString());
+        }
+        return encodedName;
+    }
+
+    public String DecodeFilterName(String encodedName){
+        String name ="";
+        try {
+            name= URLDecoder.decode(encodedName, "utf-8");
+        }catch (UnsupportedEncodingException e) {
+            Log.e("Encoding",e.toString());
+        }
+        return name;
     }
 
 }

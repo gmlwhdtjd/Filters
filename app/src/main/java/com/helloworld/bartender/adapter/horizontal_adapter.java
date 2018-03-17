@@ -58,6 +58,20 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return true;
     }
 
+    @Override
+    public boolean onItemMoveFinished(int fromPosition, int toPosition) {
+        DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+            dbHelper.chagePositionByDrag(fromPosition, toPosition);
+        } else {
+            if(fromPosition >= filterList.size()){
+                dbHelper.chagePositionByDrag(fromPosition-1,toPosition);
+            }else if(fromPosition >=filterList.size()){
+                dbHelper.chagePositionByDrag(fromPosition,toPosition-1);
+            }
+        }
+        return true;
+    }
 
 
     //여기다가 필터 아이콘 표시
@@ -100,15 +114,15 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
     //item 추가
-    public void add(FCameraFilter filter,int position) {
+    public void add(FCameraFilter filter, int position) {
         filterList.add(position, filter);
         this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
     }
 
-    public void update(FCameraFilter filter){
+    public void update(FCameraFilter filter) {
         int position = filterList.indexOf(filter);
-        filterList.set(position,filter);
+        filterList.set(position, filter);
         notifyItemChanged(position);
     }
 

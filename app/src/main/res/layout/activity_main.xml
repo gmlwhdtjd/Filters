@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/bottomLinear">
 
-            <com.helloworld.bartender.FilterableCamera.FCameraView
+            <com.helloworld.bartender.FilterableCamera.FCameraPreview
                 android:id="@+id/cameraView"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"

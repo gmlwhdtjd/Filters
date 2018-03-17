@@ -1,6 +1,5 @@
 package com.helloworld.bartender.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +11,6 @@ import android.widget.RadioButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
-import com.helloworld.bartender.FilterableCamera.FCamera;
-import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
-import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;

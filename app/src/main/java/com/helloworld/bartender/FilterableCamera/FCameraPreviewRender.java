@@ -1,10 +1,8 @@
 package com.helloworld.bartender.FilterableCamera;
 
-import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
@@ -13,12 +11,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-/**
- * Created by huijonglee on 2018. 1. 30..
- */
-class FCameraImageRenderer {
+class FCameraPreviewRender {
 
-    private int []mTextureIds = new int[1];
+    private int[] mTextureIds;
 
     //shader variable
     private FloatBuffer mVertexBuffer;
@@ -30,7 +25,7 @@ class FCameraImageRenderer {
     private int mProgram;
     private boolean initStatus = false;
 
-    FCameraImageRenderer() {
+    FCameraPreviewRender() {
     }
 
     void initRender() {
@@ -39,9 +34,17 @@ class FCameraImageRenderer {
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    void setFilter(FCameraFilter filter) {
-        mFilter = filter;
-        mProgram = mFilter.getImageProgram();
+    SurfaceTexture getInputSurfaceTexture() {
+        mTextureIds = new int[1];
+        GLES20.glGenTextures(1, mTextureIds, 0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureIds[0]);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+
+        initStatus = true;
+        return new SurfaceTexture(mTextureIds[0]);
     }
 
     static final int flip_NON = 0x00; // non flipping
@@ -122,13 +125,17 @@ class FCameraImageRenderer {
         GLES20.glViewport(0, 0, width, height);
     }
 
-    void onDraw(Bitmap bitmap) {
+    void setFilter(FCameraFilter filter) {
+        mFilter = filter;
+        mProgram = mFilter.getProgram();
+    }
+
+    void onDraw() {
         if (initStatus && mFilter != null) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             GLES20.glUseProgram(mProgram);
 
-            // TODO : Rename
             int ph = GLES20.glGetAttribLocation(mProgram, "vPosition");
             int tch = GLES20.glGetAttribLocation(mProgram, "vTexCoord");
 
@@ -138,18 +145,8 @@ class FCameraImageRenderer {
             GLES20.glEnableVertexAttribArray(ph);
             GLES20.glEnableVertexAttribArray(tch);
 
-            GLES20.glGenTextures(1, mTextureIds, 0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-            bitmap.recycle();
-            bitmap = null;
-
             GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureIds[0]);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureIds[0]);
             GLES20.glUniform1i(GLES20.glGetUniformLocation(mProgram, "sTexture"), 0);
 
             mFilter.onDraw(mProgram, mViewSize);

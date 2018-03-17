@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.helloworld.bartender.FilterableCamera.FCamera;
-import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
-import com.helloworld.bartender.FilterableCamera.FCameraView;
+import com.helloworld.bartender.FilterableCamera.FCameraCapture;
+import com.helloworld.bartender.FilterableCamera.FCameraPreview;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
@@ -24,8 +24,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 public class MainActivity extends AppCompatActivity {
 
     // 카메라 관련
-    private FCameraView fCameraView;
-    private FCameraCapturer fCameraCapturer;
+    private FCameraPreview fCameraPreview;
+    private FCameraCapture fCameraCapture;
     private FCamera fCamera;
 
     private int cameraFlashState = 0;
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // 카메라 관련
-        fCameraView = findViewById(R.id.cameraView);
-        fCameraCapturer = new FCameraCapturer(this);
-        fCamera = new FCamera(this, getLifecycle(), fCameraView, fCameraCapturer);
+        fCameraPreview = findViewById(R.id.cameraView);
+        fCameraCapture = new FCameraCapture(this);
+        fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
 
         // 카메라 캡쳐 관련
         timerTextView = findViewById(R.id.timerNumberText);
@@ -210,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setCameraFilter(final FCameraFilter filter){
-        fCameraView.setFilter(filter);
-        fCameraCapturer.setFilter(filter);
+        fCameraPreview.setFilter(filter);
+        fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
         changeCaptureInnerColor(filter);
       

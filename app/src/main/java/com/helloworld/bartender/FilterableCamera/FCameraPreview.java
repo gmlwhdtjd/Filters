@@ -32,7 +32,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * A {@link GLSurfaceView} that can be adjusted to a specified aspect ratio.
  */
-public class FCameraView extends GLSurfaceView {
+public class FCameraPreview extends GLSurfaceView {
 
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
@@ -40,11 +40,11 @@ public class FCameraView extends GLSurfaceView {
     private CameraViewRenderer mRenderer;
     private Callback mCallback;
 
-    public FCameraView(Context context) {
+    public FCameraPreview(Context context) {
         this(context, null);
     }
 
-    public FCameraView(Context context, AttributeSet attrs) {
+    public FCameraPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRenderer = new CameraViewRenderer();
 
@@ -116,7 +116,7 @@ public class FCameraView extends GLSurfaceView {
      * Created by huijonglee on 2018. 1. 22..
      */
     private class CameraViewRenderer implements GLSurfaceView.Renderer {
-        private FCameraRenderer mCameraRender;
+        private FCameraPreviewRender mPreviewRender;
 
         private AtomicBoolean filterChanged =  new AtomicBoolean(false);
         private FCameraFilter mCameraFilter = null;
@@ -131,7 +131,7 @@ public class FCameraView extends GLSurfaceView {
             @Override
             public synchronized void onFrameAvailable(SurfaceTexture surfaceTexture) {
                 mSurfaceUpdated = true;
-                FCameraView.this.requestRender();
+                FCameraPreview.this.requestRender();
             }
         };
 
@@ -139,7 +139,7 @@ public class FCameraView extends GLSurfaceView {
             mSurfaceUpdated = false;
             mInitState.set(false);
             filterChanged.set(true);
-            mCameraRender.clear();
+            mPreviewRender.clear();
         }
 
         private void setFilter(FCameraFilter filter) {
@@ -152,17 +152,17 @@ public class FCameraView extends GLSurfaceView {
             Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
             if (facing == CameraCharacteristics.LENS_FACING_FRONT)
-                mCameraRender.setBuffers(orientation, FCameraRenderer.flip_RL);
+                mPreviewRender.setBuffers(orientation, FCameraPreviewRender.flip_RL);
             else
-                mCameraRender.setBuffers(orientation, FCameraRenderer.flip_NON);
+                mPreviewRender.setBuffers(orientation, FCameraPreviewRender.flip_NON);
         }
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            mCameraRender = new FCameraRenderer();
-            mCameraRender.initRender();
+            mPreviewRender = new FCameraPreviewRender();
+            mPreviewRender.initRender();
 
-            mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
+            mInputSurfaceTexture = mPreviewRender.getInputSurfaceTexture();
             mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
         }
 
@@ -170,7 +170,7 @@ public class FCameraView extends GLSurfaceView {
         public void onSurfaceChanged(GL10 gl, final int width, final int height) {
             if(!mInitState.getAndSet(true)) {
                 if(mCallback != null) {
-                    FCameraView.this.getHandler().post(new Runnable() {
+                    FCameraPreview.this.getHandler().post(new Runnable() {
                         @Override
                         public void run() {
                             mCallback.onSurfaceCreated(width, height);
@@ -179,7 +179,7 @@ public class FCameraView extends GLSurfaceView {
                 }
             }
 
-            mCameraRender.setViewSize(width, height);
+            mPreviewRender.setViewSize(width, height);
         }
 
         @Override
@@ -188,7 +188,7 @@ public class FCameraView extends GLSurfaceView {
                 return;
 
             if (filterChanged.getAndSet(false))
-                mCameraRender.setFilter(mCameraFilter);
+                mPreviewRender.setFilter(mCameraFilter);
 
 
             synchronized (mOnFrameAvailableListener) {
@@ -198,7 +198,7 @@ public class FCameraView extends GLSurfaceView {
                 }
             }
 
-            mCameraRender.onDraw();
+            mPreviewRender.onDraw();
         }
     }
 

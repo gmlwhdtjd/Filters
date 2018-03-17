@@ -127,9 +127,9 @@ public class FCamera implements LifecycleObserver {
     private String mCameraId;
 
     /**
-     * An {@link FCameraView} for camera preview.
+     * An {@link FCameraPreview} for camera preview.
      */
-    private FCameraView mFCameraView;
+    private FCameraPreview mFCameraPreview;
 
     /**
      * A {@link CameraCaptureSession } for camera preview.
@@ -159,7 +159,7 @@ public class FCamera implements LifecycleObserver {
     /**
      * An {@link ImageReader} that handles still image capture.
      */
-    private FCameraCapturer mFCameraCapturer;
+    private FCameraCapture mFCameraCapture;
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -261,7 +261,7 @@ public class FCamera implements LifecycleObserver {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == null) {
+                    if (afState == 0) {
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
@@ -321,13 +321,13 @@ public class FCamera implements LifecycleObserver {
 
     public FCamera(FragmentActivity activity,
                    Lifecycle lifecycle,
-                   FCameraView fCameraView,
-                   FCameraCapturer fCameraCapturer) {
+                   FCameraPreview fCameraPreview,
+                   FCameraCapture fCameraCapture) {
         lifecycle.addObserver(this);
 
         mActivity = activity;
-        mFCameraView = fCameraView;
-        mFCameraView.setCallback(new FCameraView.Callback() {
+        mFCameraPreview = fCameraPreview;
+        mFCameraPreview.setCallback(new FCameraPreview.Callback() {
             @Override
             public void onSurfaceCreated(int width, int height) {
                 openCamera(width, height);
@@ -336,20 +336,20 @@ public class FCamera implements LifecycleObserver {
 
         mCameraFacing = true;
 
-        mFCameraCapturer = fCameraCapturer;
+        mFCameraCapture = fCameraCapture;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     public void onResume() {
         startBackgroundThread();
-        mFCameraCapturer.onResume();
-        mFCameraView.onResume();
+        mFCameraCapture.onResume();
+        mFCameraPreview.onResume();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void onPause() {
-        mFCameraView.onPause();
-        mFCameraCapturer.onPause();
+        mFCameraPreview.onPause();
+        mFCameraCapture.onPause();
         closeCamera();
         stopBackgroundThread();
     }
@@ -375,7 +375,7 @@ public class FCamera implements LifecycleObserver {
 
         mCameraFacing = !mCameraFacing;
 
-        openCamera(mFCameraView.getWidth(), mFCameraView.getHeight());
+        openCamera(mFCameraPreview.getWidth(), mFCameraPreview.getHeight());
     }
 
     public void setFlashSetting(Flash flash) {
@@ -510,8 +510,8 @@ public class FCamera implements LifecycleObserver {
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
 
-                mFCameraView.setCameraCharacteristics(characteristics);
-                mFCameraCapturer.setCameraCharacteristics(characteristics, largest);
+                mFCameraPreview.setCameraCharacteristics(characteristics);
+                mFCameraCapture.setCameraCharacteristics(characteristics, largest);
 
                 //noinspection ConstantConditions
                 int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
@@ -553,10 +553,10 @@ public class FCamera implements LifecycleObserver {
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = mActivity.getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mFCameraView.setAspectRatio(
+                    mFCameraPreview.setAspectRatio(
                             mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 } else {
-                    mFCameraView.setAspectRatio(
+                    mFCameraPreview.setAspectRatio(
                             mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
 
@@ -677,7 +677,7 @@ public class FCamera implements LifecycleObserver {
      */
     private void createCameraPreviewSession() {
         try {
-            SurfaceTexture texture = mFCameraView.getInputSurfaceTexture();
+            SurfaceTexture texture = mFCameraPreview.getInputSurfaceTexture();
             assert texture != null;
 
             // We configure the size of default buffer to be the size of camera preview we want.
@@ -692,7 +692,7 @@ public class FCamera implements LifecycleObserver {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mFCameraCapturer.getInputSurface()),//mImageReader.getSurface()),
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mFCameraCapture.getInputSurface()),//mImageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
 
                         @Override
@@ -791,7 +791,7 @@ public class FCamera implements LifecycleObserver {
             // This is the CaptureRequest.Builder that we use to take a picture.
             final CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(mFCameraCapturer.getInputSurface());
+            captureBuilder.addTarget(mFCameraCapture.getInputSurface());
 
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,

@@ -68,14 +68,14 @@ public class Popup {
                     case 0:
                         //DELETE
                         // TODO: delete시 현재 사용중인 필터를 default필터로 변경, 삭제시 기본필터로 변경, 삭제시 애니메이션
-                        dbHelper.deleteFilterRecord(selectedFilter.getId());
+                        dbHelper.deleteFilterRecord(selectedFilter.getId(),selectedPosition);
                         filterListView.getHorizontalAdapter().remove(selectedPosition); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
                         break;
                     case 1:
                         //PASTE
                         //TODO: 복제시 이름 카운트??
-                        FCameraFilter pastedFilter = dbHelper.pasteFilter(selectedFilter);
-                        filterListView.getHorizontalAdapter().add(pastedFilter);
+                        FCameraFilter pastedFilter = dbHelper.pasteFilter(selectedFilter,selectedPosition);
+                        filterListView.getHorizontalAdapter().add(pastedFilter,selectedPosition+1);
                         break;
                     case 2:
                         //Share

@@ -1,6 +1,7 @@
 package com.helloworld.bartender.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -58,18 +59,30 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
 
+
     //여기다가 필터 아이콘 표시
-    public class horizontalViewHolder extends RecyclerView.ViewHolder {
+    public class horizontalViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         public RadioButton filterIcon;
-        public RadioButton defaultFilterIcon;
         public View layout;
         public ImageButton endBtn;
 
-        public horizontalViewHolder(View itemView, int viewType) {
+        public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
+        }
+
+        //item 이 move 했을때
+        @Override
+        public void onItemSelected() {
+            layout.setBackgroundColor(Color.LTGRAY);
+        }
+
+        //item 의 이동이 끝났을 떄
+        @Override
+        public void onItemClear() {
+            itemView.setBackgroundColor(0);
         }
     }
 
@@ -77,7 +90,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void remove(int position) {
 
         try {
-            filterList.remove(position - 1);
+            filterList.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, filterList.size());
 
@@ -87,8 +100,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
     //item 추가
-    public void add(FCameraFilter filter) {
-        int position = filterList.size();
+    public void add(FCameraFilter filter,int position) {
         filterList.add(position, filter);
         this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
@@ -127,7 +139,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void onBindViewHolder(final horizontalViewHolder holder, int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         //이곳에서 dataset에서 element를 가져온다
-        if (position == filterList.size()) {
+        if (holder.getAdapterPosition() == filterList.size()) {
             holder.endBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -139,10 +151,10 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
-            final FCameraFilter filter = filterList.get(position);
-            final Popup popup = new Popup(mContext, filter, position);
+            final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
+            final Popup popup = new Popup(mContext, filter, holder.getAdapterPosition());
             holder.filterIcon.setText(filter.getName());
-            holder.filterIcon.setChecked(lastSelectedPosition == position);
+            holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -150,9 +162,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     //외부 클래스에서 뷰 아이템 참조
                     ((MainActivity) mContext).setCameraFilter(filter);
                     notifyDataSetChanged();
-//                    filter.setName("Changed");
-//                    dbHelper.saveFilter(filter);
-//                    Toast.makeText(horizontal_adapter.this.mContext, filter.getName(), Toast.LENGTH_LONG).show();
                 }
             });
 

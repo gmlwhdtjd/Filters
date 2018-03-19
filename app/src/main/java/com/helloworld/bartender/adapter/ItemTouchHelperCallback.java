@@ -53,7 +53,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             if (viewHolder instanceof ItemTouchHelperViewHolder) {
                 ItemTouchHelperViewHolder itemViewHolder =
                         (ItemTouchHelperViewHolder) viewHolder;
-                itemViewHolder.onItemSelected();
+                itemViewHolder.onItemSelected(viewHolder.getAdapterPosition());
             }
         }
 
@@ -72,7 +72,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             ItemTouchHelperViewHolder itemViewHolder =
                     (ItemTouchHelperViewHolder) viewHolder;
-            itemViewHolder.onItemClear();
+            itemViewHolder.onItemClear(viewHolder.getAdapterPosition());
         }
     }
 }

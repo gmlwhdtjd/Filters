@@ -1,7 +1,6 @@
 package com.helloworld.bartender.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import android.widget.RadioButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
+import com.helloworld.bartender.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
@@ -21,7 +21,9 @@ import com.helloworld.bartender.PopUpMenu.Popup;
 import com.helloworld.bartender.R;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -37,6 +39,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private Vibrator vibe;
     private EditView editView;
     private Popup popup;
+    private Animation anim;
+    private Set<horizontalViewHolder> mBoundViewHolders = new HashSet<>();
+
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
@@ -87,7 +92,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         public RadioButton filterIcon;
         public View layout;
         public ImageButton endBtn;
-        public Animation anim;
 
         public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
@@ -95,19 +99,22 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
             popup = new Popup(mContext);
-            anim =  AnimationUtils.loadAnimation(mContext,R.anim.shake);
+
+
         }
 
         //item 이 move 했을때
         @Override
-        public void onItemSelected() {
-            filterIcon.startAnimation(anim);
+        public void onItemSelected(int position) {
+            FilterListView filterListView = ((MainActivity)mContext).findViewById(R.id.FilterListView);
+            startAnimationsOnItems(position);
         }
 
         //item 의 이동이 끝났을 떄
         @Override
-        public void onItemClear() {
-            filterIcon.clearAnimation();
+        public void onItemClear(int position) {
+            FilterListView filterListView = ((MainActivity)mContext).findViewById(R.id.FilterListView);
+            stopAnimationsOnItems(position);
         }
     }
 
@@ -144,6 +151,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         this.mContext = context;
         this.mRecyclerV = recyclerView;
         vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        anim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
     }
 
 
@@ -190,6 +198,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             });
 
             if (holder.getAdapterPosition() != 0) {
+                mBoundViewHolders.add((horizontalViewHolder) holder);
                 holder.filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -200,9 +209,22 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 });
             }
         }
-
-
     }
+
+    public void startAnimationsOnItems(int position){
+        for (horizontalViewHolder holder : mBoundViewHolders) {
+            if(holder.getAdapterPosition()!=position) {
+                holder.filterIcon.startAnimation(anim);
+            }
+        }
+    }
+
+    public void stopAnimationsOnItems(int position){
+        for (horizontalViewHolder holder : mBoundViewHolders) {
+            holder.filterIcon.clearAnimation();
+        }
+    }
+
 
     //뷰안에 dataset의 사이즈를 반환한다.(LayoutManger에 의해 실행)
     public int getItemCount() {

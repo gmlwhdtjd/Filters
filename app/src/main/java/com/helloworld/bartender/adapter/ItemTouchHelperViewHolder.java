@@ -14,12 +14,12 @@ public interface ItemTouchHelperViewHolder {
      * Implementations should update the item view to indicate
      * it's active state.
      */
-    void onItemSelected();
+    void onItemSelected(int position);
 
     /**
      * Called when the {@link ItemTouchHelper} has completed the
      * move or swipe, and the active item state should be cleared.
      */
-    void onItemClear();
+    void onItemClear(int position);
 
 }

@@ -18,4 +18,5 @@
     <string name="OriginalFilter_NOISE_SIZE">크기</string>
     <string name="OriginalFilter_NOISE_INTENSITY">강도</string>
 
+    <string name="DefaultFilter_Name">원본</string>
 </resources>

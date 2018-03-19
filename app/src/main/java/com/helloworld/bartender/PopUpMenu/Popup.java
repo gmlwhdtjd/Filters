@@ -34,16 +34,17 @@ public class Popup {
     private LayoutInflater inflater;
     private FCameraFilter selectedFilter;
     private DatabaseHelper dbHelper;
+    private boolean isPopupMenuOpen =false;
+    private int selectedPosition;
 
     public interface OnPopupItemClickListener {
         void onItemClick(int itemId);
     }
 
 
-    public Popup(Context context, final FCameraFilter selectedFilter , final int selectedPosition) {
+    public Popup(Context context) {
         super();
         mContext = context;
-        this.selectedFilter = selectedFilter;
         this.popupWindow = new PopupWindow(mContext);
 
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -87,6 +88,16 @@ public class Popup {
         });
     }
 
+    public boolean isPopupMenuOpen(){
+        return isPopupMenuOpen;
+    }
+
+    public void dismiss(){
+        popupWindow.dismiss();
+        isPopupMenuOpen = false;
+    }
+
+
     public void addItem(final PopupOption item) {
         TextView tv = (TextView) inflater.inflate(R.layout.layout_popup_item, null);
         tv.setText(item.getOptionName());
@@ -101,7 +112,7 @@ public class Popup {
             @Override
             public void onClick(View v) {
                 onPopupItemClickListener.onItemClick(item.getOptionId());
-                popupWindow.dismiss();
+                dismiss();
             }
         });
     }
@@ -120,7 +131,10 @@ public class Popup {
 	 * popup there. By default a popup is shown at (0, 0) with referring
 	 * the bottom left corner of the view as origin.
 	 */
-    public void show(View v) {
+    public void show(View v,FCameraFilter selectedFilter, int selectedPosition) {
+        this.selectedFilter = selectedFilter;
+        this.selectedPosition =selectedPosition;
+
         popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setContentView(rootView);
@@ -142,6 +156,7 @@ public class Popup {
         int yPos = location[1] - rootView.getMeasuredHeight();
 
         popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, xPos, yPos);
+        isPopupMenuOpen =true;
     }
 
     public void setOnItemClickListener(OnPopupItemClickListener onPopupItemClickListener) {

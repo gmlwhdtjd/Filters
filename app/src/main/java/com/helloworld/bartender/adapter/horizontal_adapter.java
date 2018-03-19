@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 
@@ -34,7 +36,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private int lastSelectedPosition = -1;
     private Vibrator vibe;
     private EditView editView;
-
+    private Popup popup;
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
@@ -43,7 +45,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+        if(popup.isPopupMenuOpen()){
+            popup.dismiss();
+        }
+
+        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition !=0) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(filterList, i, i + 1);
@@ -61,13 +67,15 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     @Override
     public boolean onItemMoveFinished(int fromPosition, int toPosition) {
         DatabaseHelper dbHelper = new DatabaseHelper(mContext);
-        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition !=0) {
             dbHelper.chagePositionByDrag(fromPosition, toPosition);
         } else {
-            if(fromPosition >= filterList.size()){
-                dbHelper.chagePositionByDrag(fromPosition-1,toPosition);
-            }else if(fromPosition >=filterList.size()){
-                dbHelper.chagePositionByDrag(fromPosition,toPosition-1);
+            if (fromPosition >= filterList.size()) {
+                dbHelper.chagePositionByDrag(fromPosition - 1, toPosition);
+            } else if (toPosition >= filterList.size()) {
+                dbHelper.chagePositionByDrag(fromPosition, toPosition - 1);
+            } else if (toPosition == 0) {
+                dbHelper.chagePositionByDrag(fromPosition, toPosition + 1);
             }
         }
         return true;
@@ -79,24 +87,27 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         public RadioButton filterIcon;
         public View layout;
         public ImageButton endBtn;
+        public Animation anim;
 
         public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
+            popup = new Popup(mContext);
+            anim =  AnimationUtils.loadAnimation(mContext,R.anim.shake);
         }
 
         //item 이 move 했을때
         @Override
         public void onItemSelected() {
-            layout.setBackgroundColor(Color.LTGRAY);
+            filterIcon.startAnimation(anim);
         }
 
         //item 의 이동이 끝났을 떄
         @Override
         public void onItemClear() {
-            itemView.setBackgroundColor(0);
+            filterIcon.clearAnimation();
         }
     }
 
@@ -166,7 +177,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             });
         } else {
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
-            final Popup popup = new Popup(mContext, filter, holder.getAdapterPosition());
             holder.filterIcon.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
@@ -179,14 +189,16 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
 
-            holder.filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    vibe.vibrate(1000);
-                    popup.show(v);
-                    return true;
-                }
-            });
+            if (holder.getAdapterPosition() != 0) {
+                holder.filterIcon.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        vibe.vibrate(50);
+                        popup.show(v,filter,holder.getAdapterPosition());
+                        return true;
+                    }
+                });
+            }
         }
 
 

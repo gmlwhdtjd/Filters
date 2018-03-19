@@ -21,4 +21,5 @@ public interface ItemTouchHelperViewHolder {
      * move or swipe, and the active item state should be cleared.
      */
     void onItemClear();
+
 }

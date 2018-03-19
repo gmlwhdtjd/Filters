@@ -1,7 +1,7 @@
 package com.helloworld.bartender.adapter;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,15 +12,13 @@ import android.widget.RadioButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
-import com.helloworld.bartender.FilterableCamera.FCamera;
-import com.helloworld.bartender.FilterableCamera.FCameraCapturer;
-import com.helloworld.bartender.FilterableCamera.FCameraView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.PopUpMenu.Popup;
 import com.helloworld.bartender.R;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -28,7 +26,7 @@ import java.util.List;
  * Created by 김현식 on 2018-01-29.
  * swiping 추가 implement 밑 그밑 주석
  **/
-public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> {
+public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.horizontalViewHolder> implements ItemTouchHelperAdapter {
 
     private List<FCameraFilter> filterList;
     private Context mContext;
@@ -40,46 +38,92 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     //뷰타입 확인
     @Override
     public int getItemViewType(int position) {
-        if (position == filterList.size()+1) {
-            return R.layout.layout_filter_list_end_btt;
-        } else if (position == 0) {
-            return R.layout.layout_default_filter_icon;
-        } else {
-            return R.layout.layout_filter_list_icon;
+        return (position == filterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
+    }
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(filterList, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(filterList, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
         }
+        return true;
+    }
+
+    @Override
+    public boolean onItemMoveFinished(int fromPosition, int toPosition) {
+        DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+        if (fromPosition < filterList.size() && toPosition < filterList.size()) {
+            dbHelper.chagePositionByDrag(fromPosition, toPosition);
+        } else {
+            if(fromPosition >= filterList.size()){
+                dbHelper.chagePositionByDrag(fromPosition-1,toPosition);
+            }else if(fromPosition >=filterList.size()){
+                dbHelper.chagePositionByDrag(fromPosition,toPosition-1);
+            }
+        }
+        return true;
     }
 
 
     //여기다가 필터 아이콘 표시
-    public class horizontalViewHolder extends RecyclerView.ViewHolder {
+    public class horizontalViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         public RadioButton filterIcon;
-        public RadioButton defaultFilterIcon;
         public View layout;
         public ImageButton endBtn;
 
-        public horizontalViewHolder(View itemView, int viewType) {
+        public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
             layout = itemView;
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
-            defaultFilterIcon = (RadioButton) itemView.findViewById(R.id.defaultFilterIcon);
+        }
+
+        //item 이 move 했을때
+        @Override
+        public void onItemSelected() {
+            layout.setBackgroundColor(Color.LTGRAY);
+        }
+
+        //item 의 이동이 끝났을 떄
+        @Override
+        public void onItemClear() {
+            itemView.setBackgroundColor(0);
         }
     }
 
     //item 삭제
     public void remove(int position) {
+
         try {
             filterList.remove(position);
             notifyItemRemoved(position);
+            notifyItemRangeChanged(position, filterList.size());
+
         } catch (IndexOutOfBoundsException ex) {
             ex.printStackTrace();
         }
     }
 
     //item 추가
-    public void add(int position, FCameraFilter filter) {
+    public void add(FCameraFilter filter, int position) {
         filterList.add(position, filter);
+        this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
+    }
+
+    public void update(FCameraFilter filter) {
+        int position = filterList.indexOf(filter);
+        filterList.set(position, filter);
+        notifyItemChanged(position);
     }
 
 
@@ -98,8 +142,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         View view;
         if (viewType == R.layout.layout_filter_list_icon) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_icon, parent, false);
-        } else if (viewType == R.layout.layout_default_filter_icon) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_default_filter_icon, parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_end_btt, parent, false);
         }
@@ -111,7 +153,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     public void onBindViewHolder(final horizontalViewHolder holder, int position) {
         final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         //이곳에서 dataset에서 element를 가져온다
-        if (position == filterList.size()+1) {
+        if (holder.getAdapterPosition() == filterList.size()) {
             holder.endBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,24 +164,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     editView.changeState();
                 }
             });
-        } else if (position == 0) {
-            //default Filter
-            final FCameraFilter defaultFilter = new OriginalFilter(mContext, null);
-            holder.defaultFilterIcon.setText("Default");
-            holder.defaultFilterIcon.setChecked(lastSelectedPosition == position);
-            holder.defaultFilterIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lastSelectedPosition = holder.getAdapterPosition();
-                    ((MainActivity) mContext).setCameraFilter(defaultFilter);
-                    notifyDataSetChanged();
-                }
-            });
         } else {
-            final FCameraFilter filter = filterList.get(position-1);
-            final Popup popup = new Popup(mContext, filter);
+            final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
+            final Popup popup = new Popup(mContext, filter, holder.getAdapterPosition());
             holder.filterIcon.setText(filter.getName());
-            holder.filterIcon.setChecked(lastSelectedPosition == position);
+            holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -147,9 +176,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     //외부 클래스에서 뷰 아이템 참조
                     ((MainActivity) mContext).setCameraFilter(filter);
                     notifyDataSetChanged();
-//                    filter.setName("Changed");
-//                    dbHelper.saveFilter(filter);
-//                    Toast.makeText(horizontal_adapter.this.mContext, filter.getName(), Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -168,7 +194,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     //뷰안에 dataset의 사이즈를 반환한다.(LayoutManger에 의해 실행)
     public int getItemCount() {
-        return filterList.size()+2;
+        return filterList.size() + 1;
     }
 
 }

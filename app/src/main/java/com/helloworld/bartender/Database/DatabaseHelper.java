@@ -5,13 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.helloworld.bartender.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.MainActivity;
+import com.helloworld.bartender.R;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_FILTER_NAME = "name";
     public static final String COLUMN_FILTER_TYPE = "type";
+    public static final String COLUMN_FILTER_POS ="position";
     public Context mContext;
 
     public DatabaseHelper(Context context) {
@@ -35,11 +43,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        if(!db.isReadOnly()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                String query = String.format("PRAGMA foreign_keys = %s", "ON");
+                db.execSQL(query);
+            } else {
+                db.setForeignKeyConstraintsEnabled(true);
+            }
+        }
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(" CREATE TABLE " + TABLE_MAIN_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_FILTER_NAME + " TEXT NOT NULL, " +
-                COLUMN_FILTER_TYPE + " TEXT NOT NULL);"
+                COLUMN_FILTER_TYPE + " TEXT NOT NULL," +
+                COLUMN_FILTER_POS + " INT NOT NULL" +
+                ");"
         );
 
         String query = " CREATE TABLE " + TYPE1_TABLE_NAME + " (" +
@@ -63,7 +86,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void saveFilter(FCameraFilter filter) {
+    public int saveFilter(FCameraFilter filter){
+        SQLiteDatabase db = this.getReadableDatabase();
+        int position;
+        //update
+        if(filter.getId() != null){
+            Cursor cs = db.rawQuery("SELECT position FROM " + TABLE_MAIN_NAME + " WHERE " + COLUMN_ID + "='" + filter.getId() + "'", null);
+            cs.moveToFirst();
+            position = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
+        }else{
+            //add
+            FilterListView filterListView=((MainActivity) mContext).findViewById(R.id.FilterListView);
+            position = filterListView.getHorizontalAdapter().getItemCount()-1;
+        }
+        return saveFilter(filter,position);
+    }
+
+    public int saveFilter(FCameraFilter filter, int position) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -79,8 +118,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         valuesForMain.put(COLUMN_ID, filter.getId());
-        valuesForMain.put(COLUMN_FILTER_NAME, filter.getName());
+        valuesForMain.put(COLUMN_FILTER_NAME, EncodeFilterName(filter.getName()));
         valuesForMain.put(COLUMN_FILTER_TYPE, filter.getClass().getSimpleName());
+        valuesForMain.put(COLUMN_FILTER_POS,position);
 
         //id null이면 튜플 생성, id가 존재하면 튜플 update
         int lastInsertedId = (int)db.replace(TABLE_MAIN_NAME, null, valuesForMain);
@@ -101,10 +141,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.close();
 
+        return lastInsertedId;
+
     }
 
-    public void pasteFilter(FCameraFilter receivedFilter) {
+    public FCameraFilter pasteFilter(FCameraFilter receivedFilter,int position) {
+        SQLiteDatabase db = this.getWritableDatabase();
         FCameraFilter newFilter = null;
+        FCameraFilter pastedFilter = null;
+        int pastedFilterId;
+
+        //자리를 만들어준다.
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLE_MAIN_NAME+" WHERE position > "+ position + " ORDER BY position" , null);
+        if (cursor.moveToLast()) {
+            do {
+                int newPosition = cursor.getInt(cursor.getColumnIndex(COLUMN_FILTER_POS));
+                db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition + 1) + "' WHERE position='" + newPosition + "'");
+            } while (cursor.moveToPrevious());
+        }
+
         switch (receivedFilter.getClass().getSimpleName()) {
             case TYPE1_TABLE_NAME:
                 newFilter = new OriginalFilter(mContext, null);
@@ -112,10 +167,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     newFilter.setValueWithType(valueType,receivedFilter.getValueWithType(valueType));
                 }
                 newFilter.setName("CopyOf"+receivedFilter.getName());
-                saveFilter(newFilter);
+
+                pastedFilterId=saveFilter(newFilter,position+1);
+                pastedFilter = new OriginalFilter(mContext,pastedFilterId);
+                for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
+                    pastedFilter.setValueWithType(valueType,newFilter.getValueWithType(valueType));
+                }
+                pastedFilter.setName(newFilter.getName());
+                break;
             default:
                 break;
         }
+        return pastedFilter;
     }
 
 
@@ -123,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<FCameraFilter> getFilterList(String option) {
         String query;
         if (option.equals("")) {
-            query = "SELECT * FROM " + TABLE_MAIN_NAME;
+            query = "SELECT * FROM " + TABLE_MAIN_NAME + " ORDER BY " +COLUMN_FILTER_POS;
         } else {
             query = "SELECT * FROM " + TABLE_MAIN_NAME + " ORDER BY " + option;
         }
@@ -136,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 String type = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_TYPE));
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
-                String name = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME));
+                String name = DecodeFilterName(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
                 switch (type) {
                     case TYPE1_TABLE_NAME:
                         FCameraFilter filter = new OriginalFilter(mContext, id);
@@ -160,8 +223,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public void deleteFilterRecord(int id) {
+    public void deleteFilterRecord(int id,int position) {
         SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+TABLE_MAIN_NAME+" WHERE position > "+ position + " ORDER BY position" , null);
+        if (cursor.moveToFirst()) {
+            do {
+                int newPosition = cursor.getInt(cursor.getColumnIndex(COLUMN_FILTER_POS));
+                db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition - 1) + "' WHERE position='" + newPosition + "'");
+            } while (cursor.moveToNext());
+        }
         db.execSQL("DELETE FROM " + TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
     }
 
@@ -172,12 +242,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return type;
     }
 
-    public void enalbeFk() {
+    public void chagePositionByDrag(int fromPos, int toPos){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.rawQuery("PRAGMA foreign_keys = ON", null);
-        db.close();
+        Cursor cs = db.rawQuery("SELECT * FROM "+ TABLE_MAIN_NAME+" WHERE position='"+fromPos +"'",null);
+        cs.moveToFirst();
+        int fromId = cs.getInt(cs.getColumnIndex(COLUMN_ID));
 
+        //fromPOs의 id를 받아서 저장한 후 fromPos와 toPos사이의 pos를 전부 바꾼후 마지막으로 저장한 값을 바꾼다.
+
+        if(fromPos > toPos) {
+            cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position >= " + toPos + " AND position < "+ fromPos + " ORDER BY position", null);
+            if (cs.moveToLast()) {
+                do {
+                    int newPosition = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
+                    db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition + 1) + "' WHERE position='" + newPosition + "'");
+                } while (cs.moveToPrevious());
+            }
+            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE _id='" + fromId + "'");
+
+        }else if(toPos > fromPos){
+            cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position <= " + toPos + " AND position > "+ fromPos + " ORDER BY position", null);
+            if (cs.moveToFirst()) {
+                do {
+                    int newPosition = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
+                    db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + String.valueOf(newPosition - 1) + "' WHERE position='" + newPosition + "'");
+                } while (cs.moveToNext());
+            }
+            db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE _id='" + fromId + "'");
+        }
     }
 
+    public String EncodeFilterName(String name){
+        String encodedName="";
+        try {
+            encodedName = URLEncoder.encode(name, "utf-8");
+        }catch (UnsupportedEncodingException e) {
+            Log.e("Encoding",e.toString());
+        }
+        return encodedName;
+    }
+
+    public String DecodeFilterName(String encodedName){
+        String name ="";
+        try {
+            name= URLDecoder.decode(encodedName, "utf-8");
+        }catch (UnsupportedEncodingException e) {
+            Log.e("Encoding",e.toString());
+        }
+        return name;
+    }
 
 }

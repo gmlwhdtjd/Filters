@@ -8,6 +8,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.adapter.ItemTouchHelperCallback;
 import com.helloworld.bartender.adapter.horizontal_adapter;
 
 /**
@@ -26,10 +28,12 @@ public class FilterListView extends CoordinatorLayout {
 
     private String option = "";
 
+    private ItemTouchHelper mItemTouchHelper;
     private BottomSheetBehavior filterListBehavior;
     private RecyclerView filterList;
     private LinearLayoutManager mLayoutManger;
     private ImageButton filterListBtt;
+    private horizontal_adapter adapter;
 
     public FilterListView(Context context) {
         super(context);
@@ -57,10 +61,6 @@ public class FilterListView extends CoordinatorLayout {
         typedArray.recycle();
     }
 
-    public void notifyFilterList(){
-        filterList.getAdapter().notifyDataSetChanged();
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -74,6 +74,7 @@ public class FilterListView extends CoordinatorLayout {
         int resId = R.anim.layout_filter_list_slide;
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), resId);
         filterList.setLayoutAnimation(animation);
+        filterList.setHasFixedSize(true);
 
         populateRecyclerView(option);
 
@@ -135,8 +136,16 @@ public class FilterListView extends CoordinatorLayout {
     //populate recyclerview
     public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        horizontal_adapter adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
+        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
         filterList.setAdapter(adapter);
+
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(filterList);
+    }
+
+    public horizontal_adapter getHorizontalAdapter(){
+        return adapter;
     }
 
 

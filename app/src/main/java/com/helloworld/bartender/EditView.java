@@ -132,9 +132,14 @@ public class EditView extends CoordinatorLayout {
                 // TODO : Save
                 changeState();
                 //update
-                dbHelper.saveFilter(mFilter);
                 FilterListView filterListView= ((MainActivity) getContext()).findViewById(R.id.FilterListView);
-                filterListView.populateRecyclerView("");
+                int Id = dbHelper.saveFilter(mFilter);
+                if(mFilter.getId()==null){
+                    filterListView.getHorizontalAdapter().add(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);
+                }
+                else{
+                    filterListView.getHorizontalAdapter().update(mFilter);
+                }
                 if (mOnSaveListener != null)
                     mOnSaveListener.onSaved();
             }
@@ -220,4 +225,21 @@ public class EditView extends CoordinatorLayout {
     public interface OnSaveListener {
         void onSaved();
     }
+
+    public FCameraFilter NewFilter(FCameraFilter filter, int Id){
+        FCameraFilter newFilter = null;
+        switch (filter.getClass().getSimpleName()) {
+            case "OriginalFilter":
+                newFilter = new OriginalFilter(getContext(),Id);
+                for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
+                    newFilter.setValueWithType(valueType,filter.getValueWithType(valueType));
+                }
+                newFilter.setName(filter.getName());
+                break;
+            default:
+                break;
+        }
+        return newFilter;
+    }
+
 }

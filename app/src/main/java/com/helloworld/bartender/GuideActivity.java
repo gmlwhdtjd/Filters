@@ -206,11 +206,12 @@ public class GuideActivity extends AppCompatActivity {
 
     private void setDefaultSetting(Context context){
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample1",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50));
-        dbHelper.enalbeFk();
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample1",255, 255, 255, 0, 0, 0, 50,50,50,50,50),0);
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
+        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
+
     }
+
 }

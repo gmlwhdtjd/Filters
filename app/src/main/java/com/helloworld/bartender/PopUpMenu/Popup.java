@@ -16,6 +16,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.EditView;
 import com.helloworld.bartender.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
@@ -70,7 +71,9 @@ public class Popup {
                         //DELETE
                         // TODO: delete시 현재 사용중인 필터를 default필터로 변경, 삭제시 기본필터로 변경, 삭제시 애니메이션
                         dbHelper.deleteFilterRecord(selectedFilter.getId(),selectedPosition);
-                        filterListView.getHorizontalAdapter().remove(selectedPosition); //TODO: 정렬이 아닌 리스트에서 삭제로 변경
+                        if(filterListView.getHorizontalAdapter().remove(selectedPosition)) {
+                            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+                        }
                         break;
                     case 1:
                         //PASTE

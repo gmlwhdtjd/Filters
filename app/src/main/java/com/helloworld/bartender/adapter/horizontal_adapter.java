@@ -22,6 +22,7 @@ import com.helloworld.bartender.R;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private List<FCameraFilter> filterList;
     private Context mContext;
     private RecyclerView mRecyclerV;
-    private int lastSelectedPosition = -1;
+    private int lastSelectedPosition = 0;
     private Vibrator vibe;
     private EditView editView;
     private Popup popup;
@@ -50,11 +51,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
-        if(popup.isPopupMenuOpen()){
+        if (popup.isPopupMenuOpen()) {
             popup.dismiss();
         }
 
-        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition !=0) {
+        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition != 0) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(filterList, i, i + 1);
@@ -72,7 +73,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     @Override
     public boolean onItemMoveFinished(int fromPosition, int toPosition) {
         DatabaseHelper dbHelper = new DatabaseHelper(mContext);
-        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition !=0) {
+        if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition != 0) {
             dbHelper.chagePositionByDrag(fromPosition, toPosition);
         } else {
             if (fromPosition >= filterList.size()) {
@@ -106,21 +107,20 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         //item 이 move 했을때
         @Override
         public void onItemSelected(int position) {
-            FilterListView filterListView = ((MainActivity)mContext).findViewById(R.id.FilterListView);
+            FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.FilterListView);
             startAnimationsOnItems(position);
         }
 
         //item 의 이동이 끝났을 떄
         @Override
         public void onItemClear(int position) {
-            FilterListView filterListView = ((MainActivity)mContext).findViewById(R.id.FilterListView);
+            FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.FilterListView);
             stopAnimationsOnItems(position);
         }
     }
 
     //item 삭제
-    public void remove(int position) {
-
+    public boolean remove(int position) {
         try {
             filterList.remove(position);
             notifyItemRemoved(position);
@@ -129,6 +129,8 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         } catch (IndexOutOfBoundsException ex) {
             ex.printStackTrace();
         }
+
+        return lastSelectedPosition == position;
     }
 
     //item 추가
@@ -181,6 +183,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     ((MainActivity) mContext).setCameraFilter(newFilter);
                     editView = ((MainActivity) mContext).findViewById(R.id.editView);
                     editView.changeState();
+                    //TODO:새로 필터 생성 후 그 필터를 select되게 한다.
                 }
             });
         } else {
@@ -203,7 +206,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     @Override
                     public boolean onLongClick(View v) {
                         vibe.vibrate(50);
-                        popup.show(v,filter,holder.getAdapterPosition());
+                        popup.show(v, filter, holder.getAdapterPosition());
                         return true;
                     }
                 });
@@ -211,18 +214,27 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         }
     }
 
-    public void startAnimationsOnItems(int position){
+    public void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
-            if(holder.getAdapterPosition()!=position) {
+            if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
                 holder.filterIcon.startAnimation(anim);
             }
         }
     }
 
-    public void stopAnimationsOnItems(int position){
+    public void stopAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
-            holder.filterIcon.clearAnimation();
+            if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
+                holder.filterIcon.clearAnimation();
+            }
         }
+    }
+
+    public void setLastSelectedPosition(int position) {
+        final FCameraFilter filter = filterList.get(position);
+        ((MainActivity) mContext).setCameraFilter(filter);
+        lastSelectedPosition = position;
+        notifyDataSetChanged();
     }
 
 

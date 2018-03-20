@@ -14,10 +14,21 @@
         android:adjustViewBounds="true"
         android:button="@null"
         android:checked="false"
+        android:textSize="1dp"
+        android:padding= "5dp"
         android:drawableTop="@drawable/custom_radio_btn"
-        android:padding="10dp"
+       />
+    <TextView
+        android:id="@+id/filterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="test"
         android:textAlignment="center"
-        android:textColor="@color/main_white" />
+        android:textColor="@color/main_white"
+        android:textSize="12sp"
+        android:maxLength="10"
+        android:paddingBottom="4dp"
+        />
 
 </LinearLayout>

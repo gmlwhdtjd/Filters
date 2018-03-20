@@ -1,7 +1,13 @@
 package com.helloworld.bartender.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Vibrator;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
@@ -19,6 +26,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.PopUpMenu.Popup;
 import com.helloworld.bartender.R;
+
+import org.w3c.dom.Text;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -93,6 +102,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         public RadioButton filterIcon;
         public View layout;
         public ImageButton endBtn;
+        public TextView filterName;
 
         public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
@@ -100,8 +110,16 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
             popup = new Popup(mContext);
+            filterName = (TextView) itemView.findViewById(R.id.filterName);
 
-
+//            //get bitmap of the image
+//            Bitmap imageBitmap= BitmapFactory.decodeResource(mContext.getResources(),  R.drawable.sample_image);
+//            imageBitmap = Bitmap.createScaledBitmap(imageBitmap,100,100,true);
+//            RoundedBitmapDrawable roundedBitmapDrawable= RoundedBitmapDrawableFactory.create(mContext.getResources(), imageBitmap);
+//
+//            //setting radius
+//            roundedBitmapDrawable.setCornerRadius(50.0f);
+//            roundedBitmapDrawable.setAntiAlias(true);
         }
 
         //item 이 move 했을때
@@ -188,7 +206,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             });
         } else {
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
-            holder.filterIcon.setText(filter.getName());
+            holder.filterName.setText(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override

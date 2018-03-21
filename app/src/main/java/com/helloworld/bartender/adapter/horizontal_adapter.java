@@ -2,6 +2,7 @@ package com.helloworld.bartender.adapter;
 
 import android.content.Context;
 import android.os.Vibrator;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.PopupMenu.Popup;
 import com.helloworld.bartender.R;
+import com.helloworld.bartender.customRadioButton.FilterRadioButton;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -90,18 +92,16 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     //여기다가 필터 아이콘 표시
     public class horizontalViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-        public RadioButton filterIcon;
+        public FilterRadioButton filterIcon;
         public View layout;
         public ImageButton endBtn;
-        public TextView filterName;
 
         public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
             layout = itemView;
-            filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
+            filterIcon = (FilterRadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
             popup = new Popup(mContext);
-            filterName = (TextView) itemView.findViewById(R.id.filterName);
 
 //            //get bitmap of the image
 //            Bitmap imageBitmap= BitmapFactory.decodeResource(mContext.getResources(),  R.drawable.sample_image);
@@ -196,8 +196,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
+            holder.filterIcon.setFilterImageDrawable(mContext.getDrawable(R.drawable.sample_image));
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
-            holder.filterName.setText(filter.getName());
+            holder.filterIcon.setFilterName(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override

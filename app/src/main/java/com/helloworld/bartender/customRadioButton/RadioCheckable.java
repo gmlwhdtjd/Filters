@@ -10,7 +10,7 @@ import android.widget.RadioGroup;
 
 interface RadioCheckable extends Checkable {
     void addOnCheckChangeListener (OnCheckedChangeListener onCheckedChangeListener);
-    void removeOnCheckChangeListner(OnCheckedChangeListener onCheckedChangeListener);
+    void removeOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener);
 
     public static interface OnCheckedChangeListener{
         void OnCheckChanged(View radioGroup, boolean isChecked);

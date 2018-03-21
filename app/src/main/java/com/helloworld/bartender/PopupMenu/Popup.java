@@ -1,10 +1,8 @@
-package com.helloworld.bartender.PopUpMenu;
+package com.helloworld.bartender.PopupMenu;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.EditView;
 import com.helloworld.bartender.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;

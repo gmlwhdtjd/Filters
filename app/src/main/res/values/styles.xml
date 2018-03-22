@@ -28,13 +28,6 @@
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
     
-    <declare-styleable name="FilterRadioButton">
-        <attr name="FilterRadioButton_filter_name" format="string"/>
-        <attr name="FilterRadioButton_filter_name_color" format="color"/>
-        <attr name="FilterRadioButton_filter_image" format="integer"/>
-        <attr name="FilterRadioButton_filter_image_border_color" format="color"/>
-        <attr name="FilterRadioButton_filter_image_border_pressed_color" format="color"/>
-        <attr name="FilterRadioButton_filter_name_pressed_color" format="color"/>
-    </declare-styleable>
+
 
 </resources>

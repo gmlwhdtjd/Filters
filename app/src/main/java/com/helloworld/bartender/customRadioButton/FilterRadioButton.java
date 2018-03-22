@@ -36,6 +36,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
     private int mFilterTextColor;
     private Drawable minitialBackgroundDrawable;
     private int mPressedFilterTextColor;
+    private int mCheckedFilterTextColor;
+    private int mCheckedFilterImageBorderColor;
 
     private OnClickListener mOnClickListener;
     private OnTouchListener mOnTouchListener;
@@ -80,11 +82,13 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
         try {
             mFilterImageDrawable = a.getDrawable(R.styleable.FilterRadioButton_FilterRadioButton_filter_image);
-            mFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_color, Color.WHITE);
+            mFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_color, Color.LTGRAY);
             mPressedFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_pressed_color, Color.GRAY);
-            mFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_color, Color.WHITE);
+            mFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_color, Color.LTGRAY);
             mFilterName = a.getString(R.styleable.FilterRadioButton_FilterRadioButton_filter_name);
             mPressedFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_pressed_color, Color.GRAY);
+            mCheckedFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_checked_color,Color.WHITE);
+            mCheckedFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_checked_color,Color.WHITE);
         } finally {
             a.recycle();
         }
@@ -140,12 +144,13 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
     private void onTouchDown(MotionEvent motionEvent) {
         setChecked(true);
-    }
-
-    private void onTouchUp(MotionEvent motionEvent) {
         if (mOnClickListener != null) {
             mOnClickListener.onClick(this);
         }
+    }
+
+    private void onTouchUp(MotionEvent motionEvent) {
+
     }
 
     /**
@@ -153,8 +158,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
      **/
 
     public void setCheckedState() {
-        mFilterImageView.setBorderColor(mPressedFilterImageBorderColor);
-        mFilterNameTextView.setTextColor(mPressedFilterTextColor);
+        mFilterImageView.setBorderColor(mCheckedFilterImageBorderColor);
+        mFilterNameTextView.setTextColor(mCheckedFilterTextColor);
     }
 
     public void setNormalState() {
@@ -162,12 +167,14 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
         mFilterNameTextView.setTextColor(mFilterTextColor);
     }
 
+
     public String getFilterName() {
         return mFilterName;
     }
 
     public void setFilterName(String filterName) {
         mFilterName = filterName;
+        mFilterNameTextView.setText(mFilterName);
     }
 
     public Drawable getFilterImageDrawable() {
@@ -176,6 +183,7 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
     public void setFilterImageDrawable(Drawable filterImageDrawable) {
         mFilterImageDrawable = filterImageDrawable;
+        mFilterImageView.setImageDrawable(mFilterImageDrawable);
     }
 
     /**

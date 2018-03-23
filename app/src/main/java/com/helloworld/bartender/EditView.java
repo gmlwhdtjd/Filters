@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -20,6 +21,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
@@ -100,6 +102,9 @@ public class EditView extends CoordinatorLayout {
                 changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
 
                 final EditText input = new EditText(getContext());
+                InputFilter[] FilterArray = new InputFilter[1];
+                FilterArray[0] = new InputFilter.LengthFilter(9);
+                input.setFilters(FilterArray);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 changeView.addView(input);
 

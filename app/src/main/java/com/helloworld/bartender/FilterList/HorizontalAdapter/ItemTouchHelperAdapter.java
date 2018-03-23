@@ -1,4 +1,4 @@
-package com.helloworld.bartender.adapter;
+package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 /**
  * Created by samer on 2018-03-16.

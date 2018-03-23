@@ -7,10 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.helloworld.bartender.FilterListView;
-import com.helloworld.bartender.FilterableCamera.FCamera;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
@@ -242,7 +240,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return type;
     }
 
-    public void chagePositionByDrag(int fromPos, int toPos){
+    public void changePositionByDrag(int fromPos, int toPos){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cs = db.rawQuery("SELECT * FROM "+ TABLE_MAIN_NAME+" WHERE position='"+fromPos +"'",null);
         cs.moveToFirst();

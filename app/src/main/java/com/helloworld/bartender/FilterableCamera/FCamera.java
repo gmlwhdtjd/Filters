@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -24,6 +26,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +45,7 @@ import com.helloworld.bartender.R;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -132,6 +136,11 @@ public class FCamera implements LifecycleObserver {
     private FCameraPreview mFCameraPreview;
 
     /**
+     * An {@link FCameraCapture} for camera capture.
+     */
+    private FCameraCapture mFCameraCapture;
+
+    /**
      * A {@link CameraCaptureSession } for camera preview.
      */
     private CameraCaptureSession mCaptureSession;
@@ -156,10 +165,38 @@ public class FCamera implements LifecycleObserver {
      */
     private Handler mBackgroundHandler;
 
+
     /**
      * An {@link ImageReader} that handles still image capture.
      */
-    private FCameraCapture mFCameraCapture;
+    private ImageReader mImageReader;
+
+    /**
+     * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
+     * still image is ready to be saved.
+     */
+    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
+            = new ImageReader.OnImageAvailableListener() {
+
+        @Override
+        public void onImageAvailable(final ImageReader reader) {
+            mBackgroundHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Image image = reader.acquireNextImage();
+                    ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                    byte[] bytes = new byte[buffer.remaining()];
+                    buffer.get(bytes);
+                    Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+
+                    mFCameraCapture.onDrawFilter(bitmapImage);
+
+                    image.close();
+                }
+            });
+        }
+
+    };
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -513,6 +550,12 @@ public class FCamera implements LifecycleObserver {
                 mFCameraPreview.setCameraCharacteristics(characteristics);
                 mFCameraCapture.setCameraCharacteristics(characteristics, largest);
 
+                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
+                        ImageFormat.JPEG, /*maxImages*/2);
+
+                mImageReader.setOnImageAvailableListener(
+                        mOnImageAvailableListener, mBackgroundHandler);
+
                 //noinspection ConstantConditions
                 int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
                 boolean swappedDimensions = false;
@@ -692,7 +735,7 @@ public class FCamera implements LifecycleObserver {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mFCameraCapture.getInputSurface()),//mImageReader.getSurface()),
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
 
                         @Override
@@ -791,7 +834,7 @@ public class FCamera implements LifecycleObserver {
             // This is the CaptureRequest.Builder that we use to take a picture.
             final CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(mFCameraCapture.getInputSurface());
+            captureBuilder.addTarget(mImageReader.getSurface());
 
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,

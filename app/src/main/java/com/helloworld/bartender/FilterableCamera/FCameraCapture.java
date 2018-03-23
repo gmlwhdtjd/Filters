@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,19 +65,17 @@ public class FCameraCapture {
     private EGLContext eglContext;
     private EGLSurface eglSurface;
 
-    private FCameraCaptureRender mCaptureRender;
+    //shader variable
+    private FloatBuffer mVertexBuffer;
+    private FloatBuffer mTexCoordBuffer;
 
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
-
-    private ImageReader mImageReader;
-    private Bitmap mNextImageBitmap;
 
     private AtomicBoolean filterChanged = new AtomicBoolean(false);
     private FCameraFilter mCameraFilter = null;
 
     private Semaphore initLock = new Semaphore(0);
-    private boolean mSurfaceUpdated = false;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -90,26 +89,19 @@ public class FCameraCapture {
         }
     };
 
-    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
-            = new ImageReader.OnImageAvailableListener() {
-
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-            Image image = reader.acquireLatestImage();
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-            byte[] bytes = new byte[buffer.capacity()];
-            buffer.get(bytes);
-            mNextImageBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-            mSurfaceUpdated = true;
-            onDraw();
-        }
-    };
-
     public FCameraCapture(Context context) {
         mContext = context;
     }
 
-    public void setFilter(FCameraFilter filter) {
+    public void setFilter(final FCameraFilter filter) {
+//        if (renderHandler != null) {
+//            renderHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    filter.clear(FCameraFilter.Target.IMAGE);
+//                }
+//            });
+//        }
         mCameraFilter = filter;
         filterChanged.set(true);
     }
@@ -125,12 +117,17 @@ public class FCameraCapture {
         renderThread = new HandlerThread("renderThread");
         renderThread.start();
         renderHandler = new Handler(renderThread.getLooper());
+//        renderHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mCameraFilter.clear(FCameraFilter.Target.IMAGE);
+//            }
+//        });
     }
 
     void onPause() {
         filterChanged.set(true);
         initLock.tryAcquire();
-        mCaptureRender.clear();
 
         renderThread.quitSafely();
         try {
@@ -142,17 +139,8 @@ public class FCameraCapture {
         }
     }
 
-    Surface getInputSurface() {
-        initLock.acquireUninterruptibly();
-        Surface tmp = mImageReader.getSurface();
-        initLock.release();
-
-        return tmp;
-    }
-
     private void init() {
-        renderHandler.post(
-                new Runnable() {
+        renderHandler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -162,49 +150,31 @@ public class FCameraCapture {
 
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
-                mCaptureRender = new FCameraCaptureRender();
-                mCaptureRender.initRender();
-                mCaptureRender.setViewSize(mImageSize.getWidth(), mImageSize.getHeight());
-
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT)
-                    mCaptureRender.setBuffers(orientation, FCameraPreviewRender.flip_RL | FCameraPreviewRender.flip_UD);
-                else
-                    mCaptureRender.setBuffers(orientation, FCameraPreviewRender.flip_UD);
-
-                if (orientation == 90 || orientation == 270)
-                    mImageReader = ImageReader.newInstance(mImageSize.getWidth(), mImageSize.getHeight(),
-                            ImageFormat.JPEG, /*maxImages*/2);
-                else
-                    mImageReader = ImageReader.newInstance(mImageSize.getHeight(), mImageSize.getWidth(),
-                            ImageFormat.JPEG, /*maxImages*/2);
-
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, renderHandler);
+                if (facing != CameraCharacteristics.LENS_FACING_FRONT) {
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
+                }
+                else {
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_NON);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_NON);
+                }
 
                 initLock.release();
             }
         });
     }
 
-    private void onDraw() {
+    public void onDrawFilter(final Bitmap bitmap) {
         renderHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (filterChanged.getAndSet(false))
-                    mCaptureRender.setFilter(mCameraFilter);
 
-                synchronized (mOnImageAvailableListener) {
-                    if (mSurfaceUpdated)
-                        mSurfaceUpdated = false;
-                    else
-                        return;
-                }
-
-                mCaptureRender.onDraw(mNextImageBitmap);
+                mCameraFilter.onDrawFilter(bitmap, mVertexBuffer, mTexCoordBuffer, FCameraFilter.Target.IMAGE, mImageSize);
 
                 saveImage();
 
-                egl10.eglSwapBuffers(eglDisplay, eglSurface);
+                //egl10.eglSwapBuffers(eglDisplay, eglSurface);
             }
         });
     }
@@ -311,6 +281,9 @@ public class FCameraCapture {
     }
 
     private void shutdownEGL() {
+        if (eglDisplay == null || eglSurface == null || eglContext == null)
+            return;
+
         egl10.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
         egl10.eglDestroyContext(eglDisplay, eglContext);
         egl10.eglDestroySurface(eglDisplay, eglSurface);

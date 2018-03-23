@@ -1,4 +1,4 @@
-package com.helloworld.bartender.adapter;
+package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 import android.content.Context;
 import android.os.Vibrator;
@@ -9,17 +9,16 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.EditView;
-import com.helloworld.bartender.FilterListView;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
-import com.helloworld.bartender.PopupMenu.Popup;
+import com.helloworld.bartender.FilterList.PopupMenu.Popup;
 import com.helloworld.bartender.R;
+import com.helloworld.bartender.FilterList.FilterRadioButton.FilterRadioButton;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,6 +48,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return (position == filterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
 
+    //아이템 움지는이는 중
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         if (popup.isPopupMenuOpen()) {
@@ -70,18 +70,19 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return true;
     }
 
+    //움직임이 끝났을떄
     @Override
     public boolean onItemMoveFinished(int fromPosition, int toPosition) {
         DatabaseHelper dbHelper = new DatabaseHelper(mContext);
         if (fromPosition < filterList.size() && toPosition < filterList.size() && toPosition != 0 && fromPosition != 0) {
-            dbHelper.chagePositionByDrag(fromPosition, toPosition);
+            dbHelper.changePositionByDrag(fromPosition, toPosition);
         } else {
             if (fromPosition >= filterList.size()) {
-                dbHelper.chagePositionByDrag(fromPosition - 1, toPosition);
+                dbHelper.changePositionByDrag(fromPosition - 1, toPosition);
             } else if (toPosition >= filterList.size()) {
-                dbHelper.chagePositionByDrag(fromPosition, toPosition - 1);
+                dbHelper.changePositionByDrag(fromPosition, toPosition - 1);
             } else if (toPosition == 0) {
-                dbHelper.chagePositionByDrag(fromPosition, toPosition + 1);
+                dbHelper.changePositionByDrag(fromPosition, toPosition + 1);
             }
         }
         return true;
@@ -90,27 +91,16 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     //여기다가 필터 아이콘 표시
     public class horizontalViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-        public RadioButton filterIcon;
+        public FilterRadioButton filterIcon;
         public View layout;
         public ImageButton endBtn;
-        public TextView filterName;
 
         public horizontalViewHolder(final View itemView, int viewType) {
             super(itemView);
             layout = itemView;
-            filterIcon = (RadioButton) itemView.findViewById(R.id.filterIcon);
+            filterIcon = (FilterRadioButton) itemView.findViewById(R.id.filterIcon);
             endBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
             popup = new Popup(mContext);
-            filterName = (TextView) itemView.findViewById(R.id.filterName);
-
-//            //get bitmap of the image
-//            Bitmap imageBitmap= BitmapFactory.decodeResource(mContext.getResources(),  R.drawable.sample_image);
-//            imageBitmap = Bitmap.createScaledBitmap(imageBitmap,100,100,true);
-//            RoundedBitmapDrawable roundedBitmapDrawable= RoundedBitmapDrawableFactory.create(mContext.getResources(), imageBitmap);
-//
-//            //setting radius
-//            roundedBitmapDrawable.setCornerRadius(50.0f);
-//            roundedBitmapDrawable.setAntiAlias(true);
         }
 
         //item 이 move 했을때
@@ -147,6 +137,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         filterList.add(position, filter);
         this.mRecyclerV.scrollToPosition(position);
         notifyItemInserted(position);
+        setLastSelectedPosition(position);
     }
 
     public void update(FCameraFilter filter) {
@@ -196,8 +187,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
+            holder.filterIcon.setFilterImageDrawable(mContext.getDrawable(R.drawable.sample_image2));
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
-            holder.filterName.setText(filter.getName());
+            holder.filterIcon.setFilterName(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {
                 @Override

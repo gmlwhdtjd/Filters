@@ -1,11 +1,9 @@
-package com.helloworld.bartender.adapter;
+package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.R;
-import com.helloworld.bartender.adapter.ItemTouchHelperAdapter;
 
 /**
  * Created by samer on 2018-03-16.

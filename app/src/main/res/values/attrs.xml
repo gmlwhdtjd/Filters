@@ -4,4 +4,13 @@
         <attr name="text" format="reference|string" />
         <attr name="value" format="reference|integer" />
     </declare-styleable>
+    <declare-styleable name="FilterRadioButton">
+        <attr name="FilterRadioButton_filter_name" format="string"/>
+        <attr name="FilterRadioButton_filter_name_color" format="color"/>
+        <attr name="FilterRadioButton_filter_image" format="reference"/>
+        <attr name="FilterRadioButton_filter_image_border_color" format="color"/>
+        <attr name="FilterRadioButton_filter_image_filter_checked_color" format="color"/>
+        <attr name="FilterRadioButton_filter_name_checked_color" format="color"/>
+        <attr name="FilterRadioButton_filter_image_border_checked_color" format="color"/>
+    </declare-styleable>
 </resources>

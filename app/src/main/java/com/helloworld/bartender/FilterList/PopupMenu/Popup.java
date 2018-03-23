@@ -1,4 +1,4 @@
-package com.helloworld.bartender.PopupMenu;
+package com.helloworld.bartender.FilterList.PopupMenu;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,7 +14,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.FilterListView;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
@@ -25,14 +25,14 @@ import com.helloworld.bartender.R;
 
 public class Popup {
     private Context mContext;
-    
+
     private PopupWindow popupWindow;
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
     private LayoutInflater inflater;
     private FCameraFilter selectedFilter;
     private DatabaseHelper dbHelper;
-    private boolean isPopupMenuOpen =false;
+    private boolean isPopupMenuOpen = false;
     private int selectedPosition;
 
     public interface OnPopupItemClickListener {
@@ -49,9 +49,9 @@ public class Popup {
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
         dbHelper = new DatabaseHelper(mContext);
 
-        PopupOption option1 = new PopupOption(0, "삭제");
-        PopupOption option2 = new PopupOption(1, "복제");
-        PopupOption option3 = new PopupOption(2, "공유");
+        PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));
+        PopupOption option2 = new PopupOption(1, mContext.getString(R.string.duplicate_filter));
+        PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
 
         this.addItem(option1);
         this.addSeperator();
@@ -62,21 +62,21 @@ public class Popup {
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
-                FilterListView filterListView=((MainActivity) mContext).findViewById(R.id.FilterListView);
+                FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.FilterListView);
                 switch (itemId) {
                     case 0:
                         //DELETE
                         // TODO: delete시 현재 사용중인 필터를 default필터로 변경, 삭제시 기본필터로 변경, 삭제시 애니메이션
-                        dbHelper.deleteFilterRecord(selectedFilter.getId(),selectedPosition);
-                        if(filterListView.getHorizontalAdapter().remove(selectedPosition)) {
+                        dbHelper.deleteFilterRecord(selectedFilter.getId(), selectedPosition);
+                        if (filterListView.getHorizontalAdapter().remove(selectedPosition)) {
                             filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
                         }
                         break;
                     case 1:
                         //PASTE
                         //TODO: 복제시 이름 카운트??
-                        FCameraFilter pastedFilter = dbHelper.pasteFilter(selectedFilter,selectedPosition);
-                        filterListView.getHorizontalAdapter().add(pastedFilter,selectedPosition+1);
+                        FCameraFilter pastedFilter = dbHelper.pasteFilter(selectedFilter, selectedPosition);
+                        filterListView.getHorizontalAdapter().add(pastedFilter, selectedPosition + 1);
                         break;
                     case 2:
                         //Share
@@ -88,11 +88,11 @@ public class Popup {
         });
     }
 
-    public boolean isPopupMenuOpen(){
+    public boolean isPopupMenuOpen() {
         return isPopupMenuOpen;
     }
 
-    public void dismiss(){
+    public void dismiss() {
         popupWindow.dismiss();
         isPopupMenuOpen = false;
     }
@@ -131,9 +131,9 @@ public class Popup {
 	 * popup there. By default a popup is shown at (0, 0) with referring
 	 * the bottom left corner of the view as origin.
 	 */
-    public void show(View v,FCameraFilter selectedFilter, int selectedPosition) {
+    public void show(View v, FCameraFilter selectedFilter, int selectedPosition) {
         this.selectedFilter = selectedFilter;
-        this.selectedPosition =selectedPosition;
+        this.selectedPosition = selectedPosition;
 
         popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
@@ -149,14 +149,14 @@ public class Popup {
         rootView.measure(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
 
 		/*
-		 * Since the anchor position for a popup is the left top of the anchor view,
+         * Since the anchor position for a popup is the left top of the anchor view,
 		 * calculate the x position and y position and override the location manually
 		 */
         int xPos = location[0] + v.getWidth() / 2 - rootView.getMeasuredWidth() / 2;
         int yPos = location[1] - rootView.getMeasuredHeight();
 
         popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, xPos, yPos);
-        isPopupMenuOpen =true;
+        isPopupMenuOpen = true;
     }
 
     public void setOnItemClickListener(OnPopupItemClickListener onPopupItemClickListener) {

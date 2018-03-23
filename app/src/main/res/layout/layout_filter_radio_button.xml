@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:aandroid="http://schemas.android.com/tools">
+
+
+
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/filter_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/sample_image"
+        android:src="@drawable/sample_image2"
         app:civ_border_color="@color/main_white"
-        app:civ_border_width="4dp"
-        app:civ_shadow="true"
-        app:civ_shadow_radius="10"
-        app:civ_shadow_color="#8BC34A"
-        />
+        app:civ_border_width="2dp"
+      />
 
     <TextView
         android:id="@+id/filter_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/filter_image"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:text="@string/DefaultFilter_Name"
-        android:textAlignment="center"
-        android:textColor="@color/main_white"
-        android:textSize="12sp"
-        android:maxLength="10"
+        android:maxLength="9"
         android:paddingBottom="4dp"
-        android:layout_below="@+id/filter_image"
+        android:text="test"
+        android:textAlignment="center"
+        android:textSize="9sp"
         />
+
 </merge>

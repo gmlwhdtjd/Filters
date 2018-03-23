@@ -1,4 +1,4 @@
-package com.helloworld.bartender.adapter;
+package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 import android.support.v7.widget.helper.ItemTouchHelper;
 

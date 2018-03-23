@@ -1,4 +1,4 @@
-package com.helloworld.bartender;
+package com.helloworld.bartender.FilterList;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,14 +12,14 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.adapter.ItemTouchHelperCallback;
-import com.helloworld.bartender.adapter.horizontal_adapter;
+import com.helloworld.bartender.R;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.ItemTouchHelperCallback;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 
 /**
  * Created by huijonglee on 2018. 3. 5..

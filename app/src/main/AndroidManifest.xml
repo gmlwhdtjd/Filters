@@ -35,6 +35,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingsPrefActivity"
+            android:theme="@style/SettingTheme"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

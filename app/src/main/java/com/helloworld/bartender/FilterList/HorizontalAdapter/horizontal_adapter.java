@@ -1,6 +1,9 @@
 package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -187,7 +190,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
-            holder.filterIcon.setFilterImageDrawable(mContext.getDrawable(R.drawable.sample_image2));
+            holder.filterIcon.setFilterImageDrawable(mContext.getResources().getDrawable(R.drawable.sample_image2));
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
             holder.filterIcon.setFilterName(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());

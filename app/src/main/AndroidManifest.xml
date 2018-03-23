@@ -36,6 +36,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingsPrefActivity"
+            android:theme="@style/SettingTheme"
             android:screenOrientation="portrait"/>
     </application>
 

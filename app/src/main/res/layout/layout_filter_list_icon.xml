@@ -7,7 +7,7 @@
     android:layout_marginRight="8dp"
     android:orientation="vertical">
 
-    <com.helloworld.bartender.customRadioButton.FilterRadioButton
+    <com.helloworld.bartender.FilterList.FilterRadioButton.FilterRadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/filterIcon"
@@ -19,6 +19,7 @@
         app:FilterRadioButton_filter_image_border_checked_color="#000000"
         app:FilterRadioButton_filter_name_color="@color/main_white"
         app:FilterRadioButton_filter_name_checked_color="#ffffff"
+        app:FilterRadioButton_filter_image_filter_checked_color="#b0ffffff"
         />
 
 </LinearLayout>

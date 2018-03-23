@@ -1,8 +1,7 @@
-package com.helloworld.bartender.customRadioButton;
+package com.helloworld.bartender.FilterList.FilterRadioButton;
 
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.RadioGroup;
 
 /**
  * Created by wilybear on 2018-03-21.

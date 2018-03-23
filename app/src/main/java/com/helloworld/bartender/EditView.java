@@ -21,6 +21,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
@@ -102,7 +103,7 @@ public class EditView extends CoordinatorLayout {
 
                 final EditText input = new EditText(getContext());
                 InputFilter[] FilterArray = new InputFilter[1];
-                FilterArray[0] = new InputFilter.LengthFilter(10);
+                FilterArray[0] = new InputFilter.LengthFilter(9);
                 input.setFilters(FilterArray);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 changeView.addView(input);

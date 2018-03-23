@@ -1,12 +1,14 @@
-package com.helloworld.bartender.customRadioButton;
+package com.helloworld.bartender.FilterList.FilterRadioButton;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
  * Created by wilybear on 2018-03-21.
  */
 
-public class FilterRadioButton extends RelativeLayout implements RadioCheckable {
+public class FilterRadioButton extends RelativeLayout implements RadioCheckable, GestureDetector.OnGestureListener {
 
     private TextView mFilterNameTextView;
     private CircularImageView mFilterImageView;
@@ -32,17 +34,19 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
     private String mFilterName;
     private Drawable mFilterImageDrawable;
     private int mFilterImageBorderColor;
-    private int mPressedFilterImageBorderColor;
+    private int mCheckedImageFilter;
     private int mFilterTextColor;
     private Drawable minitialBackgroundDrawable;
     private int mPressedFilterTextColor;
     private int mCheckedFilterTextColor;
     private int mCheckedFilterImageBorderColor;
 
+    private OnLongClickListener mOnLongClikcListener;
     private OnClickListener mOnClickListener;
     private OnTouchListener mOnTouchListener;
     private boolean mChecked;
-    private ArrayList<OnCheckedChangeListener> mOnCheckedChangeListners = new ArrayList<>();
+    private ArrayList<OnCheckedChangeListener> mOnCheckedChangeListeners = new ArrayList<>();
+    private GestureDetector mDetector;
 
     /**
      * Constructor
@@ -82,13 +86,12 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
         try {
             mFilterImageDrawable = a.getDrawable(R.styleable.FilterRadioButton_FilterRadioButton_filter_image);
-            mFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_color, Color.LTGRAY);
-            mPressedFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_pressed_color, Color.GRAY);
+            mFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_color, Color.WHITE);
+            mCheckedImageFilter = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_filter_checked_color, Color.WHITE);
             mFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_color, Color.LTGRAY);
             mFilterName = a.getString(R.styleable.FilterRadioButton_FilterRadioButton_filter_name);
-            mPressedFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_pressed_color, Color.GRAY);
-            mCheckedFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_checked_color,Color.WHITE);
-            mCheckedFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_checked_color,Color.WHITE);
+            mCheckedFilterImageBorderColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_name_checked_color, Color.WHITE);
+            mCheckedFilterTextColor = a.getColor(R.styleable.FilterRadioButton_FilterRadioButton_filter_image_border_checked_color, Color.WHITE);
         } finally {
             a.recycle();
         }
@@ -129,8 +132,14 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
         mOnClickListener = l;
     }
 
+    @Override
+    public void setOnLongClickListener(@Nullable OnLongClickListener l) {
+        mOnLongClikcListener = l;
+    }
+
     private void setCustomTouchListener() {
         super.setOnTouchListener(new TouchListener());
+        mDetector = new GestureDetector(getContext(), new GestureListener());
     }
 
     @Override
@@ -149,6 +158,12 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
         }
     }
 
+    private void onLongClick(MotionEvent motionEvent) {
+        if (mOnLongClikcListener != null) {
+            mOnLongClikcListener.onLongClick(this);
+        }
+    }
+
     private void onTouchUp(MotionEvent motionEvent) {
 
     }
@@ -160,6 +175,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
     public void setCheckedState() {
         mFilterImageView.setBorderColor(mCheckedFilterImageBorderColor);
         mFilterNameTextView.setTextColor(mCheckedFilterTextColor);
+        mFilterImageDrawable.setColorFilter(Color.WHITE, PorterDuff.Mode.CLEAR);
+        mFilterImageView.setImageDrawable(mFilterImageDrawable);
     }
 
     public void setNormalState() {
@@ -194,9 +211,9 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
     public void setChecked(boolean checked) {
         if (mChecked != checked) {
             mChecked = checked;
-            if (!mOnCheckedChangeListners.isEmpty()) {
-                for (int i = 0; i < mOnCheckedChangeListners.size(); i++) {
-                    mOnCheckedChangeListners.get(i).OnCheckChanged(this, mChecked);
+            if (!mOnCheckedChangeListeners.isEmpty()) {
+                for (int i = 0; i < mOnCheckedChangeListeners.size(); i++) {
+                    mOnCheckedChangeListeners.get(i).OnCheckChanged(this, mChecked);
                 }
             }
             if (mChecked) {
@@ -219,12 +236,44 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
     @Override
     public void addOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
-        mOnCheckedChangeListners.add(onCheckedChangeListener);
+        mOnCheckedChangeListeners.add(onCheckedChangeListener);
     }
 
     @Override
     public void removeOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
-        mOnCheckedChangeListners.remove(onCheckedChangeListener);
+        mOnCheckedChangeListeners.remove(onCheckedChangeListener);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        if (mOnLongClikcListener != null) {
+            mOnLongClikcListener.onLongClick(this);
+        }
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
     }
 
     /**
@@ -234,19 +283,40 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable 
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    onTouchDown(event);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    onTouchUp(event);
-                    break;
-            }
-            if(mOnTouchListener != null){
-                mOnTouchListener.onTouch(v,event);
-            }
+//            switch (event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    onTouchDown(event);
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    onTouchUp(event);
+//                    break;
+//            }
+//            if (mOnTouchListener != null) {
+//                mOnTouchListener.onTouch(v, event);
+//            }
+//            return true;
+            return mDetector.onTouchEvent(event);
+        }
+    }
+
+    class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
             return true;
         }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            onTouchDown(e);
+            return true;
+        }
+        @Override
+        public void onLongPress(MotionEvent e) {
+            onLongClick(e);
+        }
+
+
     }
 
 

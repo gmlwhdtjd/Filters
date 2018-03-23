@@ -31,4 +31,6 @@
     <string name="OriginalFilter_NOISE_SIZE">Size</string>
     <string name="OriginalFilter_NOISE_INTENSITY">Intensity</string>
 
+    <string name="DefaultFilter_Name">Original</string>
+
 </resources>

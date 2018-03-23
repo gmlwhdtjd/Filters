@@ -29,4 +29,5 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
     compile 'com.mikhaellopez:circularimageview:3.0.2'
+
 }

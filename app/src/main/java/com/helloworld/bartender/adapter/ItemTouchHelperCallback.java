@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.R;
 import com.helloworld.bartender.adapter.ItemTouchHelperAdapter;
 
 /**
@@ -22,7 +23,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         int dragFlags = ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT;
         int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-        return makeMovementFlags(dragFlags, swipeFlags);
+        return viewHolder.getAdapterPosition() == 0 || viewHolder.getItemViewType() == R.layout.layout_filter_list_end_btt ? 0 : makeMovementFlags(dragFlags, swipeFlags);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             if (viewHolder instanceof ItemTouchHelperViewHolder) {
                 ItemTouchHelperViewHolder itemViewHolder =
                         (ItemTouchHelperViewHolder) viewHolder;
-                itemViewHolder.onItemSelected();
+                itemViewHolder.onItemSelected(viewHolder.getAdapterPosition());
             }
         }
 
@@ -62,7 +63,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
         super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
-        mAdapter.onItemMoveFinished(fromPos,toPos);
+        mAdapter.onItemMoveFinished(fromPos, toPos);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             ItemTouchHelperViewHolder itemViewHolder =
                     (ItemTouchHelperViewHolder) viewHolder;
-            itemViewHolder.onItemClear();
+            itemViewHolder.onItemClear(viewHolder.getAdapterPosition());
         }
     }
 }

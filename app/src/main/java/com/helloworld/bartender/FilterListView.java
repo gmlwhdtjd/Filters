@@ -12,6 +12,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
@@ -34,6 +35,7 @@ public class FilterListView extends CoordinatorLayout {
     private LinearLayoutManager mLayoutManger;
     private ImageButton filterListBtt;
     private horizontal_adapter adapter;
+
 
     public FilterListView(Context context) {
         super(context);
@@ -64,7 +66,6 @@ public class FilterListView extends CoordinatorLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
         //filterList
         filterListBehavior = BottomSheetBehavior.from(findViewById(R.id.filterListLayout));
 
@@ -89,13 +90,12 @@ public class FilterListView extends CoordinatorLayout {
         filterListBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
                     ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
-               //     runLayoutAnimation(filterList);
-                }
-                else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    //     runLayoutAnimation(filterList);
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     filterListBtt.setImageResource(R.drawable.ic_down_to_up);
                     filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
                     ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
@@ -144,9 +144,8 @@ public class FilterListView extends CoordinatorLayout {
         mItemTouchHelper.attachToRecyclerView(filterList);
     }
 
-    public horizontal_adapter getHorizontalAdapter(){
+    public horizontal_adapter getHorizontalAdapter() {
         return adapter;
     }
-
 
 }

@@ -1,4 +1,4 @@
-package com.helloworld.bartender.PopUpMenu;
+package com.helloworld.bartender.PopupMenu;
 
 /**
  * Created by samer on 2018-03-08.

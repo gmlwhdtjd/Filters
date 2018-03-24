@@ -1,25 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_header_about">
-        <Preference
-            android:selectable="false"
-            android:summary="@string/summary_about"
-            />
+        <EditTextPreference
+            android:defaultValue="@string/default_gallery_storage"
+            android:key="@string/key_gallery_name"
+            android:summary="@string/default_gallery_storage"
+            android:title="@string/title_gallery_storage" />
         <Preference
             android:summary="@string/app_version"
             android:title="@string/title_version"
             />
         <Preference
+            android:key="@string/key_review"
+            android:title="@string/title_review"
+            android:summary="@string/summary_review"
+            />
+
+        <Preference
+            android:key="@string/key_share"
+            android:title="@string/title_share"
+            android:summary="@string/summary_share"/>
+
+        <Preference
+            android:key="@string/key_faq"
+            android:summary="@string/summary_faq"
+            android:title="@string/title_faq"
+            >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_faq" />
+        </Preference>
+        <Preference
             android:key="@string/key_send_feedback"
             android:summary="@string/summary_support"
             android:title="@string/title_send_feedback" />
+        <Preference
+            android:key="@string/key_terms"
+            android:title="@string/title_terms">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_terms" />
+        </Preference>
+
+        <Preference
+            android:key="@string/key_open_license"
+            android:title="@string/title_open_license"
+            >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.helloworld.bartender"
+                android:targetClass="com.helloworld.bartender.OpenLicenseActivity"/>
+        </Preference>
+        <Preference
+            android:key="@string/key_privacy"
+            android:title="@string/title_privacy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/url_privacy" />
+        </Preference>
 
     </PreferenceCategory>
-
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/key_vibrate"
-        android:summary="@string/summary_vibrate"
-        android:title="@string/title_vibrate" />
 
 </PreferenceScreen>

@@ -34,7 +34,6 @@ public class OriginalFilter extends FCameraFilter {
     }
 
     public static void clear(Target target) {
-        Log.d("Clear", "getProgram: Clear");
         switch (target) {
             case PREVIEW:
                 if (mPreviewProgram != 0)

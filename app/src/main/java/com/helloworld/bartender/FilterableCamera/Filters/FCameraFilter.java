@@ -8,7 +8,6 @@ import android.util.Log;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
-import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
 
@@ -81,7 +80,6 @@ public abstract class FCameraFilter {
 
     public void onDrawFilter(int textureId, FloatBuffer vertexBuffer, FloatBuffer texCoordBuffer, Target target, Size viewSize) {
         int program = getProgram(target);
-        Log.d("onDrawFilter", "onDrawFilter: " + program);
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 

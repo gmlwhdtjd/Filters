@@ -669,20 +669,22 @@ public class FCamera implements LifecycleObserver {
      * This method has been referenced from Android Camera2Basic Sample.
      */
     private void closeCamera() {
-        try {
-            mCameraOpenCloseLock.acquire();
-            if (null != mCaptureSession) {
-                mCaptureSession.close();
-                mCaptureSession = null;
+        synchronized (mCaptureSessionStateCallback) {
+            try {
+                mCameraOpenCloseLock.acquire();
+                if (null != mCaptureSession) {
+                    mCaptureSession.close();
+                    mCaptureSession = null;
+                }
+                if (null != mCameraDevice) {
+                    mCameraDevice.close();
+                    mCameraDevice = null;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
+            } finally {
+                mCameraOpenCloseLock.release();
             }
-            if (null != mCameraDevice) {
-                mCameraDevice.close();
-                mCameraDevice = null;
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
-        } finally {
-            mCameraOpenCloseLock.release();
         }
     }
 
@@ -735,45 +737,57 @@ public class FCamera implements LifecycleObserver {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
-                    new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            // The camera is already closed
-                            if (null == mCameraDevice) {
-                                return;
-                            }
-
-                            // When the session is ready, we start displaying the preview.
-                            mCaptureSession = cameraCaptureSession;
-                            try {
-                                // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                // Flash is automatically enabled when necessary.
-                                setAutoFlash(mPreviewRequestBuilder);
-
-                                // Finally, we start displaying the camera preview.
-                                mPreviewRequest = mPreviewRequestBuilder.build();
-                                mCaptureSession.setRepeatingRequest(mPreviewRequest,
-                                        mCaptureCallback, mBackgroundHandler);
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onConfigureFailed(
-                                @NonNull CameraCaptureSession cameraCaptureSession) {
-                            showToast("Failed");
-                        }
-                    }, null
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null
             );
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Creates a new {@link CameraCaptureSession.StateCallback} for camera preview.
+     * It is likely to be executed simultaneously with the camera exit function.
+     * If it is run after the camera has shut down, race condition is occur.
+     * so it is managed separately.
+     *
+     * This method has been referenced from Android Camera2Basic Sample.
+     */
+    private CameraCaptureSession.StateCallback mCaptureSessionStateCallback
+            = new CameraCaptureSession.StateCallback() {
+
+        @Override
+        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+            synchronized (this) {
+                // The camera is already closed
+                if (null == mCameraDevice) {
+                    return;
+                }
+
+                // When the session is ready, we start displaying the preview.
+                mCaptureSession = cameraCaptureSession;
+                try {
+                    // Auto focus should be continuous for camera preview.
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                            CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                    // Flash is automatically enabled when necessary.
+                    setAutoFlash(mPreviewRequestBuilder);
+
+                    // Finally, we start displaying the camera preview.
+                    mPreviewRequest = mPreviewRequestBuilder.build();
+                    mCaptureSession.setRepeatingRequest(mPreviewRequest,
+                            mCaptureCallback, mBackgroundHandler);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onConfigureFailed(
+                @NonNull CameraCaptureSession cameraCaptureSession) {
+            showToast("Failed");
+        }
+    };
 
     /**
      * Lock the focus as the first step for a still image capture.

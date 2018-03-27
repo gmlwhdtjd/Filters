@@ -97,4 +97,23 @@ public class FCameraRenderBuffer {
     public void unbind() {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
     }
+
+
+    /**
+     *  This function created by Hui-Jong Lee
+     */
+    public void clear() {
+        unbind();
+
+        int[] delId = new int[1];
+
+        delId[0] = frameBufferId;
+        GLES20.glDeleteFramebuffers(1, delId, 0);
+
+        delId[0] = renderBufferId;
+        GLES20.glDeleteRenderbuffers(1, delId, 0);
+
+        delId[0] = texId;
+        GLES20.glDeleteTextures(1, delId,0);
+    }
 }

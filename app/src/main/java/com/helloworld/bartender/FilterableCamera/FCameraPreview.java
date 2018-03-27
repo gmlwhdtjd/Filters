@@ -24,7 +24,6 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Size;
-import android.view.SurfaceHolder;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
@@ -69,14 +68,6 @@ public class FCameraPreview extends GLSurfaceView {
     public void onPause() {
         mRenderer.onPause();
         super.onPause();
-    }
-
-    public void setFlag() {
-
-        if (mRenderer.flag)
-            mRenderer.flag = false;
-        else
-            mRenderer.flag = true;
     }
 
     public void setFilter(FCameraFilter filter) {
@@ -156,8 +147,6 @@ public class FCameraPreview extends GLSurfaceView {
 
         private boolean mSurfaceUpdated = false;
 
-        boolean flag = false;
-
         private final SurfaceTexture.OnFrameAvailableListener mOnFrameAvailableListener
                 = new SurfaceTexture.OnFrameAvailableListener() {
             @Override
@@ -174,9 +163,12 @@ public class FCameraPreview extends GLSurfaceView {
                     GLES20.glDeleteProgram(mProgram);
                     mProgram = 0;
                     OriginalFilter.clear(FCameraFilter.Target.PREVIEW);
+                    if (CAMERA_RENDER_BUF != null) {
+                        CAMERA_RENDER_BUF.clear();
+                        CAMERA_RENDER_BUF = null;
+                    }
                 }
             });
-            CAMERA_RENDER_BUF = null;
             mSurfaceUpdated = false;
             mInitState.set(false);
         }
@@ -247,9 +239,12 @@ public class FCameraPreview extends GLSurfaceView {
             }
 
             // Create camera render buffer
-            if (CAMERA_RENDER_BUF == null ||
-                    CAMERA_RENDER_BUF.getWidth() != mViewSize.getWidth() ||
+            if (CAMERA_RENDER_BUF == null) {
+                CAMERA_RENDER_BUF = new FCameraRenderBuffer(mViewSize.getWidth(), mViewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+            }
+            else if(CAMERA_RENDER_BUF.getWidth() != mViewSize.getWidth() ||
                     CAMERA_RENDER_BUF.getHeight() != mViewSize.getHeight()) {
+                CAMERA_RENDER_BUF.clear();
                 CAMERA_RENDER_BUF = new FCameraRenderBuffer(mViewSize.getWidth(), mViewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
             }
 
@@ -270,21 +265,17 @@ public class FCameraPreview extends GLSurfaceView {
             GLES20.glUniform1i(GLES20.glGetUniformLocation(mProgram, "sTexture"), 0);
 
             if (mCameraFilter != null && CAMERA_RENDER_BUF != null) {
-                if (!flag) {
-                    // Render to texture
-                    CAMERA_RENDER_BUF.bind();
-                    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-                    GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-                    CAMERA_RENDER_BUF.unbind();
-                    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+                // Render to texture
+                CAMERA_RENDER_BUF.bind();
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+                GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+                CAMERA_RENDER_BUF.unbind();
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-                    mCameraFilter.onDrawFilter(
-                            CAMERA_RENDER_BUF.getTexId(),
-                            mVertexBuffer, mTexCoordBuffer,
-                            FCameraFilter.Target.PREVIEW, mViewSize);
-                }
-                else
-                    GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+                mCameraFilter.onDrawFilter(
+                        CAMERA_RENDER_BUF.getTexId(),
+                        mVertexBuffer, mTexCoordBuffer,
+                        FCameraFilter.Target.PREVIEW, mViewSize);
             }
         }
     }

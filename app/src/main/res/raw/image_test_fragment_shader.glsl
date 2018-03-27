@@ -4,7 +4,6 @@ uniform vec3 iResolution;
 uniform vec3 noiseLevel;
 uniform float iGlobalTime;
 uniform sampler2D sTexture;
-uniform sampler2D sNoiseTexture;
 varying vec2 texCoord;
 uniform float mask[25];
 uniform vec3 randomRGB;

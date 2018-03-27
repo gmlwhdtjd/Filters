@@ -19,11 +19,17 @@ package com.helloworld.bartender.FilterableCamera;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.R;
 
+import java.nio.FloatBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -32,7 +38,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * A {@link GLSurfaceView} that can be adjusted to a specified aspect ratio.
  */
-public class FCameraView extends GLSurfaceView {
+public class FCameraPreview extends GLSurfaceView {
 
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
@@ -40,11 +46,11 @@ public class FCameraView extends GLSurfaceView {
     private CameraViewRenderer mRenderer;
     private Callback mCallback;
 
-    public FCameraView(Context context) {
+    public FCameraPreview(Context context) {
         this(context, null);
     }
 
-    public FCameraView(Context context, AttributeSet attrs) {
+    public FCameraPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRenderer = new CameraViewRenderer();
 
@@ -65,6 +71,7 @@ public class FCameraView extends GLSurfaceView {
     }
 
     public void setFilter(FCameraFilter filter) {
+        //filter.clear(FCameraFilter.Target.PREVIEW);
         mRenderer.setFilter(filter);
     }
 
@@ -116,14 +123,28 @@ public class FCameraView extends GLSurfaceView {
      * Created by huijonglee on 2018. 1. 22..
      */
     private class CameraViewRenderer implements GLSurfaceView.Renderer {
-        private FCameraRenderer mCameraRender;
 
-        private AtomicBoolean filterChanged =  new AtomicBoolean(false);
-        private FCameraFilter mCameraFilter = null;
+        private int mProgram;   // default program to convert TEXTURE_EXTERNAL to TEXTURE_2D
 
+        //shader variable
+        private FloatBuffer mVertexBuffer;
+        private FloatBuffer mTexCoordBuffer;
+
+        private FloatBuffer mExternalVertexBuffer;
+        private FloatBuffer mExternalTexCoordBuffer;
+
+        private FCameraRenderBuffer CAMERA_RENDER_BUF;
+        private static final int BUF_ACTIVE_TEX_UNIT = GLES20.GL_TEXTURE8;
+
+        private int mCameraTextureId = 0;
         private SurfaceTexture mInputSurfaceTexture;
 
+        private Size mViewSize;
+
+        private FCameraFilter mCameraFilter = null;
+
         private AtomicBoolean mInitState = new AtomicBoolean(false);
+
         private boolean mSurfaceUpdated = false;
 
         private final SurfaceTexture.OnFrameAvailableListener mOnFrameAvailableListener
@@ -131,46 +152,69 @@ public class FCameraView extends GLSurfaceView {
             @Override
             public synchronized void onFrameAvailable(SurfaceTexture surfaceTexture) {
                 mSurfaceUpdated = true;
-                FCameraView.this.requestRender();
+                FCameraPreview.this.requestRender();
             }
         };
 
         private void onPause() {
+            queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    GLES20.glDeleteProgram(mProgram);
+                    mProgram = 0;
+                    OriginalFilter.clear(FCameraFilter.Target.PREVIEW);
+                    if (CAMERA_RENDER_BUF != null) {
+                        CAMERA_RENDER_BUF.clear();
+                        CAMERA_RENDER_BUF = null;
+                    }
+                }
+            });
             mSurfaceUpdated = false;
             mInitState.set(false);
-            filterChanged.set(true);
-            mCameraRender.clear();
-        }
-
-        private void setFilter(FCameraFilter filter) {
-            mCameraFilter = filter;
-            filterChanged.set(true);
         }
 
         private void setCameraCharacteristics(CameraCharacteristics characteristics) throws NullPointerException {
             int orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
             Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-            if (facing == CameraCharacteristics.LENS_FACING_FRONT)
-                mCameraRender.setBuffers(orientation, FCameraRenderer.flip_RL);
-            else
-                mCameraRender.setBuffers(orientation, FCameraRenderer.flip_NON);
+            if (facing != CameraCharacteristics.LENS_FACING_FRONT) {
+                mExternalVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
+                mExternalTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
+            }
+            else {
+                mExternalVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_NON);
+                mExternalTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation,FCameraGLUtils.CAMERA_FLIP_NON);
+            }
+        }
+
+        private void setFilter(FCameraFilter filter) {
+            mCameraFilter = filter;
         }
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            mCameraRender = new FCameraRenderer();
-            mCameraRender.initRender();
+            GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-            mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
+            mProgram = FCameraGLUtils.buildProgram(getContext(), R.raw.filter_vertex_shader, R.raw.filter_default_fragment_shader);
+
+            mCameraTextureId = FCameraGLUtils.genTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
+
+            mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
+            mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_NON);
+
+            mExternalVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_RL);
+            mExternalTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_RL);
+
+            mInputSurfaceTexture = new SurfaceTexture(mCameraTextureId);
             mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
         }
 
         @Override
         public void onSurfaceChanged(GL10 gl, final int width, final int height) {
             if(!mInitState.getAndSet(true)) {
+
                 if(mCallback != null) {
-                    FCameraView.this.getHandler().post(new Runnable() {
+                    FCameraPreview.this.getHandler().post(new Runnable() {
                         @Override
                         public void run() {
                             mCallback.onSurfaceCreated(width, height);
@@ -178,18 +222,14 @@ public class FCameraView extends GLSurfaceView {
                     });
                 }
             }
-
-            mCameraRender.setViewSize(width, height);
+            GLES20.glViewport(0, 0, width, height);
+            mViewSize = new Size(width, height);
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
             if (!mInitState.get())
                 return;
-
-            if (filterChanged.getAndSet(false))
-                mCameraRender.setFilter(mCameraFilter);
-
 
             synchronized (mOnFrameAvailableListener) {
                 if (mSurfaceUpdated) {
@@ -198,7 +238,45 @@ public class FCameraView extends GLSurfaceView {
                 }
             }
 
-            mCameraRender.onDraw();
+            // Create camera render buffer
+            if (CAMERA_RENDER_BUF == null) {
+                CAMERA_RENDER_BUF = new FCameraRenderBuffer(mViewSize.getWidth(), mViewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+            }
+            else if(CAMERA_RENDER_BUF.getWidth() != mViewSize.getWidth() ||
+                    CAMERA_RENDER_BUF.getHeight() != mViewSize.getHeight()) {
+                CAMERA_RENDER_BUF.clear();
+                CAMERA_RENDER_BUF = new FCameraRenderBuffer(mViewSize.getWidth(), mViewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+            }
+
+            // Use shaders
+            GLES20.glUseProgram(mProgram);
+
+            int ph = GLES20.glGetAttribLocation(mProgram, "vPosition");
+            int tch = GLES20.glGetAttribLocation(mProgram, "vTexCoord");
+
+            GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, mExternalVertexBuffer);
+            GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2, mExternalTexCoordBuffer);
+
+            GLES20.glEnableVertexAttribArray(ph);
+            GLES20.glEnableVertexAttribArray(tch);
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mCameraTextureId);
+            GLES20.glUniform1i(GLES20.glGetUniformLocation(mProgram, "sTexture"), 0);
+
+            if (mCameraFilter != null && CAMERA_RENDER_BUF != null) {
+                // Render to texture
+                CAMERA_RENDER_BUF.bind();
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+                GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+                CAMERA_RENDER_BUF.unbind();
+                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+                mCameraFilter.onDrawFilter(
+                        CAMERA_RENDER_BUF.getTexId(),
+                        mVertexBuffer, mTexCoordBuffer,
+                        FCameraFilter.Target.PREVIEW, mViewSize);
+            }
         }
     }
 

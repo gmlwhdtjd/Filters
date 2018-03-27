@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -24,6 +26,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +45,7 @@ import com.helloworld.bartender.R;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -127,9 +131,14 @@ public class FCamera implements LifecycleObserver {
     private String mCameraId;
 
     /**
-     * An {@link FCameraView} for camera preview.
+     * An {@link FCameraPreview} for camera preview.
      */
-    private FCameraView mFCameraView;
+    private FCameraPreview mFCameraPreview;
+
+    /**
+     * An {@link FCameraCapture} for camera capture.
+     */
+    private FCameraCapture mFCameraCapture;
 
     /**
      * A {@link CameraCaptureSession } for camera preview.
@@ -156,10 +165,38 @@ public class FCamera implements LifecycleObserver {
      */
     private Handler mBackgroundHandler;
 
+
     /**
      * An {@link ImageReader} that handles still image capture.
      */
-    private FCameraCapturer mFCameraCapturer;
+    private ImageReader mImageReader;
+
+    /**
+     * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
+     * still image is ready to be saved.
+     */
+    private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
+            = new ImageReader.OnImageAvailableListener() {
+
+        @Override
+        public void onImageAvailable(final ImageReader reader) {
+            mBackgroundHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Image image = reader.acquireNextImage();
+                    ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                    byte[] bytes = new byte[buffer.remaining()];
+                    buffer.get(bytes);
+                    Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+
+                    mFCameraCapture.onDrawFilter(bitmapImage);
+
+                    image.close();
+                }
+            });
+        }
+
+    };
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -261,7 +298,7 @@ public class FCamera implements LifecycleObserver {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == null) {
+                    if (afState == 0) {
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
@@ -321,13 +358,13 @@ public class FCamera implements LifecycleObserver {
 
     public FCamera(FragmentActivity activity,
                    Lifecycle lifecycle,
-                   FCameraView fCameraView,
-                   FCameraCapturer fCameraCapturer) {
+                   FCameraPreview fCameraPreview,
+                   FCameraCapture fCameraCapture) {
         lifecycle.addObserver(this);
 
         mActivity = activity;
-        mFCameraView = fCameraView;
-        mFCameraView.setCallback(new FCameraView.Callback() {
+        mFCameraPreview = fCameraPreview;
+        mFCameraPreview.setCallback(new FCameraPreview.Callback() {
             @Override
             public void onSurfaceCreated(int width, int height) {
                 openCamera(width, height);
@@ -336,20 +373,20 @@ public class FCamera implements LifecycleObserver {
 
         mCameraFacing = true;
 
-        mFCameraCapturer = fCameraCapturer;
+        mFCameraCapture = fCameraCapture;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     public void onResume() {
         startBackgroundThread();
-        mFCameraCapturer.onResume();
-        mFCameraView.onResume();
+        mFCameraCapture.onResume();
+        mFCameraPreview.onResume();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void onPause() {
-        mFCameraView.onPause();
-        mFCameraCapturer.onPause();
+        mFCameraPreview.onPause();
+        mFCameraCapture.onPause();
         closeCamera();
         stopBackgroundThread();
     }
@@ -375,7 +412,7 @@ public class FCamera implements LifecycleObserver {
 
         mCameraFacing = !mCameraFacing;
 
-        openCamera(mFCameraView.getWidth(), mFCameraView.getHeight());
+        openCamera(mFCameraPreview.getWidth(), mFCameraPreview.getHeight());
     }
 
     public void setFlashSetting(Flash flash) {
@@ -510,8 +547,14 @@ public class FCamera implements LifecycleObserver {
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
 
-                mFCameraView.setCameraCharacteristics(characteristics);
-                mFCameraCapturer.setCameraCharacteristics(characteristics, largest);
+                mFCameraPreview.setCameraCharacteristics(characteristics);
+                mFCameraCapture.setCameraCharacteristics(characteristics, largest);
+
+                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
+                        ImageFormat.JPEG, /*maxImages*/2);
+
+                mImageReader.setOnImageAvailableListener(
+                        mOnImageAvailableListener, mBackgroundHandler);
 
                 //noinspection ConstantConditions
                 int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
@@ -553,10 +596,10 @@ public class FCamera implements LifecycleObserver {
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = mActivity.getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mFCameraView.setAspectRatio(
+                    mFCameraPreview.setAspectRatio(
                             mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 } else {
-                    mFCameraView.setAspectRatio(
+                    mFCameraPreview.setAspectRatio(
                             mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
 
@@ -626,20 +669,22 @@ public class FCamera implements LifecycleObserver {
      * This method has been referenced from Android Camera2Basic Sample.
      */
     private void closeCamera() {
-        try {
-            mCameraOpenCloseLock.acquire();
-            if (null != mCaptureSession) {
-                mCaptureSession.close();
-                mCaptureSession = null;
+        synchronized (mCaptureSessionStateCallback) {
+            try {
+                mCameraOpenCloseLock.acquire();
+                if (null != mCaptureSession) {
+                    mCaptureSession.close();
+                    mCaptureSession = null;
+                }
+                if (null != mCameraDevice) {
+                    mCameraDevice.close();
+                    mCameraDevice = null;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
+            } finally {
+                mCameraOpenCloseLock.release();
             }
-            if (null != mCameraDevice) {
-                mCameraDevice.close();
-                mCameraDevice = null;
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
-        } finally {
-            mCameraOpenCloseLock.release();
         }
     }
 
@@ -677,7 +722,7 @@ public class FCamera implements LifecycleObserver {
      */
     private void createCameraPreviewSession() {
         try {
-            SurfaceTexture texture = mFCameraView.getInputSurfaceTexture();
+            SurfaceTexture texture = mFCameraPreview.getInputSurfaceTexture();
             assert texture != null;
 
             // We configure the size of default buffer to be the size of camera preview we want.
@@ -692,45 +737,57 @@ public class FCamera implements LifecycleObserver {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mFCameraCapturer.getInputSurface()),//mImageReader.getSurface()),
-                    new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            // The camera is already closed
-                            if (null == mCameraDevice) {
-                                return;
-                            }
-
-                            // When the session is ready, we start displaying the preview.
-                            mCaptureSession = cameraCaptureSession;
-                            try {
-                                // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                // Flash is automatically enabled when necessary.
-                                setAutoFlash(mPreviewRequestBuilder);
-
-                                // Finally, we start displaying the camera preview.
-                                mPreviewRequest = mPreviewRequestBuilder.build();
-                                mCaptureSession.setRepeatingRequest(mPreviewRequest,
-                                        mCaptureCallback, mBackgroundHandler);
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onConfigureFailed(
-                                @NonNull CameraCaptureSession cameraCaptureSession) {
-                            showToast("Failed");
-                        }
-                    }, null
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null
             );
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Creates a new {@link CameraCaptureSession.StateCallback} for camera preview.
+     * It is likely to be executed simultaneously with the camera exit function.
+     * If it is run after the camera has shut down, race condition is occur.
+     * so it is managed separately.
+     *
+     * This method has been referenced from Android Camera2Basic Sample.
+     */
+    private CameraCaptureSession.StateCallback mCaptureSessionStateCallback
+            = new CameraCaptureSession.StateCallback() {
+
+        @Override
+        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+            synchronized (this) {
+                // The camera is already closed
+                if (null == mCameraDevice) {
+                    return;
+                }
+
+                // When the session is ready, we start displaying the preview.
+                mCaptureSession = cameraCaptureSession;
+                try {
+                    // Auto focus should be continuous for camera preview.
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                            CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                    // Flash is automatically enabled when necessary.
+                    setAutoFlash(mPreviewRequestBuilder);
+
+                    // Finally, we start displaying the camera preview.
+                    mPreviewRequest = mPreviewRequestBuilder.build();
+                    mCaptureSession.setRepeatingRequest(mPreviewRequest,
+                            mCaptureCallback, mBackgroundHandler);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onConfigureFailed(
+                @NonNull CameraCaptureSession cameraCaptureSession) {
+            showToast("Failed");
+        }
+    };
 
     /**
      * Lock the focus as the first step for a still image capture.
@@ -791,7 +848,7 @@ public class FCamera implements LifecycleObserver {
             // This is the CaptureRequest.Builder that we use to take a picture.
             final CaptureRequest.Builder captureBuilder =
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(mFCameraCapturer.getInputSurface());
+            captureBuilder.addTarget(mImageReader.getSurface());
 
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,

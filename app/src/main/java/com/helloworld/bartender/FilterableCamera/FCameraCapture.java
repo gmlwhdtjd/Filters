@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.opengl.GLES20;
@@ -16,11 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
-import android.view.Surface;
 import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
-import com.helloworld.bartender.R;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
@@ -28,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,8 +48,8 @@ import static javax.microedition.khronos.egl.EGL10.EGL_PBUFFER_BIT;
  * Created by huijonglee on 2018. 1. 27..
  */
 
-public class FCameraCapturer {
-    private static final String TAG = "FCameraCapturer";
+public class FCameraCapture {
+    private static final String TAG = "FCameraCapture";
 
     private Context mContext;
 
@@ -62,9 +61,9 @@ public class FCameraCapturer {
     private EGLContext eglContext;
     private EGLSurface eglSurface;
 
-    private FCameraRenderer mCameraRender;
-
-    private SurfaceTexture mInputSurfaceTexture;
+    //shader variable
+    private FloatBuffer mVertexBuffer;
+    private FloatBuffer mTexCoordBuffer;
 
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
@@ -73,7 +72,6 @@ public class FCameraCapturer {
     private FCameraFilter mCameraFilter = null;
 
     private Semaphore initLock = new Semaphore(0);
-    private boolean mSurfaceUpdated = false;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -87,20 +85,19 @@ public class FCameraCapturer {
         }
     };
 
-    private final SurfaceTexture.OnFrameAvailableListener mOnFrameAvailableListener
-            = new SurfaceTexture.OnFrameAvailableListener() {
-        @Override
-        public synchronized void onFrameAvailable(SurfaceTexture surfaceTexture) {
-            mSurfaceUpdated = true;
-            onDraw();
-        }
-    };
-
-    public FCameraCapturer(Context context) {
+    public FCameraCapture(Context context) {
         mContext = context;
     }
 
-    public void setFilter(FCameraFilter filter) {
+    public void setFilter(final FCameraFilter filter) {
+//        if (renderHandler != null) {
+//            renderHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    filter.clear(FCameraFilter.Target.IMAGE);
+//                }
+//            });
+//        }
         mCameraFilter = filter;
         filterChanged.set(true);
     }
@@ -122,6 +119,15 @@ public class FCameraCapturer {
         filterChanged.set(true);
         initLock.tryAcquire();
 
+        renderHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // TODO : Clear Filter
+                shutdownEGL();
+                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
+            }
+        });
+
         renderThread.quitSafely();
         try {
             renderThread.join();
@@ -132,17 +138,8 @@ public class FCameraCapturer {
         }
     }
 
-    Surface getInputSurface() {
-        initLock.acquireUninterruptibly();
-        Surface tmp = new Surface(mInputSurfaceTexture);
-        initLock.release();
-
-        return tmp;
-    }
-
     private void init() {
-        renderHandler.post(
-                new Runnable() {
+        renderHandler.post(new Runnable() {
             @Override
             public void run() {
 
@@ -152,48 +149,31 @@ public class FCameraCapturer {
 
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
-                mCameraRender = new FCameraRenderer();
-                mCameraRender.initRender();
-                mCameraRender.setViewSize(mImageSize.getWidth(), mImageSize.getHeight());
-
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT)
-                    mCameraRender.setBuffers(orientation, FCameraRenderer.flip_RL | FCameraRenderer.flip_UD);
-                else
-                    mCameraRender.setBuffers(orientation, FCameraRenderer.flip_UD);
-
-                mInputSurfaceTexture = mCameraRender.getInputSurfaceTexture();
-                if (orientation == 90 || orientation == 270)
-                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getHeight(), mImageSize.getWidth());
-                else
-                    mInputSurfaceTexture.setDefaultBufferSize(mImageSize.getWidth(), mImageSize.getHeight());
-
-                mInputSurfaceTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
+                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL | FCameraGLUtils.CAMERA_FLIP_UD);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL| FCameraGLUtils.CAMERA_FLIP_UD);
+                }
+                else {
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_UD);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_UD);
+                }
 
                 initLock.release();
             }
         });
     }
 
-    private void onDraw() {
+    public void onDrawFilter(final Bitmap bitmap) {
         renderHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (filterChanged.getAndSet(false))
-                    mCameraRender.setFilter(mCameraFilter);
 
-                synchronized (mOnFrameAvailableListener) {
-                    if (mSurfaceUpdated) {
-                        mInputSurfaceTexture.updateTexImage();
-                        mSurfaceUpdated = false;
-                    }
-                }
-
-                mCameraRender.onDraw();
+                mCameraFilter.onDrawFilter(bitmap, mVertexBuffer, mTexCoordBuffer, FCameraFilter.Target.IMAGE, mImageSize);
 
                 saveImage();
 
-                egl10.eglSwapBuffers(eglDisplay, eglSurface);
+                //egl10.eglSwapBuffers(eglDisplay, eglSurface);
             }
         });
     }
@@ -300,6 +280,9 @@ public class FCameraCapturer {
     }
 
     private void shutdownEGL() {
+        if (eglDisplay == null || eglSurface == null || eglContext == null)
+            return;
+
         egl10.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
         egl10.eglDestroyContext(eglDisplay, eglContext);
         egl10.eglDestroySurface(eglDisplay, eglSurface);

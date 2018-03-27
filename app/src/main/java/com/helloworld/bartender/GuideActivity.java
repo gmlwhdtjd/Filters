@@ -1,10 +1,13 @@
 package com.helloworld.bartender;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +20,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.tedpermission.PermissionListener;
+import com.helloworld.bartender.tedpermission.TedPermission;
+
+import java.util.ArrayList;
 
 public class GuideActivity extends AppCompatActivity {
     private ViewPager viewPager;
@@ -122,6 +130,7 @@ public class GuideActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch(false);
+        checkPermssion();
         startActivity(new Intent(GuideActivity.this, MainActivity.class));
         finish();
     }
@@ -211,6 +220,10 @@ public class GuideActivity extends AppCompatActivity {
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
         dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
+
+    }
+
+    private void checkPermssion(){
 
     }
 

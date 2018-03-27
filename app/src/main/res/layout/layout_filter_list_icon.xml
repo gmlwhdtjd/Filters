@@ -15,11 +15,11 @@
         app:FilterRadioButton_filter_name="@string/DefaultFilter_Name"
         android:checked="false"
         android:padding= "5dp"
-        app:FilterRadioButton_filter_image_border_color="@color/main_white"
-        app:FilterRadioButton_filter_image_border_checked_color="#000000"
-        app:FilterRadioButton_filter_name_color="@color/main_white"
-        app:FilterRadioButton_filter_name_checked_color="#ffffff"
-        app:FilterRadioButton_filter_image_filter_checked_color="#b0ffffff"
+        app:FilterRadioButton_filter_image_border_color="@color/filterIcon_border_color"
+        app:FilterRadioButton_filter_image_border_checked_color="@color/filterIcon_border_color"
+        app:FilterRadioButton_filter_name_color="@color/filterIcon_text_color"
+        app:FilterRadioButton_filter_name_checked_color="@color/filterIcon_text_color"
+        app:FilterRadioButton_filter_image_filter_checked_color="@color/filterIcon_image_filter_checked"
         />
 
 </LinearLayout>

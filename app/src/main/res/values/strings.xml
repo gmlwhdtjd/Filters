@@ -49,6 +49,39 @@
     <string name="key_vibrate">key_vibrate</string>
     <string name="key_send_feedback">key_send_feedback</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="key_review">key_review</string>
+    <string name="title_review">Review</string>
+    <string name="summary_review">Review and rate this app</string>
+    <string name="default_gallery_storage">My Videos</string>
+    <string name="key_gallery_name">key_gallery_name</string>
+    <string name="title_gallery_storage">Default Storage</string>
+    <string name="key_faq">key_faq</string>
+    <string name="key_share">key_share</string>
+    <string name="title_share">Share</string>
+    <string name="summary_share">Share this app with your friends!</string>
+    <string name="key_terms">key_terms</string>
+    <string name="title_terms">Terms and Services</string>
+    <string name="key_open_license">key_open_license</string>
+    <string name="title_open_license">Open License</string>
+    <string name="key_privacy">key_privacy</string>
+    <string name="title_privacy">Privacy Policy</string>
+    <string name="url_faq">url</string>
+    <string name="url_privacy">url</string>
+    <string name="url_open_license"> open_license://policy</string>
+    <string name="url_terms">term url</string>
+
+    <string name="apache_license">Copyright [2018] [Team inha]  \n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+\n\n
+    http://www.apache.org/licenses/LICENSE-2.0
+\n\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n</string>
 
     <!-- Strings related to Popup -->
     <string name="delete_filter">Delete</string>

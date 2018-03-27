@@ -19,4 +19,18 @@
     <string name="OriginalFilter_NOISE_INTENSITY">강도</string>
 
     <string name="DefaultFilter_Name">원본</string>
+    <string name="delete_filter">삭제</string>
+    <string name="duplicate_filter">복제</string>
+    <string name="share_filter">공유</string>
+    <string name="title_privacy">개인 정보 정책</string>
+    <string name="title_terms">이용 약관</string>
+    <string name="title_share">공유</string>
+    <string name="title_review">리뷰 남기기</string>
+    <string name="title_activity_settings">설정</string>
+    <string name="title_version">버전</string>
+    <string name="title_faq">자주 묻는 질문</string>
+    <string name="title_send_feedback">피드백 보내기</string>
+    <string name="title_activity_setting">설정</string>
+
+
 </resources>

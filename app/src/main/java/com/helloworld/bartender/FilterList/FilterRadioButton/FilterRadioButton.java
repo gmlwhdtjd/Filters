@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -16,9 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.helloworld.bartender.R;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by wilybear on 2018-03-21.
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 public class FilterRadioButton extends RelativeLayout implements RadioCheckable, GestureDetector.OnGestureListener {
 
     private TextView mFilterNameTextView;
-    private CircularImageView mFilterImageView;
+    private CircleImageView mFilterImageView;
 
     public static final int DEFAULT_TEXT_COLOR = Color.TRANSPARENT;
 
@@ -108,7 +111,7 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.layout_filter_radio_button, this, true);
         mFilterNameTextView = (TextView) findViewById(R.id.filter_name);
-        mFilterImageView = (CircularImageView) findViewById(R.id.filter_image);
+        mFilterImageView = (CircleImageView) findViewById(R.id.filter_image);
         minitialBackgroundDrawable = getBackground();
     }
 
@@ -175,13 +178,14 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
     public void setCheckedState() {
         mFilterImageView.setBorderColor(mCheckedFilterImageBorderColor);
         mFilterNameTextView.setTextColor(mCheckedFilterTextColor);
-        mFilterImageDrawable.setColorFilter(Color.WHITE, PorterDuff.Mode.CLEAR);
-        mFilterImageView.setImageDrawable(mFilterImageDrawable);
+        ColorFilter cf = new PorterDuffColorFilter(mCheckedImageFilter, PorterDuff.Mode.SRC_ATOP);
+        mFilterImageView.setColorFilter(cf);
     }
 
     public void setNormalState() {
         mFilterImageView.setBorderColor(mFilterImageBorderColor);
         mFilterNameTextView.setTextColor(mFilterTextColor);
+        mFilterImageView.clearColorFilter();
     }
 
 

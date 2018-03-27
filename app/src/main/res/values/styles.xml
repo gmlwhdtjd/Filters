@@ -5,7 +5,7 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="SettingTheme" parent="Theme.AppCompat"></style>
+    <style name="SettingTheme" parent="Theme.AppCompat.DayNight"></style>
 
     <style name="Theme.Transparent.Permission"
         parent="Theme.AppCompat.Light.NoActionBar">

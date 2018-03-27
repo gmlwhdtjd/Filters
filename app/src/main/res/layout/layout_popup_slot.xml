@@ -3,7 +3,7 @@
     android:id="@+id/popup_slots"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/popup"
+    android:background="@drawable/saple_dialog"
     android:alpha="0.95"
     android:orientation="horizontal" >
 

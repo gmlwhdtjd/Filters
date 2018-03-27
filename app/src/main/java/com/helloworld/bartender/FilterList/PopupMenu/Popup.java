@@ -29,6 +29,7 @@ public class Popup {
     private PopupWindow popupWindow;
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
+    private LinearLayout bottomView;
     private LayoutInflater inflater;
     private FCameraFilter selectedFilter;
     private DatabaseHelper dbHelper;
@@ -50,6 +51,7 @@ public class Popup {
 
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
+        bottomView = (LinearLayout) inflater.inflate(R.layout.layout_bottom_popup,null);
         dbHelper = new DatabaseHelper(mContext);
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));

@@ -23,6 +23,7 @@ import android.view.Surface;
 import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
 
@@ -117,17 +118,20 @@ public class FCameraCapture {
         renderThread = new HandlerThread("renderThread");
         renderThread.start();
         renderHandler = new Handler(renderThread.getLooper());
-//        renderHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mCameraFilter.clear(FCameraFilter.Target.IMAGE);
-//            }
-//        });
     }
 
     void onPause() {
         filterChanged.set(true);
         initLock.tryAcquire();
+
+        renderHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // TODO : Clear Filter
+                shutdownEGL();
+                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
+            }
+        });
 
         renderThread.quitSafely();
         try {
@@ -151,13 +155,13 @@ public class FCameraCapture {
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing != CameraCharacteristics.LENS_FACING_FRONT) {
-                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
-                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL);
+                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL | FCameraGLUtils.CAMERA_FLIP_UD);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL| FCameraGLUtils.CAMERA_FLIP_UD);
                 }
                 else {
-                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_NON);
-                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_NON);
+                    mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_UD);
+                    mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_UD);
                 }
 
                 initLock.release();

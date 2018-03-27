@@ -2,6 +2,7 @@ package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.util.Log;
 import android.util.Size;
 import com.helloworld.bartender.R;
 
@@ -14,6 +15,40 @@ import static java.lang.Math.exp;
  */
 
 public class OriginalFilter extends FCameraFilter {
+
+    private static int mPreviewProgram = 0;
+    private static int mImageProgram = 0;
+
+    protected int getPreviewProgramID() {
+        return mPreviewProgram;
+    }
+    protected void setPreviewProgramID(int id) {
+        mPreviewProgram = id;
+    }
+
+    protected int getImageProgramID() {
+        return mImageProgram;
+    }
+    protected void setImageProgramID(int id) {
+        mImageProgram = id;
+    }
+
+    public static void clear(Target target) {
+        Log.d("Clear", "getProgram: Clear");
+        switch (target) {
+            case PREVIEW:
+                if (mPreviewProgram != 0)
+                    GLES20.glDeleteProgram(mPreviewProgram);
+                mPreviewProgram = 0;
+                break;
+            case IMAGE:
+                if (mImageProgram != 0)
+                    GLES20.glDeleteProgram(mImageProgram);
+                mImageProgram = 0;
+                break;
+        }
+    }
+
     private float[] rgb = {0.0f, 0.0f, 0.0f};
     private float colorRatio;
     private float brightness;
@@ -229,7 +264,6 @@ public class OriginalFilter extends FCameraFilter {
 
     @Override
     public void onDraw(int program, Size viewSize) {
-
         int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
         GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
 

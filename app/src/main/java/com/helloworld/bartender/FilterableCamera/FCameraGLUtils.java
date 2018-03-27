@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -57,16 +58,16 @@ public class FCameraGLUtils {
 
         switch (cameraOrientation){
             case 0:
-                texCoordData = new float[] {0.0f, 0.0f,  1.0f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f};
+                texCoordData = new float[] { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
                 break;
             case 90:
-                texCoordData = new float[] {1.0f, 0.0f,  1.0f, 1.0f,  0.0f, 0.0f,  0.0f, 1.0f};
+                texCoordData = new float[] { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
                 break;
             case 180:
-                texCoordData = new float[] {1.0f, 1.0f,  0.0f, 1.0f,  1.0f, 0.0f,  0.0f, 0.0f};
+                texCoordData = new float[] { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
                 break;
             case 270:
-                texCoordData = new float[] {0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f};
+                texCoordData = new float[] { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
                 break;
             default:
                 throw new RuntimeException("Invalid value of \"cameraOrientation\"");
@@ -162,6 +163,9 @@ public class FCameraGLUtils {
         GLES20.glAttachShader(program, vshader);
         GLES20.glAttachShader(program, fshader);
         GLES20.glLinkProgram(program);
+
+        GLES20.glDeleteShader(vshader);
+        GLES20.glDeleteShader(fshader);
 
         return program;
     }

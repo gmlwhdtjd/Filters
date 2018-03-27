@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.Log;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
@@ -25,8 +26,11 @@ public abstract class FCameraFilter {
     private int mVertexShaderId;
     private int mFragmentShaderId;
 
-    private int mPreviewProgram = 0;
-    private int mImageProgram = 0;
+    protected abstract int getPreviewProgramID();
+    protected abstract void setPreviewProgramID(int id);
+
+    protected abstract int getImageProgramID();
+    protected abstract void setImageProgramID(int id);
 
     public enum Target {
         PREVIEW,
@@ -60,43 +64,24 @@ public abstract class FCameraFilter {
         mName = name;
     }
 
-    public int getProgram(Target target) {
+    int getProgram(Target target) {
         switch (target) {
             case PREVIEW:
-                //if (mPreviewProgram == 0)
-                    mPreviewProgram = FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId);
-                return mPreviewProgram;
+                if (getPreviewProgramID() == 0)
+                    setPreviewProgramID(FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId));
+                return getPreviewProgramID();
             case IMAGE:
-                //if (mImageProgram == 0)
-                    mImageProgram = FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId);
-                return mImageProgram;
+                if (getImageProgramID() == 0)
+                    setImageProgramID(FCameraGLUtils.buildProgram(mContext, mVertexShaderId, mFragmentShaderId));
+                return getImageProgramID();
             default:
                 return 0;
         }
     }
 
-    public void clear(Target target) {
-        switch (target) {
-            case PREVIEW:
-                GLES20.glDeleteProgram(mPreviewProgram);
-
-                GLES20.glDeleteShader(GLES20.GL_FRAGMENT_SHADER);
-                GLES20.glDeleteShader(GLES20.GL_VERTEX_SHADER);
-
-                mPreviewProgram = 0;
-                break;
-            case IMAGE:
-                GLES20.glDeleteProgram(mImageProgram);
-                GLES20.glDeleteShader(GLES20.GL_FRAGMENT_SHADER);
-                GLES20.glDeleteShader(GLES20.GL_VERTEX_SHADER);
-
-                mImageProgram = 0;
-                break;
-        }
-    }
-
     public void onDrawFilter(int textureId, FloatBuffer vertexBuffer, FloatBuffer texCoordBuffer, Target target, Size viewSize) {
         int program = getProgram(target);
+        Log.d("onDrawFilter", "onDrawFilter: " + program);
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 

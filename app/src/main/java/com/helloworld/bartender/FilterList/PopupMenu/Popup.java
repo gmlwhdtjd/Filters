@@ -34,6 +34,7 @@ public class Popup {
     private DatabaseHelper dbHelper;
     private boolean isPopupMenuOpen = false;
     private int selectedPosition;
+    private PopupWindow bottomPopup;
 
     public interface OnPopupItemClickListener {
         void onItemClick(int itemId);
@@ -44,6 +45,8 @@ public class Popup {
         super();
         mContext = context;
         this.popupWindow = new PopupWindow(mContext);
+
+        bottomPopup =new PopupWindow(mContext);
 
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);

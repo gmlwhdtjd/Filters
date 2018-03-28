@@ -43,7 +43,7 @@ public class FCameraPreview extends GLSurfaceView {
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
 
-    private CameraViewRenderer mRenderer;
+    private previewRenderer mRenderer;
     private Callback mCallback;
 
     public FCameraPreview(Context context) {
@@ -52,7 +52,7 @@ public class FCameraPreview extends GLSurfaceView {
 
     public FCameraPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mRenderer = new CameraViewRenderer();
+        mRenderer = new previewRenderer();
 
         this.setEGLContextClientVersion ( 2 );
         this.setRenderer(mRenderer);
@@ -71,7 +71,6 @@ public class FCameraPreview extends GLSurfaceView {
     }
 
     public void setFilter(FCameraFilter filter) {
-        //filter.clear(FCameraFilter.Target.PREVIEW);
         mRenderer.setFilter(filter);
     }
 
@@ -112,17 +111,19 @@ public class FCameraPreview extends GLSurfaceView {
         if (0 == mRatioWidth || 0 == mRatioHeight) {
             setMeasuredDimension(width, height);
         } else {
-            // Todo : 화면 사이즈 관련 수정 필요
-            // 화면 사이즈 관련해서 화면의 길이는 짧으나 카메라의 길이가 긴 디바이스의 경우
-            // 화면 좌우에 레터박스가 생길 수 있으므로 이에 대한 처리가 필요함
-            setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+            // Todo : 화면 사이즈 관련 수정 완료 -> 디바이스 테스트 필요
+            if (width > height * mRatioWidth / mRatioHeight) {
+                setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
+            } else {
+                setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+            }
         }
     }
 
     /**
      * Created by huijonglee on 2018. 1. 22..
      */
-    private class CameraViewRenderer implements GLSurfaceView.Renderer {
+    private class previewRenderer implements GLSurfaceView.Renderer {
 
         private int mProgram;   // default program to convert TEXTURE_EXTERNAL to TEXTURE_2D
 

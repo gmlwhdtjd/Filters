@@ -90,14 +90,6 @@ public class FCameraCapture {
     }
 
     public void setFilter(final FCameraFilter filter) {
-//        if (renderHandler != null) {
-//            renderHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    filter.clear(FCameraFilter.Target.IMAGE);
-//                }
-//            });
-//        }
         mCameraFilter = filter;
         filterChanged.set(true);
     }
@@ -173,7 +165,7 @@ public class FCameraCapture {
 
                 saveImage();
 
-                //egl10.eglSwapBuffers(eglDisplay, eglSurface);
+                egl10.eglSwapBuffers(eglDisplay, eglSurface);
             }
         });
     }
@@ -198,13 +190,13 @@ public class FCameraCapture {
                         .check();
                 return;
             }
-            // TODO : 카운터를 추가해서 1초안에 여러장을 찍을 경우를 대비한다.
             // TODO : 저장 위치 설정.
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String millisecondStamp = String.format("%04d", System.currentTimeMillis() % 10000);
             File mFile = new File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
 //                            File.separator + mContext.getString(R.string.app_name) +
-                            File.separator +"IMG_"+ timeStamp + ".jpg");
+                            File.separator +"IMG_"+ timeStamp + "_" + millisecondStamp + ".jpg");
 
             FileOutputStream fos = new FileOutputStream(mFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -291,5 +283,9 @@ public class FCameraCapture {
         eglDisplay = EGL10.EGL_NO_DISPLAY;
         eglSurface = EGL10.EGL_NO_SURFACE;
         eglContext = EGL10.EGL_NO_CONTEXT;
+    }
+
+    interface captureCallback {
+        void onCaptureCompleted(int width, int height);
     }
 }

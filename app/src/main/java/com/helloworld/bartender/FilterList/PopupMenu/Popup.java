@@ -29,13 +29,11 @@ public class Popup {
     private PopupWindow popupWindow;
     private OnPopupItemClickListener onPopupItemClickListener;
     private LinearLayout rootView;
-    private LinearLayout bottomView;
     private LayoutInflater inflater;
     private FCameraFilter selectedFilter;
     private DatabaseHelper dbHelper;
     private boolean isPopupMenuOpen = false;
     private int selectedPosition;
-    private PopupWindow bottomPopup;
 
     public interface OnPopupItemClickListener {
         void onItemClick(int itemId);
@@ -47,11 +45,8 @@ public class Popup {
         mContext = context;
         this.popupWindow = new PopupWindow(mContext);
 
-        bottomPopup =new PopupWindow(mContext);
-
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         rootView = (LinearLayout) inflater.inflate(R.layout.layout_popup_slot, null);
-        bottomView = (LinearLayout) inflater.inflate(R.layout.layout_bottom_popup,null);
         dbHelper = new DatabaseHelper(mContext);
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));

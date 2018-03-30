@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
@@ -37,6 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     public static final String TABLE_MAIN_NAME = "list";
     public static final String TYPE1_TABLE_NAME = "OriginalFilter";
+    public static final String TYPE0_DEFAULT_NAME = "DefaultFilter";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_FILTER_NAME = "name";
     public static final String COLUMN_FILTER_TYPE = "type";
@@ -112,6 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int saveFilter(FCameraFilter filter, int position) {
 
+        String query="";
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         ContentValues valuesForMain = new ContentValues();
@@ -137,6 +140,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //type에 따라 테이블과 속성이 바뀜
         switch (filter.getClass().getSimpleName()) {
+            case TYPE0_DEFAULT_NAME:
+               BitmapDrawable defaultDrawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.default_image);
+               Bitmap defaultFilterIconImage = defaultDrawable.getBitmap();
+                byte[] defaultData = getByteArrayFromDrawable(defaultFilterIconImage);
+              query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_ICON + "=? WHERE " + COLUMN_ID + "=" + String.valueOf(lastInsertedId);
+                SQLiteStatement p1 = db.compileStatement(query);
+                p1.bindBlob(1, defaultData);
+                p1.execute();
+                defaultFilterIconImage.recycle();
+
+                break;
             case TYPE1_TABLE_NAME:
                 values.put(COLUMN_ID, lastInsertedId);
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
@@ -144,20 +158,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
                 db.replace(TYPE1_TABLE_NAME, null, values);
 
-                FCameraCapture cameraCapture = ((MainActivity)mContext).getfCameraCapture();
-                BitmapDrawable drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
-                Bitmap filterIconImage = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
+                FCameraCapture cameraCapture = ((MainActivity) mContext).getfCameraCapture();
+              BitmapDrawable  originalDrawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
+              Bitmap  originalFilterIconImage = cameraCapture.bitmapFiltering(filter, originalDrawable.getBitmap());
+                byte[] OriginalData = getByteArrayFromDrawable(originalFilterIconImage);
+              query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_ICON + "=? WHERE " + COLUMN_ID + "=" + String.valueOf(lastInsertedId);
+                SQLiteStatement p2 = db.compileStatement(query);
+                p2.bindBlob(1, OriginalData);
+                p2.execute();
 
-                byte[] data = getByteArrayFromDrawable(filterIconImage);
-                String query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_ICON + "=? WHERE " + COLUMN_ID + "=" + String.valueOf(lastInsertedId);
-                SQLiteStatement p = db.compileStatement(query);
-                p.bindBlob(1, data);
-                p.execute();
+                originalFilterIconImage.recycle();
 
                 break;
             default:
                 break;
         }
+
         db.close();
 
         return lastInsertedId;
@@ -229,6 +245,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             filter.setValueWithType(valueType, typeCursor.getInt(typeCursor.getColumnIndex(valueType.toString())));
                         }
                         filterLinkedList.add(filter);
+                        break;
+                    case TYPE0_DEFAULT_NAME:
+                        FCameraFilter defaultFilter = new DefaultFilter(mContext,id,name);
+                        filterLinkedList.add(defaultFilter);
                         break;
                     default:
                         break;

@@ -48,7 +48,7 @@ public class GuideActivity extends AppCompatActivity {
             launchHomeScreen();
             finish();
         }else {
-            setDefaultSetting(this);
+//            setDefaultSetting(this);
         }
 
         // Making notification bar transparent

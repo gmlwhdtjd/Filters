@@ -190,8 +190,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                 }
             });
         } else {
-            holder.filterIcon.setFilterImageDrawable(mContext.getResources().getDrawable(R.drawable.sample_image2));
+
             final FCameraFilter filter = filterList.get(holder.getAdapterPosition());
+            holder.filterIcon.setFilterImageDrawable(dbHelper.getFilterIconImage(filter.getId()));
             holder.filterIcon.setFilterName(filter.getName());
             holder.filterIcon.setChecked(lastSelectedPosition == holder.getAdapterPosition());
             holder.filterIcon.setOnClickListener(new View.OnClickListener() {

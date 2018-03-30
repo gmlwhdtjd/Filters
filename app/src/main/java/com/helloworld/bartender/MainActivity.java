@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 카메라 관련
     private FCameraPreview fCameraPreview;
-    private FCameraCapture fCameraCapture;
+    public FCameraCapture fCameraCapture;
     private FCamera fCamera;
 
     private int cameraFlashState = 0;
@@ -51,10 +52,14 @@ public class MainActivity extends AppCompatActivity {
 
     FCameraFilter cameraFilter;
 
+    public static Context mainContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainContext = this;
 
         //rate this app
         RateThisApp.onCreate(this);

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 
@@ -14,6 +17,7 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -33,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FILTER_NAME = "name";
     public static final String COLUMN_FILTER_TYPE = "type";
     public static final String COLUMN_FILTER_POS ="position";
+    public static final String COLUMN_FILTER_ICON = "filterIcon";
     public Context mContext;
 
     public DatabaseHelper(Context context) {
@@ -58,7 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(" CREATE TABLE " + TABLE_MAIN_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_FILTER_NAME + " TEXT NOT NULL, " +
-                COLUMN_FILTER_TYPE + " TEXT NOT NULL," +
+                COLUMN_FILTER_TYPE + " TEXT NOT NULL, " +
+                COLUMN_FILTER_ICON + " BLOB NOT NULL, " +
                 COLUMN_FILTER_POS + " INT NOT NULL" +
                 ");"
         );
@@ -132,6 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                     values.put(valueType.toString(), filter.getValueWithType(valueType));
                 }
+                
                 db.replace(TYPE1_TABLE_NAME, null, values);
                 break;
             default:
@@ -164,7 +171,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
                     newFilter.setValueWithType(valueType,receivedFilter.getValueWithType(valueType));
                 }
-                newFilter.setName("CopyOf"+receivedFilter.getName());
+                newFilter.setName(receivedFilter.getName());
 
                 pastedFilterId=saveFilter(newFilter,position+1);
                 pastedFilter = new OriginalFilter(mContext,pastedFilterId);
@@ -288,6 +295,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e("Encoding",e.toString());
         }
         return name;
+    }
+
+
+    public byte[] getByteArrayFromDrawable(Drawable img){
+        Bitmap bitmap = ((BitmapDrawable)img).getBitmap();
+        ByteArrayOutputStream byteStream= new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,byteStream);
+        byte data[] = byteStream.toByteArray();
+
+        return data;
     }
 
 }

@@ -418,6 +418,7 @@ public class FCamera implements LifecycleObserver {
     public void setFlashSetting(Flash flash) {
         if (mFlashSupported) {
             mFlashSetting = flash;
+            createCameraPreviewSession();
         }
         else
             mFlashSetting = Flash.OFF;
@@ -904,8 +905,18 @@ public class FCamera implements LifecycleObserver {
      */
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (mFlashSupported) {
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+            switch (mFlashSetting) {
+                case AUTO:
+                    requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                    break;
+                case ON:
+                    requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH);
+                    break;
+                case OFF:
+                    requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+                    break;
+            }
+
         }
     }
 

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.helloworld.bartender.NamedSeekBar
+    <com.helloworld.bartender.Edit.NamedSeekBar
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:text="test"

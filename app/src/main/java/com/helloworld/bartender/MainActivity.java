@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
@@ -155,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO : settingActivity
         settingBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

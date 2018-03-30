@@ -25,6 +25,7 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Size;
 
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.R;
@@ -111,7 +112,6 @@ public class FCameraPreview extends GLSurfaceView {
         if (0 == mRatioWidth || 0 == mRatioHeight) {
             setMeasuredDimension(width, height);
         } else {
-            // Todo : 화면 사이즈 관련 수정 완료 -> 디바이스 테스트 필요
             if (width > height * mRatioWidth / mRatioHeight) {
                 setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
             } else {
@@ -163,11 +163,15 @@ public class FCameraPreview extends GLSurfaceView {
                 public void run() {
                     GLES20.glDeleteProgram(mProgram);
                     mProgram = 0;
-                    OriginalFilter.clear(FCameraFilter.Target.PREVIEW);
+
                     if (CAMERA_RENDER_BUF != null) {
                         CAMERA_RENDER_BUF.clear();
                         CAMERA_RENDER_BUF = null;
                     }
+
+                    // TODO : Clear Filter
+                    DefaultFilter.clear(FCameraFilter.Target.PREVIEW);
+                    OriginalFilter.clear(FCameraFilter.Target.PREVIEW);
                 }
             });
             mSurfaceUpdated = false;

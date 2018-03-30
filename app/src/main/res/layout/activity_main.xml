@@ -146,7 +146,7 @@
                 app:srcCompat="@drawable/ic_edit" />
         </LinearLayout>
 
-        <com.helloworld.bartender.EditView
+        <com.helloworld.bartender.Edit.EditView
             android:id="@+id/editView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

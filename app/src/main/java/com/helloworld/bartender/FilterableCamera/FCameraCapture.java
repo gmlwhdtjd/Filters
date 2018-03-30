@@ -17,6 +17,7 @@ import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
 
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.tedpermission.PermissionListener;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -117,6 +117,7 @@ public class FCameraCapture {
             public void run() {
                 // TODO : Clear Filter
                 shutdownEGL();
+                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
                 OriginalFilter.clear(FCameraFilter.Target.IMAGE);
             }
         });

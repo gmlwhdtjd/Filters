@@ -1,4 +1,4 @@
-package com.helloworld.bartender;
+package com.helloworld.bartender.Edit;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,6 +8,8 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.helloworld.bartender.R;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 

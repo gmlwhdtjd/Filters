@@ -1,8 +1,9 @@
-package com.helloworld.bartender;
+package com.helloworld.bartender.Edit;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.QuickViewConstants;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -22,10 +23,15 @@ import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterList.FilterListView;
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.MainActivity;
+import com.helloworld.bartender.R;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by huijonglee on 2018. 2. 27..
@@ -40,6 +46,7 @@ public class EditView extends CoordinatorLayout {
     TextView editNameView;
 
     OnSaveListener mOnSaveListener;
+    Queue<Integer> backupValues;
 
     public EditView(Context context) {
         super(context);
@@ -126,16 +133,21 @@ public class EditView extends CoordinatorLayout {
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : Cancel
                 changeState();
+
+                if (mFilter instanceof OriginalFilter) {
+                    for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                        mFilter.setValueWithType(valueType, backupValues.poll());
+                    }
+                }
             }
         });
 
         findViewById(R.id.editSaveBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : Save
                 changeState();
+
                 //update
                 FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.FilterListView);
                 int Id = dbHelper.saveFilter(mFilter);
@@ -154,6 +166,13 @@ public class EditView extends CoordinatorLayout {
     public void changeState() {
         if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            backupValues  = new LinkedList<>();
+
+            if (mFilter instanceof OriginalFilter) {
+                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                    backupValues.add(mFilter.getValueWithType(valueType));
+                }
+            }
         } else {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
@@ -171,11 +190,28 @@ public class EditView extends CoordinatorLayout {
         tabHost.setup();
         tabHost.clearAllTabs();
 
-        if (filter instanceof OriginalFilter) {
-            FrameLayout tabContent = findViewById(android.R.id.tabcontent);
-            tabContent.removeAllViews();
-            HashMap<String, LinearLayout> tabs = new HashMap<>();
+        FrameLayout tabContent = findViewById(android.R.id.tabcontent);
+        tabContent.removeAllViews();
+        HashMap<String, LinearLayout> tabs = new HashMap<>();
 
+        if (mFilter instanceof DefaultFilter) {
+            LinearLayout tab = new LinearLayout(getContext());
+            tab.setId(View.generateViewId());
+            tab.setGravity(Gravity.CENTER);
+            tab.setOrientation(LinearLayout.VERTICAL);
+            tabContent.addView(tab);
+
+            TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec Default");
+            tmpTabSpec.setContent(tab.getId());
+            tmpTabSpec.setIndicator("Default");
+            tabHost.addTab(tmpTabSpec);
+
+            TextView textView = new TextView(getContext());
+            textView.setText("Default");
+
+            tab.addView(textView);
+        }
+        else if (mFilter instanceof OriginalFilter) {
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {

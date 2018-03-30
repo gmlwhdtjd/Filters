@@ -1,9 +1,6 @@
 package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.EditView;
+import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;

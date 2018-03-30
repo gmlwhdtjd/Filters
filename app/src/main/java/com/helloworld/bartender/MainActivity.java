@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 카메라 관련
     private FCameraPreview fCameraPreview;
-    public FCameraCapture fCameraCapture;
+    private FCameraCapture fCameraCapture;
     private FCamera fCamera;
 
     private int cameraFlashState = 0;
@@ -52,14 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
     FCameraFilter cameraFilter;
 
-    public static Context mainContext;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mainContext = this;
 
         //rate this app
         RateThisApp.onCreate(this);
@@ -253,5 +249,9 @@ public class MainActivity extends AppCompatActivity {
             hsb[2] = 0.90f;
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsb));
         }
+    }
+
+    public FCameraCapture getfCameraCapture(){
+        return fCameraCapture;
     }
 }

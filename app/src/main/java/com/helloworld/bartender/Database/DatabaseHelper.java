@@ -144,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
                 db.replace(TYPE1_TABLE_NAME, null, values);
 
-                FCameraCapture cameraCapture = ((MainActivity) MainActivity.mainContext).fCameraCapture;
+                FCameraCapture cameraCapture = ((MainActivity)mContext).getfCameraCapture();
                 BitmapDrawable drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
                 Bitmap filterIconImage = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
 

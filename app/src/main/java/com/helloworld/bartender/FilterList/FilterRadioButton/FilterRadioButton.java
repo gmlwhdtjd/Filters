@@ -39,12 +39,10 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
     private int mFilterImageBorderColor;
     private int mCheckedImageFilter;
     private int mFilterTextColor;
-    private Drawable minitialBackgroundDrawable;
-    private int mPressedFilterTextColor;
     private int mCheckedFilterTextColor;
     private int mCheckedFilterImageBorderColor;
 
-    private OnLongClickListener mOnLongClikcListener;
+    private OnLongClickListener mOnLongClickListener;
     private OnClickListener mOnClickListener;
     private OnTouchListener mOnTouchListener;
     private boolean mChecked;
@@ -112,7 +110,6 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
         inflater.inflate(R.layout.layout_filter_radio_button, this, true);
         mFilterNameTextView = (TextView) findViewById(R.id.filter_name);
         mFilterImageView = (CircleImageView) findViewById(R.id.filter_image);
-        minitialBackgroundDrawable = getBackground();
     }
 
     protected void bindView() {
@@ -137,7 +134,7 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
 
     @Override
     public void setOnLongClickListener(@Nullable OnLongClickListener l) {
-        mOnLongClikcListener = l;
+        mOnLongClickListener = l;
     }
 
     private void setCustomTouchListener() {
@@ -162,8 +159,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
     }
 
     private void onLongClick(MotionEvent motionEvent) {
-        if (mOnLongClikcListener != null) {
-            mOnLongClikcListener.onLongClick(this);
+        if (mOnLongClickListener != null) {
+            mOnLongClickListener.onLongClick(this);
         }
     }
 
@@ -270,8 +267,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
 
     @Override
     public void onLongPress(MotionEvent e) {
-        if (mOnLongClikcListener != null) {
-            mOnLongClikcListener.onLongClick(this);
+        if (mOnLongClickListener != null) {
+            mOnLongClickListener.onLongClick(this);
         }
     }
 

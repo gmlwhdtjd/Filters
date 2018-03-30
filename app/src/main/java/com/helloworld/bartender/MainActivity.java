@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -248,5 +249,9 @@ public class MainActivity extends AppCompatActivity {
             hsb[2] = 0.90f;
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsb));
         }
+    }
+
+    public FCameraCapture getfCameraCapture(){
+        return fCameraCapture;
     }
 }

@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void changeCaptureInnerColor(FCameraFilter filter) {
+    private void changeCaptureInnerColor(FCameraFilter filter) {
         if (filter instanceof OriginalFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsb = new float[3];

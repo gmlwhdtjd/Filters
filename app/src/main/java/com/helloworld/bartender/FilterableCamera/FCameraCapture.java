@@ -68,10 +68,12 @@ public class FCameraCapture {
     private Size mImageSize;
     private CameraCharacteristics mCameraCharacteristics;
 
-    private AtomicBoolean filterChanged = new AtomicBoolean(false);
     private FCameraFilter mCameraFilter = null;
 
     private Semaphore initLock = new Semaphore(0);
+
+    private Semaphore bitmapFilteringLock;
+    private Bitmap resultBitmap;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -90,16 +92,7 @@ public class FCameraCapture {
     }
 
     public void setFilter(final FCameraFilter filter) {
-//        if (renderHandler != null) {
-//            renderHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    filter.clear(FCameraFilter.Target.IMAGE);
-//                }
-//            });
-//        }
         mCameraFilter = filter;
-        filterChanged.set(true);
     }
 
     void setCameraCharacteristics(@NonNull CameraCharacteristics characteristics, Size largest) {
@@ -110,13 +103,13 @@ public class FCameraCapture {
     }
 
     void onResume() {
+        bitmapFilteringLock = new Semaphore(0);
         renderThread = new HandlerThread("renderThread");
         renderThread.start();
         renderHandler = new Handler(renderThread.getLooper());
     }
 
     void onPause() {
-        filterChanged.set(true);
         initLock.tryAcquire();
 
         renderHandler.post(new Runnable() {
@@ -164,26 +157,56 @@ public class FCameraCapture {
         });
     }
 
-    public void onDrawFilter(final Bitmap bitmap) {
+    void onDrawFilter(final Bitmap bitmap) {
         renderHandler.post(new Runnable() {
             @Override
             public void run() {
 
                 mCameraFilter.onDrawFilter(bitmap, mVertexBuffer, mTexCoordBuffer, FCameraFilter.Target.IMAGE, mImageSize);
 
-                saveImage();
+                saveImage(mImageSize);
 
-                //egl10.eglSwapBuffers(eglDisplay, eglSurface);
+                egl10.eglSwapBuffers(eglDisplay, eglSurface);
             }
         });
     }
 
-    private void saveImage() {
-        ByteBuffer mImageBuffer = ByteBuffer.allocate(mImageSize.getWidth() * mImageSize.getHeight() * 4);
+    public Bitmap bitmapFiltering(final FCameraFilter filter, final Bitmap bitmap) {
+        renderHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FloatBuffer vertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
+                FloatBuffer texCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
 
-        GLES20.glReadPixels(0, 0, mImageSize.getWidth(), mImageSize.getHeight(), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mImageBuffer);
+                Size imageSize = new Size(bitmap.getWidth(), bitmap.getHeight());
 
-        Bitmap bitmap = Bitmap.createBitmap(mImageSize.getWidth(), mImageSize.getHeight(), Bitmap.Config.ARGB_8888);
+                filter.onDrawFilter(bitmap, vertexBuffer, texCoordBuffer, FCameraFilter.Target.IMAGE, imageSize);
+
+                ByteBuffer mImageBuffer = ByteBuffer.allocate(imageSize.getWidth() * imageSize.getHeight() * 4);
+
+                GLES20.glReadPixels(0, 0, imageSize.getWidth(), imageSize.getHeight(), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mImageBuffer);
+
+                resultBitmap = Bitmap.createBitmap(imageSize.getWidth(), imageSize.getHeight(), Bitmap.Config.ARGB_8888);
+
+                resultBitmap.copyPixelsFromBuffer(mImageBuffer);
+
+                egl10.eglSwapBuffers(eglDisplay, eglSurface);
+
+                bitmapFilteringLock.release();
+            }
+        });
+
+        bitmapFilteringLock.acquireUninterruptibly();
+
+        return resultBitmap;
+    }
+
+    private void saveImage(Size imageSize) {
+        ByteBuffer mImageBuffer = ByteBuffer.allocate(imageSize.getWidth() * imageSize.getHeight() * 4);
+
+        GLES20.glReadPixels(0, 0, imageSize.getWidth(), imageSize.getHeight(), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mImageBuffer);
+
+        Bitmap bitmap = Bitmap.createBitmap(imageSize.getWidth(), imageSize.getHeight(), Bitmap.Config.ARGB_8888);
 
         bitmap.copyPixelsFromBuffer(mImageBuffer);
 
@@ -198,13 +221,13 @@ public class FCameraCapture {
                         .check();
                 return;
             }
-            // TODO : 카운터를 추가해서 1초안에 여러장을 찍을 경우를 대비한다.
             // TODO : 저장 위치 설정.
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String millisecondStamp = String.format("%04d", System.currentTimeMillis() % 10000);
             File mFile = new File(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
 //                            File.separator + mContext.getString(R.string.app_name) +
-                            File.separator +"IMG_"+ timeStamp + ".jpg");
+                            File.separator +"IMG_"+ timeStamp + "_" + millisecondStamp + ".jpg");
 
             FileOutputStream fos = new FileOutputStream(mFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -291,5 +314,9 @@ public class FCameraCapture {
         eglDisplay = EGL10.EGL_NO_DISPLAY;
         eglSurface = EGL10.EGL_NO_SURFACE;
         eglContext = EGL10.EGL_NO_CONTEXT;
+    }
+
+    interface captureCallback {
+        void onCaptureCompleted(int width, int height);
     }
 }

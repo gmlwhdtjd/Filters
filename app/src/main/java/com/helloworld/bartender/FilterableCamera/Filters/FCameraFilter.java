@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
-import android.util.Log;
 import android.util.Size;
 
 import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;

@@ -1,4 +1,3 @@
-#extension GL_OES_EGL_image_external : require
 precision mediump float;
 uniform vec3 iResolution;
 uniform vec3 noiseLevel;

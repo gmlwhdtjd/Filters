@@ -1,6 +1,5 @@
 package com.helloworld.bartender;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
-
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private FCameraCapture fCameraCapture;
     private FCamera fCamera;
 
-    private int cameraFlashState = 0;
     private int cameraTimerState = 0;
 
     // 카메라 캡쳐 관련
@@ -176,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
                 AlbumIntent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                 startActivity(AlbumIntent);
-
-//              dbHelper.saveFilter(new Item("last",0.5f,0.5f,0.5f,0.5f,0.5f));
             }
         });
 
@@ -251,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public FCameraCapture getfCameraCapture(){
+    public FCameraCapture getFCameraCapture(){
         return fCameraCapture;
     }
 }

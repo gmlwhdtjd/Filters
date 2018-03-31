@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.MainActivity;
@@ -32,16 +33,17 @@ import java.util.List;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static String DB_NAME = "filter_list.db";    //sqlite
+    private static String DB_NAME = "filter_list.db";
     private static final int DB_VERSION = 1;
-    public static final String TABLE_MAIN_NAME = "list";
-    public static final String TYPE1_TABLE_NAME = "OriginalFilter";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_FILTER_NAME = "name";
-    public static final String COLUMN_FILTER_TYPE = "type";
-    public static final String COLUMN_FILTER_POS = "position";
-    public static final String COLUMN_FILTER_ICON = "filterIcon";
-    public Context mContext;
+    private static final String TABLE_MAIN_NAME = "list";
+    private static final String TYPE1_FILTER_NAME = "OriginalFilter";
+    private static final String TYPE0_DEFAULT_NAME = "DefaultFilter";
+    private static final String COLUMN_ID = "_id";
+    private static final String COLUMN_FILTER_NAME = "name";
+    private static final String COLUMN_FILTER_TYPE = "type";
+    private static final String COLUMN_FILTER_POS = "position";
+    private static final String COLUMN_FILTER_ICON = "filterIcon";
+    private Context mContext;
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -72,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ");"
         );
 
-        String query = " CREATE TABLE " + TYPE1_TABLE_NAME + " (" +
+        String query = " CREATE TABLE " + TYPE1_FILTER_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, ";
 
         for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
@@ -89,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //you can implement here migration process
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAIN_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TYPE1_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TYPE1_FILTER_NAME);
         this.onCreate(db);
     }
 
@@ -114,6 +116,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         ContentValues valuesForMain = new ContentValues();
+        Bitmap bitmap;
+        BitmapDrawable drawable;
 
         //id가 존재하고 type이 다르면 기존 type테이블에 있는 튜플 삭제
         if (filter.getId() != null) {
@@ -129,38 +133,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valuesForMain.put(COLUMN_FILTER_TYPE, filter.getClass().getSimpleName());
         valuesForMain.put(COLUMN_FILTER_POS, position);
 
-        //id null이면 튜플 생성, id가 존재하면 튜플 update
         int lastInsertedId = (int) db.replace(TABLE_MAIN_NAME, null, valuesForMain);
 
-        Log.d("lastinsertedid", String.valueOf(lastInsertedId));
-
-        //type에 따라 테이블과 속성이 바뀜
         switch (filter.getClass().getSimpleName()) {
-            case TYPE1_TABLE_NAME:
+            case TYPE0_DEFAULT_NAME:
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.default_image);
+                bitmap = drawable.getBitmap();
+                saveBitmapDrawable(bitmap, lastInsertedId);
+
+                break;
+            case TYPE1_FILTER_NAME:
                 values.put(COLUMN_ID, lastInsertedId);
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                     values.put(valueType.toString(), filter.getValueWithType(valueType));
                 }
-                db.replace(TYPE1_TABLE_NAME, null, values);
+                db.replace(TYPE1_FILTER_NAME, null, values);
 
-                FCameraCapture cameraCapture = ((MainActivity)mContext).getFCameraCapture();
-                BitmapDrawable drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
-                Bitmap filterIconImage = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
-
-                byte[] data = getByteArrayFromDrawable(filterIconImage);
-                String query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_ICON + "=? WHERE " + COLUMN_ID + "=" + String.valueOf(lastInsertedId);
-                SQLiteStatement p = db.compileStatement(query);
-                p.bindBlob(1, data);
-                p.execute();
-
-                break;
-            default:
+                FCameraCapture cameraCapture = ((MainActivity) mContext).getFCameraCapture();
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
+                bitmap = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
+                saveBitmapDrawable(bitmap, lastInsertedId);
                 break;
         }
+
         db.close();
 
         return lastInsertedId;
 
+    }
+
+    private void saveBitmapDrawable(Bitmap bitmap, int lastInsertedId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        byte[] data = getByteArrayFromDrawable(bitmap);
+        String query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_ICON + "=? WHERE " + COLUMN_ID + "=" + String.valueOf(lastInsertedId);
+        SQLiteStatement p = db.compileStatement(query);
+        p.bindBlob(1, data);
+        p.execute();
     }
 
     public FCameraFilter pasteFilter(FCameraFilter receivedFilter, int position) {
@@ -179,7 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         switch (receivedFilter.getClass().getSimpleName()) {
-            case TYPE1_TABLE_NAME:
+            case TYPE1_FILTER_NAME:
                 newFilter = new OriginalFilter(mContext, null);
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                     newFilter.setValueWithType(valueType, receivedFilter.getValueWithType(valueType));
@@ -219,15 +227,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
                 String name = DecodeFilterName(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
                 switch (type) {
-                    case TYPE1_TABLE_NAME:
+                    case TYPE1_FILTER_NAME:
                         FCameraFilter filter = new OriginalFilter(mContext, id);
                         filter.setName(name);
-                        Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_TABLE_NAME + " WHERE " + COLUMN_ID + "=" + id, null);
+                        Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_FILTER_NAME + " WHERE " + COLUMN_ID + "=" + id, null);
                         typeCursor.moveToFirst();
                         for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
                             filter.setValueWithType(valueType, typeCursor.getInt(typeCursor.getColumnIndex(valueType.toString())));
                         }
                         filterLinkedList.add(filter);
+                        break;
+                    case TYPE0_DEFAULT_NAME:
+                        FCameraFilter defaultFilter = new DefaultFilter(mContext, id, name);
+                        filterLinkedList.add(defaultFilter);
                         break;
                     default:
                         break;
@@ -250,7 +262,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return filterIconImage;
     }
 
-    public void deleteFilterRecord(int id, int position) {
+    public void deleteFilter(int id, int position) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position > " + position + " ORDER BY position", null);
         if (cursor.moveToFirst()) {
@@ -275,8 +287,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cs.moveToFirst();
         int fromId = cs.getInt(cs.getColumnIndex(COLUMN_ID));
 
-        //fromPOs의 id를 받아서 저장한 후 fromPos와 toPos사이의 pos를 전부 바꾼후 마지막으로 저장한 값을 바꾼다.
-
         if (fromPos > toPos) {
             cs = db.rawQuery("SELECT * FROM " + TABLE_MAIN_NAME + " WHERE position >= " + toPos + " AND position < " + fromPos + " ORDER BY position", null);
             if (cs.moveToLast()) {
@@ -299,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public String EncodeFilterName(String name) {
+    private String EncodeFilterName(String name) {
         String encodedName = "";
         try {
             encodedName = URLEncoder.encode(name, "utf-8");
@@ -309,18 +319,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return encodedName;
     }
 
-    public String DecodeFilterName(String encodedName) {
-        String name = "";
+    private String DecodeFilterName(String encodedName) {
+        String decodedName = "";
         try {
-            name = URLDecoder.decode(encodedName, "utf-8");
+            decodedName = URLDecoder.decode(encodedName, "utf-8");
         } catch (UnsupportedEncodingException e) {
             Log.e("Encoding", e.toString());
         }
-        return name;
+        return decodedName;
     }
 
-
-    public byte[] getByteArrayFromDrawable(Bitmap bitmap) {
+    private byte[] getByteArrayFromDrawable(Bitmap bitmap) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
         byte data[] = byteStream.toByteArray();

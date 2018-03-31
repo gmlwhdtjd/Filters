@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.tedpermission.PermissionListener;
 import com.helloworld.bartender.tedpermission.TedPermission;
@@ -48,7 +49,7 @@ public class GuideActivity extends AppCompatActivity {
             launchHomeScreen();
             finish();
         }else {
-//            setDefaultSetting(this);
+            setDefaultSetting(this);
         }
 
         // Making notification bar transparent
@@ -130,7 +131,7 @@ public class GuideActivity extends AppCompatActivity {
 
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch(false);
-        checkPermssion();
+        checkPermission();
         startActivity(new Intent(GuideActivity.this, MainActivity.class));
         finish();
     }
@@ -215,15 +216,15 @@ public class GuideActivity extends AppCompatActivity {
 
     private void setDefaultSetting(Context context){
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.DefaultFilter_Name),255, 255, 255, 0, 0, 0, 50,50,50,50,50),0);
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
-        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
+        dbHelper.saveFilter(new DefaultFilter(context,null,getString(R.string.DefaultFilter_Name)),0);
+//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
+//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
+//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
+//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
 
     }
 
-    private void checkPermssion(){
+    private void checkPermission(){
 
     }
 

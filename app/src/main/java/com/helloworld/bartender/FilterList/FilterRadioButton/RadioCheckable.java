@@ -8,10 +8,7 @@ import android.widget.Checkable;
  */
 
 interface RadioCheckable extends Checkable {
-    void addOnCheckChangeListener (OnCheckedChangeListener onCheckedChangeListener);
-    void removeOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener);
-
-    public static interface OnCheckedChangeListener{
+    interface OnCheckedChangeListener{
         void OnCheckChanged(View radioGroup, boolean isChecked);
     }
 

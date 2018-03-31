@@ -236,23 +236,12 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
     }
 
     @Override
-    public void addOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
-        mOnCheckedChangeListeners.add(onCheckedChangeListener);
-    }
-
-    @Override
-    public void removeOnCheckChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
-        mOnCheckedChangeListeners.remove(onCheckedChangeListener);
-    }
-
-    @Override
     public boolean onDown(MotionEvent e) {
         return false;
     }
 
     @Override
     public void onShowPress(MotionEvent e) {
-
     }
 
     @Override
@@ -284,18 +273,7 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN:
-//                    onTouchDown(event);
-//                    break;
-//                case MotionEvent.ACTION_UP:
-//                    onTouchUp(event);
-//                    break;
-//            }
-//            if (mOnTouchListener != null) {
-//                mOnTouchListener.onTouch(v, event);
-//            }
-//            return true;
+
             return mDetector.onTouchEvent(event);
         }
     }

@@ -3,7 +3,6 @@ package com.helloworld.bartender.Edit;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.QuickViewConstants;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -152,10 +151,10 @@ public class EditView extends CoordinatorLayout {
                 FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.FilterListView);
                 int Id = dbHelper.saveFilter(mFilter);
                 if(mFilter.getId()==null){
-                    filterListView.getHorizontalAdapter().add(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);
+                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);
                 }
                 else{
-                    filterListView.getHorizontalAdapter().update(mFilter);
+                    filterListView.getHorizontalAdapter().updateItem(mFilter);
                 }
                 if (mOnSaveListener != null)
                     mOnSaveListener.onSaved();

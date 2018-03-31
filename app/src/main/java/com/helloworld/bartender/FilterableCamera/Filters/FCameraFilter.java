@@ -107,7 +107,6 @@ public abstract class FCameraFilter {
 
         int textureId = FCameraGLUtils.genTexture();
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        bitmap.recycle();
 
         onDrawFilter(textureId, vertexBuffer, texCoordBuffer, target, viewSize);
     }

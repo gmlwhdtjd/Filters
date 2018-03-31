@@ -3,7 +3,6 @@ package com.helloworld.bartender.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
@@ -144,7 +143,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
                 db.replace(TYPE1_TABLE_NAME, null, values);
 
-                FCameraCapture cameraCapture = ((MainActivity)mContext).getfCameraCapture();
+                FCameraCapture cameraCapture = ((MainActivity)mContext).getFCameraCapture();
                 BitmapDrawable drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
                 Bitmap filterIconImage = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
 

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/pref_header_about">
-        <EditTextPreference
-            android:defaultValue="@string/default_gallery_storage"
+        <Preference
             android:key="@string/key_gallery_name"
             android:summary="@string/default_gallery_storage"
             android:title="@string/title_gallery_storage" />

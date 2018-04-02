@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.util.Log;
+import android.content.SharedPreferences;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -61,9 +62,14 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference_layout_setting);
-
-            // gallery EditText change listener
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
+
+            SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
+            String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
+            if(path!=null){
+            galleryPath.setSummary(path);
+            }
+            // gallery EditText change listener
             galleryPath.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -114,6 +120,11 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                         resultCode));
 
                 if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                    SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString(getString(R.string.key_gallery_name),data
+                            .getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+                    editor.commit();
                     Preference galleryPath = findPreference(getString(R.string.key_gallery_name));
                     galleryPath
                             .setSummary(data

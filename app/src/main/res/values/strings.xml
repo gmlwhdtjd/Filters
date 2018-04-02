@@ -87,5 +87,6 @@ limitations under the License.\n</string>
     <string name="delete_filter">Delete</string>
     <string name="duplicate_filter">Duplicate</string>
     <string name="share_filter">Share</string>
+    <string name="gallery_pref">gallery_shared_pref</string>
 
 </resources>

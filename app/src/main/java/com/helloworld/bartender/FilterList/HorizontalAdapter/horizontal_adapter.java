@@ -228,4 +228,8 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return mFilterList.size() + 1;
     }
 
+    public FCameraFilter getDefaultFilter(){
+        return mFilterList.get(0);
+    }
+
 }

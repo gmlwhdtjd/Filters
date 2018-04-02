@@ -105,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             position = cs.getInt(cs.getColumnIndex(COLUMN_FILTER_POS));
         } else {
             //add
-            FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.FilterListView);
+            FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
             position = filterListView.getHorizontalAdapter().getItemCount() - 1;
         }
         return saveFilter(filter, position);

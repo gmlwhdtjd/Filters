@@ -22,6 +22,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
+import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton cameraCaptureBtt;
     private ImageButton editBtt;
 
-    // EditView
+    // CustomViews
+    private FilterListView filterListView;
     private EditView editView;
 
     @Override
@@ -96,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
         cameraCaptureBtt = findViewById(R.id.cameraCaptureBtt);
         editBtt = findViewById(R.id.editBtt);
 
-        // EditView
+        // CustomView
         editView = findViewById(R.id.editView);
+        filterListView = findViewById(R.id.filterListView);
 
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
@@ -229,10 +232,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 초기 필터 세팅
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        List<FCameraFilter> filterList = dbHelper.getFilterList("");
-        setCameraFilter(filterList.get(0));
-        dbHelper.close();
+        setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
     }
 
     public void setCameraFilter(final FCameraFilter filter){

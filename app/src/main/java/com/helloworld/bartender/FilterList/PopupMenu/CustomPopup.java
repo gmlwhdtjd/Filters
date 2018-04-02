@@ -79,7 +79,7 @@ public class CustomPopup {
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
-                FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.FilterListView);
+                FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
                 switch (itemId) {
                     case 0:
                         dbHelper.deleteFilter(mSelectedFilter.getId(), mSelectedPosition);

@@ -148,7 +148,7 @@ public class EditView extends CoordinatorLayout {
                 changeState();
 
                 //update
-                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.FilterListView);
+                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
                 int Id = dbHelper.saveFilter(mFilter);
                 if(mFilter.getId()==null){
                     filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);

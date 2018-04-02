@@ -1,27 +1,20 @@
 package com.helloworld.bartender.FilterableCamera;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.opengl.GLES20;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
-import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.tedpermission.PermissionListener;
-import com.helloworld.bartender.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +22,6 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
@@ -71,21 +63,11 @@ public class FCameraCapture {
     private FCameraFilter mCameraFilter = null;
 
     private Semaphore initLock = new Semaphore(0);
-
     private Semaphore bitmapFilteringLock;
+
     private Bitmap resultBitmap;
 
-    private PermissionListener permissionlistener = new PermissionListener() {
-        @Override
-        public void onPermissionGranted() {
-            Toast.makeText(mContext, "Permission Granted", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(mContext, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };
+    private String mSaveDirectory;
 
     public FCameraCapture(Context context) {
         mContext = context;
@@ -93,6 +75,15 @@ public class FCameraCapture {
 
     public void setFilter(final FCameraFilter filter) {
         mCameraFilter = filter;
+    }
+
+    public void setSaveDirectory(String dir) {
+        File file = new File(dir);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        mSaveDirectory = file.getAbsolutePath();
     }
 
     void setCameraCharacteristics(@NonNull CameraCharacteristics characteristics, Size largest) {
@@ -112,15 +103,7 @@ public class FCameraCapture {
     void onPause() {
         initLock.tryAcquire();
 
-        renderHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO : Clear Filter
-                shutdownEGL();
-                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
-                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
-            }
-        });
+        clear();
 
         renderThread.quitSafely();
         try {
@@ -154,6 +137,19 @@ public class FCameraCapture {
                 }
 
                 initLock.release();
+            }
+        });
+    }
+
+    void clear() {
+        renderHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // TODO : Clear Filter
+                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
+                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
+
+                shutdownEGL();
             }
         });
     }
@@ -202,7 +198,7 @@ public class FCameraCapture {
         return resultBitmap;
     }
 
-    private void saveImage(Size imageSize) {
+    private void saveImage(Size imageSize){
         ByteBuffer mImageBuffer = ByteBuffer.allocate(imageSize.getWidth() * imageSize.getHeight() * 4);
 
         GLES20.glReadPixels(0, 0, imageSize.getWidth(), imageSize.getHeight(), GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, mImageBuffer);
@@ -212,32 +208,18 @@ public class FCameraCapture {
         bitmap.copyPixelsFromBuffer(mImageBuffer);
 
         try {
-            //Permission Check
-            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                TedPermission.with(mContext)
-                        .setPermissionListener(permissionlistener)
-                        .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .check();
-                return;
-            }
-            // TODO : 저장 위치 설정.
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             String millisecondStamp = String.format("%04d", System.currentTimeMillis() % 10000);
-            File mFile = new File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +
-//                            File.separator + mContext.getString(R.string.app_name) +
-                            File.separator +"IMG_"+ timeStamp + "_" + millisecondStamp + ".jpg");
+            File file = new File(mSaveDirectory + File.separator + "IMG_" + timeStamp + "_" + millisecondStamp + ".jpg");
 
-            FileOutputStream fos = new FileOutputStream(mFile);
+            FileOutputStream fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
 
-            Log.d(TAG, mFile.toString());
+            Log.d(TAG, file.toString());
 
-            mContext.sendBroadcast(new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mFile)) );
+            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
         }
-        catch (FileNotFoundException e) {
+        catch (FileNotFoundException e){
             e.printStackTrace();
         }
     }
@@ -315,9 +297,5 @@ public class FCameraCapture {
         eglDisplay = EGL10.EGL_NO_DISPLAY;
         eglSurface = EGL10.EGL_NO_SURFACE;
         eglContext = EGL10.EGL_NO_CONTEXT;
-    }
-
-    interface captureCallback {
-        void onCaptureCompleted(int width, int height);
     }
 }

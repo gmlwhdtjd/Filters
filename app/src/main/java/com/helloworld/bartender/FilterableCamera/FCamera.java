@@ -41,9 +41,9 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.R;
-import com.helloworld.bartender.tedpermission.PermissionListener;
-import com.helloworld.bartender.tedpermission.TedPermission;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -409,6 +409,7 @@ public class FCamera implements LifecycleObserver {
      */
     public void switchCameraFacing() {
         closeCamera();
+        mFCameraCapture.clear();
 
         mCameraFacing = !mCameraFacing;
 

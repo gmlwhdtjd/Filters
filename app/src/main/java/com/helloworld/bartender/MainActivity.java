@@ -1,24 +1,38 @@
 package com.helloworld.bartender;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
+import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.kobakei.ratethisapp.RateThisApp;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -48,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
     // EditView
     private EditView editView;
 
-    FCameraFilter cameraFilter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
         // 카메라 관련
         fCameraPreview = findViewById(R.id.cameraView);
         fCameraCapture = new FCameraCapture(this);
+        fCameraCapture.setSaveDirectory(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + File.separator + getString(R.string.app_name));
+
         fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
 
         // 카메라 캡쳐 관련
@@ -213,16 +229,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 초기 필터 세팅
-        cameraFilter = new OriginalFilter(this, 1);
-        setCameraFilter(cameraFilter);
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        List<FCameraFilter> filterList = dbHelper.getFilterList("");
+        setCameraFilter(filterList.get(0));
+        dbHelper.close();
     }
 
     public void setCameraFilter(final FCameraFilter filter){
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
+        
         changeCaptureInnerColor(filter);
-
         editView.setOnSaveListener(new EditView.OnSaveListener() {
             @Override
             public void onSaved() {
@@ -232,17 +250,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeCaptureInnerColor(FCameraFilter filter) {
-        if (filter instanceof OriginalFilter) {
+        if (filter instanceof DefaultFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
-            float[] hsb = new float[3];
+            float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
+            cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
+        }
+        else if (filter instanceof OriginalFilter) {
+            ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+            float[] hsv = new float[3];
             Color.RGBToHSV(
                     filter.getValueWithType(OriginalFilter.ValueType.RGB_R),
                     filter.getValueWithType(OriginalFilter.ValueType.RGB_G),
                     filter.getValueWithType(OriginalFilter.ValueType.RGB_B),
-                    hsb);
-            hsb[1] = hsb[1] < 0.2f ? hsb[1] : 0.2f;
-            hsb[2] = 0.90f;
-            cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsb));
+                    hsv);
+            hsv[1] = hsv[1] < 0.2f ? hsv[1] : 0.2f;
+            hsv[2] = 0.90f;
+            cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
         }
     }
 

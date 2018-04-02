@@ -31,4 +31,5 @@ dependencies {
     compile 'org.adw.library:discrete-seekbar:1.0.1'
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'io.github.kobakei:ratethisapp:1.2.0'
+    compile 'gun0912.ted:tedpermission:2.1.1'
 }

@@ -12,6 +12,8 @@
 
     <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
 
+    <string name="DefaultFilter_msg">You chose the original source.\nPlease, Select a different filter.</string>
+
     <!--Original Filter-->
     <string name="OriginalFilter_Page_1">Color</string>
     <string name="OriginalFilter_Page_2">Light</string>

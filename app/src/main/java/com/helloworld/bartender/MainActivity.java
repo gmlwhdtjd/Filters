@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
+import java.io.File;
 import java.util.List;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
@@ -53,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
     // EditView
     private EditView editView;
 
-    FCameraFilter cameraFilter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
         // 카메라 관련
         fCameraPreview = findViewById(R.id.cameraView);
         fCameraCapture = new FCameraCapture(this);
+        fCameraCapture.setSaveDirectory(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + File.separator + getString(R.string.app_name));
+
         fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
 
         // 카메라 캡쳐 관련

@@ -22,11 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.tedpermission.PermissionListener;
-import com.helloworld.bartender.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 
@@ -39,6 +38,22 @@ public class GuideActivity extends AppCompatActivity {
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
 
+    private PermissionListener permissionlistener = new PermissionListener() {
+        @Override
+        public void onPermissionGranted() {
+            Toast.makeText(GuideActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            prefManager.setFirstTimeLaunch(false);
+            launchHomeScreen();
+        }
+
+        @Override
+        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            Toast.makeText(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            prefManager.setFirstTimeLaunch(false);
+            finish();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +61,7 @@ public class GuideActivity extends AppCompatActivity {
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
-            launchHomeScreen();
+            checkPermission();
             finish();
         }else {
             setDefaultSetting(this);
@@ -86,7 +101,7 @@ public class GuideActivity extends AppCompatActivity {
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchHomeScreen();
+                checkPermission();
             }
         });
 
@@ -100,7 +115,7 @@ public class GuideActivity extends AppCompatActivity {
                     // move to next screen
                     viewPager.setCurrentItem(current);
                 } else {
-                    launchHomeScreen();
+                    checkPermission();
                 }
             }
         });
@@ -130,8 +145,6 @@ public class GuideActivity extends AppCompatActivity {
     }
 
     private void launchHomeScreen() {
-        prefManager.setFirstTimeLaunch(false);
-        checkPermission();
         startActivity(new Intent(GuideActivity.this, MainActivity.class));
         finish();
     }
@@ -224,8 +237,17 @@ public class GuideActivity extends AppCompatActivity {
 
     }
 
+
     private void checkPermission(){
-
+        //Permission Check
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            TedPermission.with(this)
+                    .setPermissionListener(permissionlistener)
+                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                    .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .check();
+            return;
+        }
     }
-
 }

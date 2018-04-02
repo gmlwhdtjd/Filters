@@ -1,27 +1,20 @@
 package com.helloworld.bartender.FilterableCamera;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.opengl.GLES20;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
-import android.widget.Toast;
 
 import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
-import com.helloworld.bartender.tedpermission.PermissionListener;
-import com.helloworld.bartender.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +22,6 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;

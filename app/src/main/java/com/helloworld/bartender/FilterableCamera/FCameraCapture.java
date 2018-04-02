@@ -112,15 +112,7 @@ public class FCameraCapture {
     void onPause() {
         initLock.tryAcquire();
 
-        renderHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                // TODO : Clear Filter
-                shutdownEGL();
-                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
-                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
-            }
-        });
+        clear();
 
         renderThread.quitSafely();
         try {
@@ -154,6 +146,19 @@ public class FCameraCapture {
                 }
 
                 initLock.release();
+            }
+        });
+    }
+
+    void clear() {
+        renderHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                // TODO : Clear Filter
+                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
+                OriginalFilter.clear(FCameraFilter.Target.IMAGE);
+
+                shutdownEGL();
             }
         });
     }
@@ -315,9 +320,5 @@ public class FCameraCapture {
         eglDisplay = EGL10.EGL_NO_DISPLAY;
         eglSurface = EGL10.EGL_NO_SURFACE;
         eglContext = EGL10.EGL_NO_CONTEXT;
-    }
-
-    interface captureCallback {
-        void onCaptureCompleted(int width, int height);
     }
 }

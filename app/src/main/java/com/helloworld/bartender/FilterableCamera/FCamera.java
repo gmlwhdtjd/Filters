@@ -409,6 +409,7 @@ public class FCamera implements LifecycleObserver {
      */
     public void switchCameraFacing() {
         closeCamera();
+        mFCameraCapture.clear();
 
         mCameraFacing = !mCameraFacing;
 

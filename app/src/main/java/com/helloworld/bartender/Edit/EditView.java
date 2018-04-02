@@ -200,13 +200,16 @@ public class EditView extends CoordinatorLayout {
             tab.setOrientation(LinearLayout.VERTICAL);
             tabContent.addView(tab);
 
-            TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec Default");
+            TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec Original");
             tmpTabSpec.setContent(tab.getId());
-            tmpTabSpec.setIndicator("Default");
+            tmpTabSpec.setIndicator("Original");
             tabHost.addTab(tmpTabSpec);
 
             TextView textView = new TextView(getContext());
-            textView.setText("Default");
+            textView.setText(getContext().getString(R.string.DefaultFilter_msg));
+            textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(20);
 
             tab.addView(textView);
         }

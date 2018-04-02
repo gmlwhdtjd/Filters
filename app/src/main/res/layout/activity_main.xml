@@ -89,7 +89,7 @@
         </LinearLayout>
 
         <com.helloworld.bartender.FilterList.FilterListView
-            android:id="@+id/FilterListView"
+            android:id="@+id/filterListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignBottom="@id/cameraFrame"/>

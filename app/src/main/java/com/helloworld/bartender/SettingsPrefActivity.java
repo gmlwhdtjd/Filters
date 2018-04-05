@@ -63,6 +63,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference_layout_setting);
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
+            Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
             String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
@@ -88,6 +89,14 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                             config);
 
                     startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+                    return true;
+                }
+            });
+
+            openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(),0);
                     return true;
                 }
             });
@@ -149,6 +158,11 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private static void startDetailActivity(Context context,int pageNum){
+        Intent intent = new Intent(context,OpenLicenseActivity.class);
+        intent.putExtra("pageNum", pageNum);
+        context.startActivity(intent);
+    }
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);

@@ -7,24 +7,21 @@
             android:title="@string/title_gallery_storage" />
         <Preference
             android:summary="@string/app_version"
-            android:title="@string/title_version"
-            />
+            android:title="@string/title_version" />
         <Preference
             android:key="@string/key_review"
-            android:title="@string/title_review"
             android:summary="@string/summary_review"
-            />
+            android:title="@string/title_review" />
 
         <Preference
             android:key="@string/key_share"
-            android:title="@string/title_share"
-            android:summary="@string/summary_share"/>
+            android:summary="@string/summary_share"
+            android:title="@string/title_share" />
 
         <Preference
             android:key="@string/key_faq"
             android:summary="@string/summary_faq"
-            android:title="@string/title_faq"
-            >
+            android:title="@string/title_faq">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/url_faq" />
@@ -43,13 +40,8 @@
 
         <Preference
             android:key="@string/key_open_license"
-            android:title="@string/title_open_license"
-            >
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetPackage="com.helloworld.bartender"
-                android:targetClass="com.helloworld.bartender.OpenLicenseActivity"/>
-        </Preference>
+            android:title="@string/title_open_license" />
+
         <Preference
             android:key="@string/key_privacy"
             android:title="@string/title_privacy">

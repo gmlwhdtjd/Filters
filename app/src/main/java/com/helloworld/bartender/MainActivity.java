@@ -87,23 +87,23 @@ public class MainActivity extends AppCompatActivity {
         fCamera.setCallback(new FCamera.Callback() {
             @Override
             public void onOpened() {
-//                switch (fCamera.getFlashSetting()) {
-//                    case AUTO:
-//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
-//                        break;
-//                    case OFF:
-//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
-//                        break;
-//                    case ON:
-//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
-//                        break;
-//                }
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                        break;
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                        break;
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                        break;
+                }
             }
 
             @Override
             public void onCapture() {
-//                Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
-//                captureEffectImg.startAnimation(captuer);
+                Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
+                captureEffectImg.startAnimation(captuer);
             }
         });
 

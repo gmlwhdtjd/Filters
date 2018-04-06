@@ -2,6 +2,7 @@ package com.helloworld.bartender.FilterableCamera;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.util.Size;
 import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,8 +84,11 @@ public class FCameraCapture {
         if (!file.exists()) {
             file.mkdirs();
         }
-
         mSaveDirectory = file.getAbsolutePath();
+        SharedPreferences pref = mContext.getSharedPreferences(mContext.getString(R.string.gallery_pref),0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(mContext.getString(R.string.key_gallery_name),mSaveDirectory);
+        editor.commit();
     }
 
     void setCameraCharacteristics(@NonNull CameraCharacteristics characteristics, Size largest) {

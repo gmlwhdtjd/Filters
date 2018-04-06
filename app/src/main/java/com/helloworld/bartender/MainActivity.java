@@ -2,6 +2,7 @@ package com.helloworld.bartender;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -233,6 +234,14 @@ public class MainActivity extends AppCompatActivity {
 
         // 초기 필터 세팅
         setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref),0);
+        String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
+        fCameraCapture.setSaveDirectory(path);
     }
 
     public void setCameraFilter(final FCameraFilter filter){

@@ -93,6 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAIN_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TYPE1_FILTER_NAME);
         this.onCreate(db);
+
     }
 
     public int saveFilter(FCameraFilter filter) {

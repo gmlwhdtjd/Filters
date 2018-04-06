@@ -160,7 +160,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
 
     private static void startDetailActivity(Context context,int pageNum){
         Intent intent = new Intent(context,OpenLicenseActivity.class);
-        intent.putExtra("pageNum", pageNum);
+        intent.putExtra("pageNum", String.valueOf(pageNum));
         context.startActivity(intent);
     }
 

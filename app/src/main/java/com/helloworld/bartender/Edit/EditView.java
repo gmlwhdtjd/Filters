@@ -38,6 +38,7 @@ import java.util.Queue;
 
 public class EditView extends CoordinatorLayout {
 
+    private boolean isOpen;
     BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
     DatabaseHelper dbHelper;
@@ -69,6 +70,7 @@ public class EditView extends CoordinatorLayout {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
         dbHelper = new DatabaseHelper(getContext());
+        isOpen = false;
 
         // TODO : 변수 세팅
 
@@ -103,7 +105,7 @@ public class EditView extends CoordinatorLayout {
 
                 float dp = getResources().getDisplayMetrics().density;
 
-                FrameLayout changeView= new FrameLayout(getContext());
+                FrameLayout changeView = new FrameLayout(getContext());
                 changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
 
@@ -150,10 +152,9 @@ public class EditView extends CoordinatorLayout {
                 //update
                 FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
                 int Id = dbHelper.saveFilter(mFilter);
-                if(mFilter.getId()==null){
-                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);
-                }
-                else{
+                if (mFilter.getId() == null) {
+                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
+                } else {
                     filterListView.getHorizontalAdapter().updateItem(mFilter);
                 }
                 if (mOnSaveListener != null)
@@ -165,7 +166,8 @@ public class EditView extends CoordinatorLayout {
     public void changeState() {
         if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            backupValues  = new LinkedList<>();
+            isOpen = true;
+            backupValues = new LinkedList<>();
 
             if (mFilter instanceof OriginalFilter) {
                 for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
@@ -173,6 +175,7 @@ public class EditView extends CoordinatorLayout {
                 }
             }
         } else {
+            isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
@@ -212,8 +215,7 @@ public class EditView extends CoordinatorLayout {
             textView.setTextSize(20);
 
             tab.addView(textView);
-        }
-        else if (mFilter instanceof OriginalFilter) {
+        } else if (mFilter instanceof OriginalFilter) {
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {
@@ -269,13 +271,13 @@ public class EditView extends CoordinatorLayout {
         void onSaved();
     }
 
-    public FCameraFilter NewFilter(FCameraFilter filter, int Id){
+    public FCameraFilter NewFilter(FCameraFilter filter, int Id) {
         FCameraFilter newFilter = null;
         switch (filter.getClass().getSimpleName()) {
             case "OriginalFilter":
-                newFilter = new OriginalFilter(getContext(),Id);
-                for(OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()){
-                    newFilter.setValueWithType(valueType,filter.getValueWithType(valueType));
+                newFilter = new OriginalFilter(getContext(), Id);
+                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                    newFilter.setValueWithType(valueType, filter.getValueWithType(valueType));
                 }
                 newFilter.setName(filter.getName());
                 break;
@@ -283,6 +285,10 @@ public class EditView extends CoordinatorLayout {
                 break;
         }
         return newFilter;
+    }
+
+    public boolean IsOpen() {
+        return isOpen;
     }
 
 }

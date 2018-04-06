@@ -9,7 +9,7 @@ public class OpenLicenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String page = getIntent().getStringExtra("page");
+        String page = getIntent().getStringExtra("pageNum");
         setContentView(R.layout.activity_open_license);
         Toast.makeText(this,page,Toast.LENGTH_LONG).show();
     }

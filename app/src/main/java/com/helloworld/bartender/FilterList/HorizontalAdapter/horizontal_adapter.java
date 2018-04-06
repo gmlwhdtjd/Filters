@@ -232,4 +232,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return mFilterList.get(0);
     }
 
+    public boolean isPopupMenuOpen(){
+        return mCustomPopup.isPopupMenuOpen();
+    }
+
+    public void dismissPopup(){
+        mCustomPopup.dismiss();
+    }
 }

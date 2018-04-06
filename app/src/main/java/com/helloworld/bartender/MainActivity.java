@@ -1,29 +1,22 @@
 package com.helloworld.bartender;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
-import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
@@ -33,8 +26,6 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -62,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton editBtt;
 
     // CustomViews
-    private FilterListView filterListView;
+    private FilterListView mFilterListView;
+    private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
     @Override
@@ -101,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         // CustomView
         editView = findViewById(R.id.editView);
-        filterListView = findViewById(R.id.filterListView);
+        mFilterListView = findViewById(R.id.filterListView);
+        mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 초기 필터 세팅
-        setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
+        setCameraFilter(mHorizontal_adapter.getDefaultFilter());
     }
 
     @Override
@@ -280,5 +273,17 @@ public class MainActivity extends AppCompatActivity {
 
     public FCameraCapture getFCameraCapture(){
         return fCameraCapture;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(editView.IsOpen()) {
+            editView.changeState();
+        }else if(mHorizontal_adapter.isPopupMenuOpen()){
+            mHorizontal_adapter.dismissPopup();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 }

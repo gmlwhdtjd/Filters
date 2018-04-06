@@ -30,6 +30,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
 
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
+
 public class GuideActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -42,7 +44,7 @@ public class GuideActivity extends AppCompatActivity {
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(GuideActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            Toasty.success(GuideActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
             prefManager.setFirstTimeLaunch(false);
             launchHomeScreen();
         }

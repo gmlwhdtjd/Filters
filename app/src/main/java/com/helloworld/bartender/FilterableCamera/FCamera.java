@@ -85,12 +85,6 @@ public class FCamera implements LifecycleObserver {
     private static final String TAG = "FCamera";
 
     /**
-     * true == back camera
-     * false == front camera
-     */
-    private Boolean mCameraFacing;
-
-    /**
      * FCamera state: Showing camera preview.
      */
     private static final int STATE_PREVIEW = 0;
@@ -150,6 +144,27 @@ public class FCamera implements LifecycleObserver {
      */
     private CameraDevice mCameraDevice;
 
+    private Callback mCallback;
+
+    /**
+     * true == back camera
+     * false == front camera
+     */
+    private Boolean mCameraFacing;
+
+    public enum Flash {
+        AUTO,
+        ON,
+        OFF
+    }
+
+    /**
+     * Whether the current camera device supports Flash or not.
+     */
+    private boolean mFlashSupported;
+
+    private Flash mFlashSetting;
+
     /**
      * The {@link Size} of camera preview.
      */
@@ -164,7 +179,6 @@ public class FCamera implements LifecycleObserver {
      * A {@link Handler} for running tasks in the background.
      */
     private Handler mBackgroundHandler;
-
 
     /**
      * An {@link ImageReader} that handles still image capture.
@@ -220,19 +234,6 @@ public class FCamera implements LifecycleObserver {
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
-    /**
-     * Whether the current camera device supports Flash or not.
-     */
-    private boolean mFlashSupported;
-
-    private Flash mFlashSetting;
-
-    public enum Flash {
-        AUTO,
-        ON,
-        OFF
-    }
-
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
@@ -262,6 +263,15 @@ public class FCamera implements LifecycleObserver {
             // This method is called when the camera is opened.  We start camera preview here.
             mCameraOpenCloseLock.release();
             mCameraDevice = cameraDevice;
+            if (mCallback != null) {
+                Handler mainHandler = new Handler(mActivity.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onOpened();
+                    }
+                });
+            }
             createCameraPreviewSession();
         }
 
@@ -389,6 +399,10 @@ public class FCamera implements LifecycleObserver {
         mFCameraCapture.onPause();
         closeCamera();
         stopBackgroundThread();
+    }
+
+    public void setCallback(Callback callback){
+        mCallback = callback;
     }
 
     /**
@@ -870,6 +884,17 @@ public class FCamera implements LifecycleObserver {
 
             mCaptureSession.stopRepeating();
             mCaptureSession.abortCaptures();
+
+            if (mCallback != null){
+                Handler mainHandler = new Handler(mActivity.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onCapture();
+                    }
+                });
+            }
+
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -969,5 +994,10 @@ public class FCamera implements LifecycleObserver {
                     .create();
         }
 
+    }
+
+    public interface Callback {
+        void onOpened();
+        void onCapture();
     }
 }

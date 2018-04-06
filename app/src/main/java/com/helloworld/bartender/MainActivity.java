@@ -84,6 +84,28 @@ public class MainActivity extends AppCompatActivity {
                 + File.separator + getString(R.string.app_name));
 
         fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
+        fCamera.setCallback(new FCamera.Callback() {
+            @Override
+            public void onOpened() {
+//                switch (fCamera.getFlashSetting()) {
+//                    case AUTO:
+//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+//                        break;
+//                    case OFF:
+//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+//                        break;
+//                    case ON:
+//                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+//                        break;
+//                }
+            }
+
+            @Override
+            public void onCapture() {
+//                Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
+//                captureEffectImg.startAnimation(captuer);
+            }
+        });
 
         // 카메라 캡쳐 관련
         timerTextView = findViewById(R.id.timerNumberText);
@@ -215,9 +237,6 @@ public class MainActivity extends AppCompatActivity {
                         timerTextView.setText("");
 
                         fCamera.takePicture();
-
-                        Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
-                        captureEffectImg.startAnimation(captuer);
 
                         cameraCaptureBtt.setClickable(true);
                     }

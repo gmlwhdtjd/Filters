@@ -194,6 +194,8 @@ public class EditView extends CoordinatorLayout {
         HashMap<String, LinearLayout> tabs = new HashMap<>();
 
         if (mFilter instanceof DefaultFilter) {
+            editNameView.setClickable(false);
+
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -214,6 +216,8 @@ public class EditView extends CoordinatorLayout {
             tab.addView(textView);
         }
         else if (mFilter instanceof OriginalFilter) {
+            editNameView.setClickable(true);
+
             for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {

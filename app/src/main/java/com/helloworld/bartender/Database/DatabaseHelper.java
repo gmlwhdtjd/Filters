@@ -88,11 +88,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //you can implement here migration process
-
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MAIN_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TYPE1_FILTER_NAME);
-        this.onCreate(db);
     }
 
     public int saveFilter(FCameraFilter filter) {

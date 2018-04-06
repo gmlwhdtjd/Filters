@@ -21,11 +21,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
         <activity
-            android:name=".tedpermission.TedPermissionActivity"
-            android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|screenLayout|fontScale|uiMode|orientation|screenSize|layoutDirection"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Transparent.Permission" />
-        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
         <activity

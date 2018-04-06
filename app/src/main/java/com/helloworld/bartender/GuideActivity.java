@@ -250,5 +250,9 @@ public class GuideActivity extends AppCompatActivity {
                     .check();
             return;
         }
+        else {
+            prefManager.setFirstTimeLaunch(false);
+            launchHomeScreen();
+        }
     }
 }

@@ -367,10 +367,9 @@ public class FCamera implements LifecycleObserver {
     private final FragmentActivity mActivity;
 
     public FCamera(FragmentActivity activity,
-                   Lifecycle lifecycle,
                    FCameraPreview fCameraPreview,
                    FCameraCapture fCameraCapture) {
-        lifecycle.addObserver(this);
+        activity.getLifecycle().addObserver(this);
 
         mActivity = activity;
         mFCameraPreview = fCameraPreview;
@@ -686,6 +685,15 @@ public class FCamera implements LifecycleObserver {
      */
     private void closeCamera() {
         synchronized (mCaptureSessionStateCallback) {
+            if (mCallback != null){
+                Handler mainHandler = new Handler(mActivity.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onClose();
+                    }
+                });
+            }
             try {
                 mCameraOpenCloseLock.acquire();
                 if (null != mCaptureSession) {
@@ -753,8 +761,16 @@ public class FCamera implements LifecycleObserver {
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null
-            );
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
+            if (mCallback != null){
+                Handler mainHandler = new Handler(mActivity.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onStartPreview();
+                    }
+                });
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -768,7 +784,7 @@ public class FCamera implements LifecycleObserver {
      *
      * This method has been referenced from Android Camera2Basic Sample.
      */
-    private CameraCaptureSession.StateCallback mCaptureSessionStateCallback
+    final private CameraCaptureSession.StateCallback mCaptureSessionStateCallback
             = new CameraCaptureSession.StateCallback() {
 
         @Override
@@ -998,6 +1014,8 @@ public class FCamera implements LifecycleObserver {
 
     public interface Callback {
         void onOpened();
+        void onStartPreview();
         void onCapture();
+        void onClose();
     }
 }

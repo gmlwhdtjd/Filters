@@ -28,7 +28,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 android:visibility="invisible"
-                app:srcCompat="@drawable/ic_flash_square" />
+                app:srcCompat="@drawable/flash_square" />
 
             <TextView
                 android:id="@+id/timerNumberText"
@@ -41,6 +41,13 @@
                 android:shadowRadius="50.0"
                 android:textColor="@color/main_white"
                 android:textSize="200sp" />
+
+            <ImageView
+                android:id="@+id/openEffectImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/open_square" />
 
         </FrameLayout>
 

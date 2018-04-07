@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
@@ -47,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int cameraTimerState = 0;
 
-    // 카메라 캡쳐 관련
+    // 카메라 애니메이션 관련
     private TextView timerTextView;
     private ImageView captureEffectImg;
+    private ImageView openEffectImg;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 + File.separator + getString(R.string.app_name));
 
-        fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
+        fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
         fCamera.setCallback(new FCamera.Callback() {
             @Override
             public void onOpened() {
@@ -101,15 +103,28 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onStartPreview() {
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
+            }
+
+            @Override
             public void onCapture() {
-                Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
+                Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
                 captureEffectImg.startAnimation(captuer);
+            }
+
+            @Override
+            public void onClose() {
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.close_effect);
+                openEffectImg.startAnimation(open);
             }
         });
 
-        // 카메라 캡쳐 관련
+        // 카메라 애니메이션 관련
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
+        openEffectImg = findViewById(R.id.openEffectImg);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);

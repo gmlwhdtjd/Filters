@@ -100,6 +100,9 @@ public class GuideActivity extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
+        if (!prefManager.isFirstTimeLaunch()) {
+            viewPager.setCurrentItem(layouts.length);
+        }
         btnSkip.setOnClickListener(
                 new View.OnClickListener() {
             @Override

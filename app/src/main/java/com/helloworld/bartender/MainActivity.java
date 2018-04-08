@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -97,21 +98,32 @@ public class MainActivity extends AppCompatActivity {
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
-        cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
+        cameraSwitchingBtt.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                fCamera.switchCameraFacing();
-                switch (fCamera.getFlashSetting()) {
-                    case AUTO:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        cameraSwitchingBtt.setColorFilter(Color.GRAY);
                         break;
-                    case OFF:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                    case MotionEvent.ACTION_UP:
+                        fCamera.switchCameraFacing();
+                        switch (fCamera.getFlashSetting()) {
+                            case AUTO:
+                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                                break;
+                            case OFF:
+                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                                break;
+                            case ON:
+                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                                break;
+                        }
                         break;
-                    case ON:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
-                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        cameraSwitchingBtt.clearColorFilter();
+
                 }
+                return true;
             }
         });
 

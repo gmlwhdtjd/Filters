@@ -51,9 +51,9 @@ public class GuideActivity extends AppCompatActivity {
 
         @Override
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            Toasty.warning(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             prefManager.setFirstTimeLaunch(false);
-            finish();
+            viewPager.setCurrentItem(layouts.length);
         }
     };
 
@@ -65,7 +65,6 @@ public class GuideActivity extends AppCompatActivity {
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             checkPermission();
-            finish();
         }else {
             setDefaultSetting(this);
         }
@@ -101,10 +100,11 @@ public class GuideActivity extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        btnSkip.setOnClickListener(new View.OnClickListener() {
+        btnSkip.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkPermission();
+                viewPager.setCurrentItem(layouts.length);
             }
         });
 
@@ -247,7 +247,7 @@ public class GuideActivity extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             TedPermission.with(this)
                     .setPermissionListener(permissionlistener)
-                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                    .setDeniedMessage(getString(R.string.permission_denied))
                     .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .check();
             return;

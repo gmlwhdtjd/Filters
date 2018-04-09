@@ -25,9 +25,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class FCameraGLUtils {
     private static final String TAG = "FCameraGLUtils";
 
-    static final int CAMERA_FLIP_NON = 0x00; // non flipping
-    static final int CAMERA_FLIP_UD = 0x01; // Up Down flipping
-    static final int CAMERA_FLIP_RL = 0x10; // Right Left flipping
+    public static final int CAMERA_FLIP_NON = 0x00; // non flipping
+    public static final int CAMERA_FLIP_UD = 0x01; // Up Down flipping
+    public static final int CAMERA_FLIP_RL = 0x10; // Right Left flipping
 
     private static void swapElement(float[] a, int i, int j) {
         float tmp = a[i];

@@ -93,12 +93,8 @@ public abstract class FCameraFilter {
 
         GLES20.glEnableVertexAttribArray(ph);
         GLES20.glEnableVertexAttribArray(tch);
-/*
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
-        GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sTexture"), 0);
-*/
-        onDraw(program, target, textureId, vertexBuffer, texCoordBuffer, viewSize);
+
+        onDraw(program, target, textureId, viewSize);
 
         GLES20.glFlush();
     }
@@ -113,7 +109,7 @@ public abstract class FCameraFilter {
         onDrawFilter(textureId, vertexBuffer, texCoordBuffer, target, viewSize);
     }
 
-    abstract protected void onDraw(int program, Target target, int textureId, FloatBuffer vertexBuffer, FloatBuffer texCoordBuffer, Size viewSize);
+    abstract protected void onDraw(int program, Target target, int textureId, Size viewSize);
 
     abstract public void setValueWithType(ValueType type, int value);
     abstract public int getValueWithType(ValueType type);

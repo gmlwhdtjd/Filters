@@ -99,7 +99,6 @@ void main ()
                         texture2D(sTexture, texCoord).g,
                         texture2D(sTexture, texCoord+(dis/res).yx*variables.aberration).b);
 
-    target = texture2D(sTexture, texCoord).rgb;
     vec3 saturation = RGBtoHSV(target);
     saturation.y *= 2.0*variables.saturation;
     target = HSVtoRGB(saturation);

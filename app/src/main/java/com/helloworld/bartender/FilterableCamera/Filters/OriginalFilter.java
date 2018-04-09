@@ -28,10 +28,11 @@ public class OriginalFilter extends FCameraFilter {
     private static int mPreviewProgram2 = 0;
     private static int mImageProgram2 = 0;
 
+    private FloatBuffer vertexBuffer;
+    private FloatBuffer texCoordBuffer;
+
     private static FCameraRenderBuffer CAMERA_RENDER_BUF;
     private static final int BUF_ACTIVE_TEX_UNIT = GLES20.GL_TEXTURE8;
-
-    private int texture2Id;
 
     protected int getPreviewProgramID() {
         return mPreviewProgram;
@@ -250,7 +251,7 @@ public class OriginalFilter extends FCameraFilter {
             throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
     }
 
-    int getProgram2(Target target) {
+    private int getProgram2(Target target) {
         switch (target) {
             case PREVIEW:
                 if (mPreviewProgram2 == 0)
@@ -262,6 +263,23 @@ public class OriginalFilter extends FCameraFilter {
                 return mImageProgram2;
             default:
                 return 0;
+        }
+    }
+
+    private void loadBuffer(Size viewSize) {
+        if (vertexBuffer == null)
+            vertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
+        if (texCoordBuffer == null)
+            texCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_NON);
+
+        // Create camera render buffer
+        if (CAMERA_RENDER_BUF == null) {
+            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+        }
+        else if(CAMERA_RENDER_BUF.getWidth() != viewSize.getWidth() ||
+                CAMERA_RENDER_BUF.getHeight() != viewSize.getHeight()) {
+            CAMERA_RENDER_BUF.clear();
+            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
         }
     }
 
@@ -302,9 +320,11 @@ public class OriginalFilter extends FCameraFilter {
     }
 
     @Override
-    public void onDraw(int program, Target target, int textureId, FloatBuffer vertexBuffer, FloatBuffer texCoordBuffer, Size viewSize) {
+    public void onDraw(int program, Target target, int textureId, Size viewSize) {
 
-        texture2Id = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
+        loadBuffer(viewSize);
+
+        int texture2Id = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
@@ -348,16 +368,6 @@ public class OriginalFilter extends FCameraFilter {
 
         int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
         GLES20.glUniform1f(niLocation, noiseIntensity);
-
-        // Create camera render buffer
-        if (CAMERA_RENDER_BUF == null) {
-            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
-        }
-        else if(CAMERA_RENDER_BUF.getWidth() != viewSize.getWidth() ||
-                CAMERA_RENDER_BUF.getHeight() != viewSize.getHeight()) {
-            CAMERA_RENDER_BUF.clear();
-            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
-        }
 
         if (CAMERA_RENDER_BUF != null) {
             // Render to texture

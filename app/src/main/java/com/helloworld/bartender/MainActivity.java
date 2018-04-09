@@ -116,8 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClose() {
-                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.close_effect);
-                openEffectImg.startAnimation(open);
             }
         });
 

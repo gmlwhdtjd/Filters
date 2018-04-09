@@ -124,6 +124,8 @@ public class FCamera implements LifecycleObserver {
      */
     private String mCameraId;
 
+    CameraCharacteristics mCharacteristics;
+
     /**
      * An {@link FCameraPreview} for camera preview.
      */
@@ -562,7 +564,6 @@ public class FCamera implements LifecycleObserver {
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
 
-                mFCameraPreview.setCameraCharacteristics(characteristics);
                 mFCameraCapture.setCameraCharacteristics(characteristics, largest);
 
                 mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
@@ -627,6 +628,7 @@ public class FCamera implements LifecycleObserver {
                     mFlashSetting = Flash.OFF;
 
                 mCameraId = cameraId;
+                mCharacteristics = characteristics;
                 return;
             }
         } catch (CameraAccessException e) {
@@ -762,6 +764,9 @@ public class FCamera implements LifecycleObserver {
 
             // Here, we create a CameraCaptureSession for camera preview.
             mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
+
+            mFCameraPreview.setCameraCharacteristics(mCharacteristics);
+
             if (mCallback != null){
                 Handler mainHandler = new Handler(mActivity.getMainLooper());
                 mainHandler.post(new Runnable() {

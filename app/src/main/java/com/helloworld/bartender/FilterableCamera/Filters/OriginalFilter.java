@@ -1,9 +1,15 @@
 package com.helloworld.bartender.FilterableCamera.Filters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.util.Log;
 import android.util.Size;
+
+import com.helloworld.bartender.FilterableCamera.FCameraGLUtils;
+import com.helloworld.bartender.FilterableCamera.FCameraRenderBuffer;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
@@ -18,6 +24,15 @@ public class OriginalFilter extends FCameraFilter {
 
     private static int mPreviewProgram = 0;
     private static int mImageProgram = 0;
+
+    private static int mPreviewProgram2 = 0;
+    private static int mImageProgram2 = 0;
+
+    private FloatBuffer vertexBuffer;
+    private FloatBuffer texCoordBuffer;
+
+    private static FCameraRenderBuffer CAMERA_RENDER_BUF;
+    private static final int BUF_ACTIVE_TEX_UNIT = GLES20.GL_TEXTURE8;
 
     protected int getPreviewProgramID() {
         return mPreviewProgram;
@@ -39,12 +54,23 @@ public class OriginalFilter extends FCameraFilter {
                 if (mPreviewProgram != 0)
                     GLES20.glDeleteProgram(mPreviewProgram);
                 mPreviewProgram = 0;
+                if (mPreviewProgram2 != 0)
+                GLES20.glDeleteProgram(mPreviewProgram2);
+                mPreviewProgram2 = 0;
                 break;
             case IMAGE:
                 if (mImageProgram != 0)
                     GLES20.glDeleteProgram(mImageProgram);
                 mImageProgram = 0;
+                if (mImageProgram2 != 0)
+                    GLES20.glDeleteProgram(mImageProgram2);
+                mImageProgram2 = 0;
                 break;
+        }
+
+        if(CAMERA_RENDER_BUF != null) {
+            CAMERA_RENDER_BUF.clear();
+            CAMERA_RENDER_BUF = null;
         }
     }
 
@@ -225,6 +251,38 @@ public class OriginalFilter extends FCameraFilter {
             throw new IllegalArgumentException("type is not OriginalFilter.ValueType");
     }
 
+    private int getProgram2(Target target) {
+        switch (target) {
+            case PREVIEW:
+                if (mPreviewProgram2 == 0)
+                    mPreviewProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_vertex_shader, R.raw.filter_blur_shader);
+                return mPreviewProgram2;
+            case IMAGE:
+                if (mImageProgram2 == 0)
+                    mImageProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_vertex_shader, R.raw.filter_blur_shader);
+                return mImageProgram2;
+            default:
+                return 0;
+        }
+    }
+
+    private void loadBuffer(Size viewSize) {
+        if (vertexBuffer == null)
+            vertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
+        if (texCoordBuffer == null)
+            texCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_NON);
+
+        // Create camera render buffer
+        if (CAMERA_RENDER_BUF == null) {
+            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+        }
+        else if(CAMERA_RENDER_BUF.getWidth() != viewSize.getWidth() ||
+                CAMERA_RENDER_BUF.getHeight() != viewSize.getHeight()) {
+            CAMERA_RENDER_BUF.clear();
+            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+        }
+    }
+
     private float[] nl = {(float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
@@ -262,7 +320,20 @@ public class OriginalFilter extends FCameraFilter {
     }
 
     @Override
-    public void onDraw(int program, Size viewSize) {
+    public void onDraw(int program, Target target, int textureId, Size viewSize) {
+
+        loadBuffer(viewSize);
+
+        int texture2Id = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+        GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sTexture"), 0);
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture2Id);
+        GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sNoiseTexture"), 1);
+
         int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
         GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
 
@@ -289,9 +360,6 @@ public class OriginalFilter extends FCameraFilter {
         int blurLocation = GLES20.glGetUniformLocation(program, "variables.blur");
         GLES20.glUniform1f(blurLocation, blur);
 
-        int focusLocation = GLES20.glGetUniformLocation(program, "variables.focus");
-        GLES20.glUniform1f(focusLocation, focus);
-
         int abeLocation = GLES20.glGetUniformLocation(program, "variables.aberration");
         GLES20.glUniform1f(abeLocation, aberration);
 
@@ -301,8 +369,45 @@ public class OriginalFilter extends FCameraFilter {
         int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
         GLES20.glUniform1f(niLocation, noiseIntensity);
 
-        int maskLocation = GLES20.glGetUniformLocation(program, "mask");
-        GLES20.glUniform1fv(maskLocation, 25, FloatBuffer.wrap(mask));
+        if (CAMERA_RENDER_BUF != null) {
+            // Render to texture
+            CAMERA_RENDER_BUF.bind();
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+            CAMERA_RENDER_BUF.unbind();
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+            int program2 = getProgram2(target);
+
+            ////////////////////////////////////
+
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+            GLES20.glUseProgram(program2);
+
+            int ph = GLES20.glGetAttribLocation(program2, "vPosition");
+            int tch = GLES20.glGetAttribLocation(program2, "vTexCoord");
+
+            GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, vertexBuffer);
+            GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2, texCoordBuffer);
+
+            GLES20.glEnableVertexAttribArray(ph);
+            GLES20.glEnableVertexAttribArray(tch);
+
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, CAMERA_RENDER_BUF.getTexId());
+            GLES20.glUniform1i(GLES20.glGetUniformLocation(program2, "sTexture"), 0);
+
+            int maskLocation = GLES20.glGetUniformLocation(program2, "mask");
+            GLES20.glUniform1fv(maskLocation, 25, FloatBuffer.wrap(mask));
+
+            int focusLocation = GLES20.glGetUniformLocation(program2, "focus");
+            GLES20.glUniform1f(focusLocation, focus);
+
+            int iResolutionLocation2 = GLES20.glGetUniformLocation(program2, "iResolution");
+            GLES20.glUniform3fv(iResolutionLocation2, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
+
+        }
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }

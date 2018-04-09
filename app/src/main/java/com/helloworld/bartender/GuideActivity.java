@@ -53,7 +53,6 @@ public class GuideActivity extends AppCompatActivity {
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
             Toasty.warning(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             prefManager.setFirstTimeLaunch(false);
-            viewPager.setCurrentItem(layouts.length);
         }
     };
 

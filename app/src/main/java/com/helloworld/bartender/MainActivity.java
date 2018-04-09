@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,34 +100,24 @@ public class MainActivity extends AppCompatActivity {
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
-        cameraSwitchingBtt.setOnTouchListener(new View.OnTouchListener() {
+        cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        cameraSwitchingBtt.setColorFilter(Color.GRAY);
+            public void onClick(View v) {
+                fCamera.switchCameraFacing();
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
                         break;
-                    case MotionEvent.ACTION_UP:
-                        fCamera.switchCameraFacing();
-                        switch (fCamera.getFlashSetting()) {
-                            case AUTO:
-                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
-                                break;
-                            case OFF:
-                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
-                                break;
-                            case ON:
-                                cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
-                                break;
-                        }
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
                         break;
-                    case MotionEvent.ACTION_CANCEL:
-                        cameraSwitchingBtt.clearColorFilter();
-
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                        break;
                 }
-                return true;
             }
         });
+        cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
+
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
+
         settingBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
         galleryBtt.setOnClickListener(new View.OnClickListener() {
@@ -200,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(AlbumIntent);
             }
         });
+        galleryBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraCaptureBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,6 +234,8 @@ public class MainActivity extends AppCompatActivity {
                 editView.changeState();
             }
         });
+
+        editBtt.setOnTouchListener(OnTouchEffectListener);
 
         // 초기 필터 세팅
         setCameraFilter(mHorizontal_adapter.getDefaultFilter());
@@ -298,4 +298,24 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    public View.OnTouchListener OnTouchEffectListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageButton imageButton = (ImageButton) v;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    imageButton.setColorFilter(Color.GRAY);
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    imageButton.clearColorFilter();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    imageButton.clearColorFilter();
+
+            }
+            return false;
+        }
+    };
+
 }

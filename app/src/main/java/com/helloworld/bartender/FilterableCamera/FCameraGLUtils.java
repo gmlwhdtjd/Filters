@@ -1,8 +1,11 @@
 package com.helloworld.bartender.FilterableCamera;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -120,6 +123,35 @@ public class FCameraGLUtils {
         }
 
         return genBuf[0];
+    }
+
+    public static int loadTexture(final Context context, final int resourceId, int[] size) {
+        final int texId = genTexture();
+
+        if (texId != 0) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;   // No pre-scaling
+            options.inJustDecodeBounds = true;
+
+            // Just decode bounds
+            BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
+            // Set return size
+            size[0] = options.outWidth;
+            size[1] = options.outHeight;
+
+            // Decode
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
+            // Load the bitmap into the bound texture.
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+
+            // Recycle the bitmap, since its data has been loaded into OpenGL.
+            bitmap.recycle();
+        }
+
+        return texId;
     }
 
     public static int buildProgram(Context context, int VertexShaderID, int FragmentShaderID) {

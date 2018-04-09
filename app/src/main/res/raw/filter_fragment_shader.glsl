@@ -89,15 +89,15 @@ vec3 HSLtoRGB(vec3 HSL) {
 
 void main ()
 {
-
     vec2 dis = gl_FragCoord.xy/iResolution.xy;
     dis -= 0.5;
+    dis *= -1.0;
     vec2 res = vec2(40.0, 40.0);
 
     ////////////////////////////////색수차
-    vec3 target = vec3(texture2D(sTexture, texCoord-(dis/res).yx*variables.aberration).r,
+    vec3 target = vec3(texture2D(sTexture, texCoord-(dis/res).xy*variables.aberration).r,
                         texture2D(sTexture, texCoord).g,
-                        texture2D(sTexture, texCoord+(dis/res).yx*variables.aberration).b);
+                        texture2D(sTexture, texCoord+(dis/res).xy*variables.aberration).b);
 
     vec3 saturation = RGBtoHSV(target);
     saturation.y *= 2.0*variables.saturation;

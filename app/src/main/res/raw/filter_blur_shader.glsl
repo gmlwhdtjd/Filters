@@ -8,6 +8,7 @@ uniform vec3 iResolution;
 
 void main ()
 {
+    vec3 target = vec3(0.0, 0.0, 0.0);
 
     float radius = 0.0;
     vec2 innerR = gl_FragCoord.xy/iResolution.x;
@@ -21,17 +22,10 @@ void main ()
     vec2 stp0 = vec2(1.0/400.0, 0.0)*radius;    //  x
     vec2 st0p = vec2(0.0, 1.0/400.0)*radius;    //  y
 
-    vec3 target = vec3(0.0, 0.0, 0.0);
-
-    float fi=0.0;
-    float fj = 0.0;
     for(int i=0; i<5; i++) {
-        fj = 0.0;
         for(int j=0; j<5; j++) {
-            target += vec3(texture2D(sTexture, texCoord+((fj-2.0)*stp0)+((fi-2.0)*st0p)).rgb*mask[i*5+j]);
-            fj+=1.0;
+            target += vec3(texture2D(sTexture, texCoord+((float(j)-2.0)*stp0)+((float(i)-2.0)*st0p)).rgb*mask[i*5+j]);
         }
-        fi += 1.0;
     }
 
     gl_FragColor = vec4(target, 1.0);

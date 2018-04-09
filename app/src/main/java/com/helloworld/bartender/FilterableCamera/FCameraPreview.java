@@ -25,9 +25,9 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Size;
 
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
@@ -170,8 +170,8 @@ public class FCameraPreview extends GLSurfaceView {
                     }
 
                     // TODO : Clear Filter
-                    DefaultFilter.clear(FCameraFilter.Target.PREVIEW);
                     OriginalFilter.clear(FCameraFilter.Target.PREVIEW);
+                    RetroFilter.clear(FCameraFilter.Target.PREVIEW);
                 }
             });
             mSurfaceUpdated = false;
@@ -200,7 +200,7 @@ public class FCameraPreview extends GLSurfaceView {
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-            mProgram = FCameraGLUtils.buildProgram(getContext(), R.raw.filter_vertex_shader, R.raw.filter_default_fragment_shader);
+            mProgram = FCameraGLUtils.buildProgram(getContext(), R.raw.filter_default_vshader, R.raw.filter_sampler_external_fshader);
 
             mCameraTextureId = FCameraGLUtils.genTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
 

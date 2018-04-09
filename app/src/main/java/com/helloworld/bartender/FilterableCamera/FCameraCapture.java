@@ -13,9 +13,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
 
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.R;
 
 import java.io.File;
@@ -151,8 +151,8 @@ public class FCameraCapture {
             @Override
             public void run() {
                 // TODO : Clear Filter
-                DefaultFilter.clear(FCameraFilter.Target.IMAGE);
                 OriginalFilter.clear(FCameraFilter.Target.IMAGE);
+                RetroFilter.clear(FCameraFilter.Target.IMAGE);
 
                 shutdownEGL();
             }

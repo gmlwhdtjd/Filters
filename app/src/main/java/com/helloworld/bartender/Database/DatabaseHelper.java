@@ -15,9 +15,9 @@ import android.util.Log;
 
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
@@ -36,8 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DB_NAME = "filter_list.db";
     private static final int DB_VERSION = 1;
     private static final String TABLE_MAIN_NAME = "list";
-    private static final String TYPE1_FILTER_NAME = "OriginalFilter";
-    private static final String TYPE0_DEFAULT_NAME = "DefaultFilter";
+    private static final String TYPE1_FILTER_NAME = "RetroFilter";
+    private static final String TYPE0_DEFAULT_NAME = "OriginalFilter";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_FILTER_NAME = "name";
     private static final String COLUMN_FILTER_TYPE = "type";
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = " CREATE TABLE " + TYPE1_FILTER_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY, ";
 
-        for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+        for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
             query += valueType.toString() + " INTEGER NOT NULL, ";
         }
         query += "FOREIGN KEY(" + COLUMN_ID + ") REFERENCES " + TABLE_MAIN_NAME + "(" + COLUMN_ID + ") ON DELETE CASCADE); ";
@@ -139,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 break;
             case TYPE1_FILTER_NAME:
                 values.put(COLUMN_ID, lastInsertedId);
-                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     values.put(valueType.toString(), filter.getValueWithType(valueType));
                 }
                 db.replace(TYPE1_FILTER_NAME, null, values);
@@ -183,15 +183,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         switch (receivedFilter.getClass().getSimpleName()) {
             case TYPE1_FILTER_NAME:
-                newFilter = new OriginalFilter(mContext, null);
-                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                newFilter = new RetroFilter(mContext, null);
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     newFilter.setValueWithType(valueType, receivedFilter.getValueWithType(valueType));
                 }
                 newFilter.setName(receivedFilter.getName());
 
                 pastedFilterId = saveFilter(newFilter, position + 1);
-                pastedFilter = new OriginalFilter(mContext, pastedFilterId);
-                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                pastedFilter = new RetroFilter(mContext, pastedFilterId);
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     pastedFilter.setValueWithType(valueType, newFilter.getValueWithType(valueType));
                 }
                 pastedFilter.setName(newFilter.getName());
@@ -223,17 +223,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String name = DecodeFilterName(cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_NAME)));
                 switch (type) {
                     case TYPE1_FILTER_NAME:
-                        FCameraFilter filter = new OriginalFilter(mContext, id);
+                        FCameraFilter filter = new RetroFilter(mContext, id);
                         filter.setName(name);
                         Cursor typeCursor = db.rawQuery("SELECT * FROM " + TYPE1_FILTER_NAME + " WHERE " + COLUMN_ID + "=" + id, null);
                         typeCursor.moveToFirst();
-                        for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                        for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                             filter.setValueWithType(valueType, typeCursor.getInt(typeCursor.getColumnIndex(valueType.toString())));
                         }
                         filterLinkedList.add(filter);
                         break;
                     case TYPE0_DEFAULT_NAME:
-                        FCameraFilter defaultFilter = new DefaultFilter(mContext, id, name);
+                        FCameraFilter defaultFilter = new OriginalFilter(mContext, id, name);
                         filterLinkedList.add(defaultFilter);
                         break;
                     default:

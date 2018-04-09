@@ -1,41 +1,32 @@
 package com.helloworld.bartender;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -291,18 +282,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeCaptureInnerColor(FCameraFilter filter) {
-        if (filter instanceof DefaultFilter) {
+        if (filter instanceof OriginalFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
         }
-        else if (filter instanceof OriginalFilter) {
+        else if (filter instanceof RetroFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[3];
             Color.RGBToHSV(
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_R),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_G),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_B),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_R),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_G),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_B),
                     hsv);
             hsv[1] = hsv[1] < 0.2f ? hsv[1] : 0.2f;
             hsv[2] = 0.90f;

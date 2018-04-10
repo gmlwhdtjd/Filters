@@ -103,6 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
             position = filterListView.getHorizontalAdapter().getItemCount() - 1;
         }
+        db.close();
         return saveFilter(filter, position);
     }
 
@@ -164,6 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteStatement p = db.compileStatement(query);
         p.bindBlob(1, data);
         p.execute();
+        db.close();
     }
 
     public FCameraFilter pasteFilter(FCameraFilter receivedFilter, int position) {
@@ -199,6 +201,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             default:
                 break;
         }
+        db.close();
         return pastedFilter;
     }
 
@@ -244,6 +247,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d("x", String.valueOf(i) + "repeated this");
 
         }
+        db.close();
         return filterLinkedList;
     }
 
@@ -254,6 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         byte[] b = cursor.getBlob(cursor.getColumnIndex(COLUMN_FILTER_ICON));
         Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
         Drawable filterIconImage = new BitmapDrawable(mContext.getResources(), bitmap);
+        db.close();
         return filterIconImage;
     }
 
@@ -267,6 +272,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         db.execSQL("DELETE FROM " + TABLE_MAIN_NAME + " WHERE _id='" + id + "'");
+        db.close();
     }
 
     public String findTypeWithId(SQLiteDatabase db, int id) {
@@ -302,6 +308,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             db.execSQL("UPDATE " + TABLE_MAIN_NAME + " SET position ='" + toPos + "' WHERE _id='" + fromId + "'");
         }
+        db.close();
     }
 
     private String EncodeFilterName(String name) {

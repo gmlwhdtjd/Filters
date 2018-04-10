@@ -277,10 +277,7 @@ public class FCameraPreview extends GLSurfaceView {
                 CAMERA_RENDER_BUF.unbind();
                 GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-                mCameraFilter.onDrawFilter(
-                        CAMERA_RENDER_BUF.getTexId(),
-                        mVertexBuffer, mTexCoordBuffer,
-                        FCameraFilter.Target.PREVIEW, mViewSize);
+                mCameraFilter.onDrawFilter(CAMERA_RENDER_BUF.getTexId(), mVertexBuffer, mTexCoordBuffer, FCameraFilter.Target.PREVIEW, mViewSize);
             }
         }
     }

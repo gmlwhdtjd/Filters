@@ -91,12 +91,13 @@ public class MainActivity extends AppCompatActivity {
                         cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
                         break;
                 }
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
             }
 
             @Override
             public void onStartPreview() {
-                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
-                openEffectImg.startAnimation(open);
+
             }
 
             @Override

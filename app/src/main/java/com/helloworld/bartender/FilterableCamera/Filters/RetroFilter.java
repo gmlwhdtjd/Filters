@@ -24,49 +24,168 @@ public class RetroFilter extends FCameraFilter {
     private static int mPreviewProgram2 = 0;
     private static int mImageProgram2 = 0;
 
-    private FloatBuffer vertexBuffer;
-    private FloatBuffer texCoordBuffer;
+    private static int mPreviewNoiseTextureId = 0;
+    private static int mImageNoiseTextureId = 0;
 
-    private static FCameraRenderBuffer CAMERA_RENDER_BUF;
+    private static FCameraRenderBuffer CAMERA_RENDER_BUF_PREVIEW;
+    private static FCameraRenderBuffer CAMERA_RENDER_BUF_IMAGE;
     private static final int BUF_ACTIVE_TEX_UNIT = GLES20.GL_TEXTURE8;
 
-    protected int getPreviewProgramID() {
-        return mPreviewProgram;
-    }
-    protected void setPreviewProgramID(int id) {
-        mPreviewProgram = id;
-    }
-
-    protected int getImageProgramID() {
-        return mImageProgram;
-    }
-    protected void setImageProgramID(int id) {
-        mImageProgram = id;
-    }
+    private static FloatBuffer vertexBuffer = null;
+    private static FloatBuffer texCoordBuffer = null;
 
     public static void clear(Target target) {
         switch (target) {
             case PREVIEW:
+                //Program
                 if (mPreviewProgram != 0)
                     GLES20.glDeleteProgram(mPreviewProgram);
                 mPreviewProgram = 0;
+
                 if (mPreviewProgram2 != 0)
-                GLES20.glDeleteProgram(mPreviewProgram2);
+                    GLES20.glDeleteProgram(mPreviewProgram2);
                 mPreviewProgram2 = 0;
+
+                // Noise Texture
+                if (mPreviewNoiseTextureId != 0) {
+                    int[] tmp = { mPreviewNoiseTextureId };
+                    GLES20.glDeleteTextures(1, tmp, 0);
+                }
+                mPreviewNoiseTextureId = 0;
+
+                //render buffer
+                if (CAMERA_RENDER_BUF_PREVIEW != null) {
+                    CAMERA_RENDER_BUF_PREVIEW.clear();
+                    CAMERA_RENDER_BUF_PREVIEW = null;
+                }
                 break;
             case IMAGE:
+                //Program
                 if (mImageProgram != 0)
                     GLES20.glDeleteProgram(mImageProgram);
                 mImageProgram = 0;
+
                 if (mImageProgram2 != 0)
                     GLES20.glDeleteProgram(mImageProgram2);
                 mImageProgram2 = 0;
+
+                // Noise Texture
+                if (mImageNoiseTextureId != 0) {
+                    int[] tmp = { mImageNoiseTextureId };
+                    GLES20.glDeleteTextures(1, tmp, 0);
+                }
+                mImageNoiseTextureId = 0;
+
+                //render buffer
+                if (CAMERA_RENDER_BUF_IMAGE != null) {
+                    CAMERA_RENDER_BUF_IMAGE.clear();
+                    CAMERA_RENDER_BUF_IMAGE = null;
+                }
                 break;
         }
 
-        if(CAMERA_RENDER_BUF != null) {
-            CAMERA_RENDER_BUF.clear();
-            CAMERA_RENDER_BUF = null;
+        if (vertexBuffer != null)
+            vertexBuffer.clear();
+        vertexBuffer = null;
+
+        if (texCoordBuffer != null)
+            texCoordBuffer.clear();
+        vertexBuffer = null;
+    }
+
+    @Override
+    protected int getPreviewProgramID() {
+        return mPreviewProgram;
+    }
+
+    @Override
+    protected void setPreviewProgramID(int id) {
+        mPreviewProgram = id;
+    }
+
+    @Override
+    protected int getImageProgramID() {
+        return mImageProgram;
+    }
+
+    @Override
+    protected void setImageProgramID(int id) {
+        mImageProgram = id;
+    }
+
+    // OpenGL Settings
+    private int getProgram2(Target target) {
+        switch (target) {
+            case PREVIEW:
+                if (mPreviewProgram2 == 0)
+                    mPreviewProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_default_vshader, R.raw.filter_retro_blur_fshader);
+                return mPreviewProgram2;
+            case IMAGE:
+                if (mImageProgram2 == 0)
+                    mImageProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_default_vshader, R.raw.filter_retro_blur_fshader);
+                return mImageProgram2;
+            default:
+                return 0;
+        }
+    }
+
+    private int getNoiseTexture(Target target) {
+        switch (target) {
+            case PREVIEW:
+                if (mPreviewNoiseTextureId == 0)
+                    mPreviewNoiseTextureId = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
+                return mPreviewNoiseTextureId;
+            case IMAGE:
+                if (mImageNoiseTextureId == 0)
+                    mImageNoiseTextureId = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
+                return mImageNoiseTextureId;
+            default:
+                return 0;
+        }
+    }
+
+    private void loadBuffer(Target target, Size viewSize) {
+        if (vertexBuffer == null)
+            vertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
+        if (texCoordBuffer == null)
+            texCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_NON);
+
+        switch (target) {
+            case PREVIEW:
+                // Create camera render buffer
+                if (CAMERA_RENDER_BUF_PREVIEW == null) {
+                    CAMERA_RENDER_BUF_PREVIEW = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+                }
+                else if(CAMERA_RENDER_BUF_PREVIEW.getWidth() != viewSize.getWidth() ||
+                        CAMERA_RENDER_BUF_PREVIEW.getHeight() != viewSize.getHeight()) {
+                    CAMERA_RENDER_BUF_PREVIEW.clear();
+                    CAMERA_RENDER_BUF_PREVIEW = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+                }
+                break;
+            case IMAGE:
+                // Create camera render buffer
+                if (CAMERA_RENDER_BUF_IMAGE == null) {
+                    CAMERA_RENDER_BUF_IMAGE = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+                }
+                else if(CAMERA_RENDER_BUF_IMAGE.getWidth() != viewSize.getWidth() ||
+                        CAMERA_RENDER_BUF_IMAGE.getHeight() != viewSize.getHeight()) {
+                    CAMERA_RENDER_BUF_IMAGE.clear();
+                    CAMERA_RENDER_BUF_IMAGE = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
+                }
+                break;
+        }
+
+        getNoiseTexture(target);
+    }
+
+    private FCameraRenderBuffer getCameraRenderBuf(Target target) {
+        switch (target) {
+            case PREVIEW:
+                return CAMERA_RENDER_BUF_PREVIEW;
+            case IMAGE:
+                return CAMERA_RENDER_BUF_IMAGE;
+            default:
+                return null;
         }
     }
 
@@ -247,38 +366,6 @@ public class RetroFilter extends FCameraFilter {
             throw new IllegalArgumentException("type is not RetroFilter.ValueType");
     }
 
-    private int getProgram2(Target target) {
-        switch (target) {
-            case PREVIEW:
-                if (mPreviewProgram2 == 0)
-                    mPreviewProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_default_vshader, R.raw.filter_retro_blur_fshader);
-                return mPreviewProgram2;
-            case IMAGE:
-                if (mImageProgram2 == 0)
-                    mImageProgram2 = FCameraGLUtils.buildProgram(mContext, R.raw.filter_default_vshader, R.raw.filter_retro_blur_fshader);
-                return mImageProgram2;
-            default:
-                return 0;
-        }
-    }
-
-    private void loadBuffer(Size viewSize) {
-        if (vertexBuffer == null)
-            vertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(0, FCameraGLUtils.CAMERA_FLIP_NON);
-        if (texCoordBuffer == null)
-            texCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(0,FCameraGLUtils.CAMERA_FLIP_NON);
-
-        // Create camera render buffer
-        if (CAMERA_RENDER_BUF == null) {
-            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
-        }
-        else if(CAMERA_RENDER_BUF.getWidth() != viewSize.getWidth() ||
-                CAMERA_RENDER_BUF.getHeight() != viewSize.getHeight()) {
-            CAMERA_RENDER_BUF.clear();
-            CAMERA_RENDER_BUF = new FCameraRenderBuffer(viewSize.getWidth(), viewSize.getHeight(), BUF_ACTIVE_TEX_UNIT);
-        }
-    }
-
     private float[] nl = {(float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
 
@@ -318,16 +405,14 @@ public class RetroFilter extends FCameraFilter {
     @Override
     public void onDraw(int program, Target target, int textureId, Size viewSize) {
 
-        loadBuffer(viewSize);
-
-        int texture2Id = FCameraGLUtils.loadTexture(mContext, R.drawable.noise, new int[2]);
+        loadBuffer(target, viewSize);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
         GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sTexture"), 0);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture2Id);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, getNoiseTexture(target));
         GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sNoiseTexture"), 1);
 
         int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
@@ -335,7 +420,6 @@ public class RetroFilter extends FCameraFilter {
 
         int noiseLevelLocation = GLES20.glGetUniformLocation(program, "noiseLevel");
         GLES20.glUniform3fv(noiseLevelLocation, 1, FloatBuffer.wrap(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()}));
-
 
         float time = ((float) (System.currentTimeMillis() - START_TIME)) / 1000.0f;
         int iGlobalTimeLocation = GLES20.glGetUniformLocation(program, "iGlobalTime");
@@ -365,6 +449,7 @@ public class RetroFilter extends FCameraFilter {
         int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
         GLES20.glUniform1f(niLocation, noiseIntensity);
 
+        FCameraRenderBuffer CAMERA_RENDER_BUF = getCameraRenderBuf(target);
         if (CAMERA_RENDER_BUF != null) {
             // Render to texture
             CAMERA_RENDER_BUF.bind();
@@ -402,7 +487,6 @@ public class RetroFilter extends FCameraFilter {
 
             int iResolutionLocation2 = GLES20.glGetUniformLocation(program2, "iResolution");
             GLES20.glUniform3fv(iResolutionLocation2, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
-
         }
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);

@@ -22,9 +22,9 @@ import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterList.FilterListView;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
@@ -136,8 +136,8 @@ public class EditView extends CoordinatorLayout {
             public void onClick(View v) {
                 changeState();
 
-                if (mFilter instanceof OriginalFilter) {
-                    for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+                if (mFilter instanceof RetroFilter) {
+                    for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                         mFilter.setValueWithType(valueType, backupValues.poll());
                     }
                 }
@@ -169,8 +169,8 @@ public class EditView extends CoordinatorLayout {
             isOpen = true;
             backupValues = new LinkedList<>();
 
-            if (mFilter instanceof OriginalFilter) {
-                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+            if (mFilter instanceof RetroFilter) {
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
                 }
             }
@@ -196,7 +196,9 @@ public class EditView extends CoordinatorLayout {
         tabContent.removeAllViews();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
 
-        if (mFilter instanceof DefaultFilter) {
+        if (mFilter instanceof OriginalFilter) {
+            editNameView.setClickable(false);
+
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -215,8 +217,11 @@ public class EditView extends CoordinatorLayout {
             textView.setTextSize(20);
 
             tab.addView(textView);
-        } else if (mFilter instanceof OriginalFilter) {
-            for (final OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
+        }
+        else if (mFilter instanceof RetroFilter) {
+            editNameView.setClickable(true);
+
+            for (final RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {
                     LinearLayout tab = new LinearLayout(getContext());
@@ -274,10 +279,10 @@ public class EditView extends CoordinatorLayout {
     public FCameraFilter NewFilter(FCameraFilter filter, int Id) {
         FCameraFilter newFilter = null;
         switch (filter.getClass().getSimpleName()) {
-            case "OriginalFilter":
-                newFilter = new OriginalFilter(getContext(), Id);
-                for (OriginalFilter.ValueType valueType : OriginalFilter.ValueType.values()) {
-                    newFilter.setValueWithType(valueType, filter.getValueWithType(valueType));
+            case "RetroFilter":
+                newFilter = new RetroFilter(getContext(),Id);
+                for(RetroFilter.ValueType valueType : RetroFilter.ValueType.values()){
+                    newFilter.setValueWithType(valueType,filter.getValueWithType(valueType));
                 }
                 newFilter.setName(filter.getName());
                 break;

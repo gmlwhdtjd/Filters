@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -26,7 +25,7 @@ import android.widget.Toast;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
 import java.util.ArrayList;
 
@@ -234,11 +233,11 @@ public class GuideActivity extends AppCompatActivity {
 
     private void setDefaultSetting(Context context){
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.saveFilter(new DefaultFilter(context,null,getString(R.string.DefaultFilter_Name)),0);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
+        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.DefaultFilter_Name)),0);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
 
     }
 

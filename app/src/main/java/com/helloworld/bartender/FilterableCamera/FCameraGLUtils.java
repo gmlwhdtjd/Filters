@@ -1,9 +1,15 @@
 package com.helloworld.bartender.FilterableCamera;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,9 +28,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class FCameraGLUtils {
     private static final String TAG = "FCameraGLUtils";
 
-    static final int CAMERA_FLIP_NON = 0x00; // non flipping
-    static final int CAMERA_FLIP_UD = 0x01; // Up Down flipping
-    static final int CAMERA_FLIP_RL = 0x10; // Right Left flipping
+    public static final int CAMERA_FLIP_NON = 0x00; // non flipping
+    public static final int CAMERA_FLIP_UD = 0x01; // Up Down flipping
+    public static final int CAMERA_FLIP_RL = 0x10; // Right Left flipping
 
     private static void swapElement(float[] a, int i, int j) {
         float tmp = a[i];
@@ -57,16 +63,16 @@ public class FCameraGLUtils {
 
         switch (cameraOrientation){
             case 0:
-                texCoordData = new float[] { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
+                texCoordData = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
                 break;
             case 90:
-                texCoordData = new float[] { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
+                texCoordData = new float[] { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
                 break;
             case 180:
-                texCoordData = new float[] { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+                texCoordData = new float[] { 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
                 break;
             case 270:
-                texCoordData = new float[] { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+                texCoordData = new float[] { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f };
                 break;
             default:
                 throw new RuntimeException("Invalid value of \"cameraOrientation\"");
@@ -122,6 +128,35 @@ public class FCameraGLUtils {
         return genBuf[0];
     }
 
+    public static int loadTexture(final Context context, final int resourceId, int[] size) {
+        final int texId = genTexture();
+
+        if (texId != 0) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;   // No pre-scaling
+            options.inJustDecodeBounds = true;
+
+            // Just decode bounds
+            BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
+            // Set return size
+            size[0] = options.outWidth;
+            size[1] = options.outHeight;
+
+            // Decode
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+
+            // Load the bitmap into the bound texture.
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+
+            // Recycle the bitmap, since its data has been loaded into OpenGL.
+            bitmap.recycle();
+        }
+
+        return texId;
+    }
+
     public static int buildProgram(Context context, int VertexShaderID, int FragmentShaderID) {
         String vss="";
         String fss="";
@@ -169,6 +204,7 @@ public class FCameraGLUtils {
         return program;
     }
 
+    @NonNull
     private static String getStringFromRawFile(Context context, int id) throws IOException {
         InputStream inputStream = context.getResources().openRawResource(id);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -181,5 +217,31 @@ public class FCameraGLUtils {
         inputStream.close();
 
         return builder.toString();
+    }
+
+    public static void errorChack(FCameraFilter.Target target) {
+        int error = GLES20.glGetError();
+        switch (error) {
+            case GLES20.GL_NO_ERROR :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_ENUM :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_VALUE :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_OPERATION :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_FRAMEBUFFER_OPERATION :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_OUT_OF_MEMORY :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            default:
+                Log.e(target.toString(), "onDraw: Default");
+        }
     }
 }

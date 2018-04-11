@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,15 +17,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
@@ -40,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int cameraTimerState = 0;
 
-    // 카메라 캡쳐 관련
+    // 카메라 애니메이션 관련
     private TextView timerTextView;
     private ImageView captureEffectImg;
+    private ImageView openEffectImg;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -78,11 +82,45 @@ public class MainActivity extends AppCompatActivity {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 + File.separator + getString(R.string.app_name));
 
-        fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
+        fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
+        fCamera.setCallback(new FCamera.Callback() {
+            @Override
+            public void onOpened() {
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                        break;
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                        break;
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                        break;
+                }
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
+            }
 
-        // 카메라 캡쳐 관련
+            @Override
+            public void onStartPreview() {
+
+            }
+
+            @Override
+            public void onCapture() {
+                Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
+                captureEffectImg.startAnimation(captuer);
+            }
+
+            @Override
+            public void onClose() {
+            }
+        });
+
+        // 카메라 애니메이션 관련
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
+        openEffectImg = findViewById(R.id.openEffectImg);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);
@@ -219,9 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
                         fCamera.takePicture();
 
-                        Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
-                        captureEffectImg.startAnimation(captuer);
-
                         cameraCaptureBtt.setClickable(true);
                     }
                 }.start();
@@ -264,18 +299,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeCaptureInnerColor(FCameraFilter filter) {
-        if (filter instanceof DefaultFilter) {
+        if (filter instanceof OriginalFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
         }
-        else if (filter instanceof OriginalFilter) {
+        else if (filter instanceof RetroFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[3];
             Color.RGBToHSV(
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_R),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_G),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_B),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_R),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_G),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_B),
                     hsv);
             hsv[1] = hsv[1] < 0.2f ? hsv[1] : 0.2f;
             hsv[2] = 0.90f;

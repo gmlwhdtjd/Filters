@@ -1,40 +1,36 @@
 package com.helloworld.bartender;
 
-import android.Manifest;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -47,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int cameraTimerState = 0;
 
-    // 카메라 캡쳐 관련
+    // 카메라 애니메이션 관련
     private TextView timerTextView;
     private ImageView captureEffectImg;
+    private ImageView openEffectImg;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -62,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton editBtt;
 
     // CustomViews
-    private FilterListView filterListView;
+    private FilterListView mFilterListView;
+    private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,11 +82,45 @@ public class MainActivity extends AppCompatActivity {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 + File.separator + getString(R.string.app_name));
 
-        fCamera = new FCamera(this, getLifecycle(), fCameraPreview, fCameraCapture);
+        fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
+        fCamera.setCallback(new FCamera.Callback() {
+            @Override
+            public void onOpened() {
+                switch (fCamera.getFlashSetting()) {
+                    case AUTO:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                        break;
+                    case OFF:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                        break;
+                    case ON:
+                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                        break;
+                }
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
+            }
 
-        // 카메라 캡쳐 관련
+            @Override
+            public void onStartPreview() {
+
+            }
+
+            @Override
+            public void onCapture() {
+                Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
+                captureEffectImg.startAnimation(captuer);
+            }
+
+            @Override
+            public void onClose() {
+            }
+        });
+
+        // 카메라 애니메이션 관련
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
+        openEffectImg = findViewById(R.id.openEffectImg);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);
@@ -101,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
         // CustomView
         editView = findViewById(R.id.editView);
-        filterListView = findViewById(R.id.filterListView);
+        mFilterListView = findViewById(R.id.filterListView);
+        mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
+
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
+
         settingBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
         galleryBtt.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(AlbumIntent);
             }
         });
+        galleryBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraCaptureBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,9 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
                         fCamera.takePicture();
 
-                        Animation captuer = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.capture_effect);
-                        captureEffectImg.startAnimation(captuer);
-
                         cameraCaptureBtt.setClickable(true);
                     }
                 }.start();
@@ -232,8 +270,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        editBtt.setOnTouchListener(OnTouchEffectListener);
+
         // 초기 필터 세팅
-        setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
+        setCameraFilter(mHorizontal_adapter.getDefaultFilter());
     }
 
     @Override
@@ -259,18 +299,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeCaptureInnerColor(FCameraFilter filter) {
-        if (filter instanceof DefaultFilter) {
+        if (filter instanceof OriginalFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
         }
-        else if (filter instanceof OriginalFilter) {
+        else if (filter instanceof RetroFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[3];
             Color.RGBToHSV(
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_R),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_G),
-                    filter.getValueWithType(OriginalFilter.ValueType.RGB_B),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_R),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_G),
+                    filter.getValueWithType(RetroFilter.ValueType.RGB_B),
                     hsv);
             hsv[1] = hsv[1] < 0.2f ? hsv[1] : 0.2f;
             hsv[2] = 0.90f;
@@ -281,4 +321,36 @@ public class MainActivity extends AppCompatActivity {
     public FCameraCapture getFCameraCapture(){
         return fCameraCapture;
     }
+
+    @Override
+    public void onBackPressed() {
+        if(editView.IsOpen()) {
+            editView.changeState();
+        }else if(mHorizontal_adapter.isPopupMenuOpen()){
+            mHorizontal_adapter.dismissPopup();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    public View.OnTouchListener OnTouchEffectListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageButton imageButton = (ImageButton) v;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    imageButton.setColorFilter(Color.GRAY);
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    imageButton.clearColorFilter();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    imageButton.clearColorFilter();
+
+            }
+            return false;
+        }
+    };
+
 }

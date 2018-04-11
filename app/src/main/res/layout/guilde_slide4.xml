@@ -5,7 +5,7 @@
     android:background="@color/bg_screen4">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
@@ -19,21 +19,55 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Intro slide 4"
+            android:text="@string/permission_page_title"
             android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
-            android:text="information"
-            android:textAlignment="center"
+            android:text="Camera"
+            android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:textSize="16dp" />
+            android:textSize="18dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:textSize="14dp"
+            android:text="@string/camera_permission_summary"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:text="Storage"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:textSize="14dp"
+            android:text="@string/storage_permission_summary"
+            />
+
+
+
+
 
     </LinearLayout>
 </RelativeLayout>

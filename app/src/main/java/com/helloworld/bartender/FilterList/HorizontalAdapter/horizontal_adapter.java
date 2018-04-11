@@ -14,7 +14,7 @@ import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.PopupMenu.CustomPopup;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
-import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.helloworld.bartender.FilterList.FilterRadioButton.FilterRadioButton;
@@ -166,7 +166,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     /*
                     * 만약 필터 종류를 업데이트 한다면 이곳에서 필터 종류를 분류 시켜줘야 합니다.
                     * */
-                    FCameraFilter newFilter = new OriginalFilter(mContext, null);
+                    FCameraFilter newFilter = new RetroFilter(mContext, null);
                     lastSelectedPosition = -1;
                     ((MainActivity) mContext).setCameraFilter(newFilter);
                     mEditView = ((MainActivity) mContext).findViewById(R.id.editView);
@@ -204,7 +204,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.startAnimation(anim);
+                holder.mFilterRadioBtn.getCircleImageView().startAnimation(anim);
             }
         }
     }
@@ -212,7 +212,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void stopAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.clearAnimation();
+                holder.mFilterRadioBtn.getCircleImageView().clearAnimation();
             }
         }
     }
@@ -232,4 +232,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return mFilterList.get(0);
     }
 
+    public boolean isPopupMenuOpen(){
+        return mCustomPopup.isPopupMenuOpen();
+    }
+
+    public void dismissPopup(){
+        mCustomPopup.dismiss();
+    }
 }

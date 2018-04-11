@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.SupportActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -26,9 +25,11 @@ import android.widget.Toast;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.FilterableCamera.Filters.DefaultFilter;
+import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 public class GuideActivity extends AppCompatActivity {
     private ViewPager viewPager;
@@ -42,16 +43,15 @@ public class GuideActivity extends AppCompatActivity {
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {
-            Toast.makeText(GuideActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            Toasty.success(GuideActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
             prefManager.setFirstTimeLaunch(false);
             launchHomeScreen();
         }
 
         @Override
         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-            Toast.makeText(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            Toasty.warning(GuideActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             prefManager.setFirstTimeLaunch(false);
-            finish();
         }
     };
 
@@ -63,7 +63,6 @@ public class GuideActivity extends AppCompatActivity {
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             checkPermission();
-            finish();
         }else {
             setDefaultSetting(this);
         }
@@ -99,10 +98,14 @@ public class GuideActivity extends AppCompatActivity {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        btnSkip.setOnClickListener(new View.OnClickListener() {
+        if (!prefManager.isFirstTimeLaunch()) {
+            viewPager.setCurrentItem(layouts.length);
+        }
+        btnSkip.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkPermission();
+                viewPager.setCurrentItem(layouts.length);
             }
         });
 
@@ -230,11 +233,11 @@ public class GuideActivity extends AppCompatActivity {
 
     private void setDefaultSetting(Context context){
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.saveFilter(new DefaultFilter(context,null,getString(R.string.DefaultFilter_Name)),0);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
-//        dbHelper.saveFilter(new OriginalFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
+        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.DefaultFilter_Name)),0);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
+//        dbHelper.saveFilter(new RetroFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
 
     }
 
@@ -245,7 +248,7 @@ public class GuideActivity extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             TedPermission.with(this)
                     .setPermissionListener(permissionlistener)
-                    .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                    .setDeniedMessage(getString(R.string.permission_denied))
                     .setPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .check();
             return;

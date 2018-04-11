@@ -204,7 +204,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.startAnimation(anim);
+                holder.mFilterRadioBtn.getCircleImageView().startAnimation(anim);
             }
         }
     }
@@ -212,7 +212,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void stopAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.clearAnimation();
+                holder.mFilterRadioBtn.getCircleImageView().clearAnimation();
             }
         }
     }
@@ -232,4 +232,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return mFilterList.get(0);
     }
 
+    public boolean isPopupMenuOpen(){
+        return mCustomPopup.isPopupMenuOpen();
+    }
+
+    public void dismissPopup(){
+        mCustomPopup.dismiss();
+    }
 }

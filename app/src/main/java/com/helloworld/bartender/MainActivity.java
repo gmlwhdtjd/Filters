@@ -1,5 +1,7 @@
 package com.helloworld.bartender;
 
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,6 +21,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
@@ -55,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton editBtt;
 
     // CustomViews
-    private FilterListView filterListView;
+    private FilterListView mFilterListView;
+    private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
         // CustomView
         editView = findViewById(R.id.editView);
-        filterListView = findViewById(R.id.filterListView);
+        mFilterListView = findViewById(R.id.filterListView);
+        mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
+
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
+
         settingBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
         galleryBtt.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(AlbumIntent);
             }
         });
+        galleryBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraCaptureBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,8 +270,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        editBtt.setOnTouchListener(OnTouchEffectListener);
+
         // 초기 필터 세팅
-        setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
+        setCameraFilter(mHorizontal_adapter.getDefaultFilter());
     }
 
     @Override
@@ -305,4 +321,36 @@ public class MainActivity extends AppCompatActivity {
     public FCameraCapture getFCameraCapture(){
         return fCameraCapture;
     }
+
+    @Override
+    public void onBackPressed() {
+        if(editView.IsOpen()) {
+            editView.changeState();
+        }else if(mHorizontal_adapter.isPopupMenuOpen()){
+            mHorizontal_adapter.dismissPopup();
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    public View.OnTouchListener OnTouchEffectListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageButton imageButton = (ImageButton) v;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    imageButton.setColorFilter(Color.GRAY);
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    imageButton.clearColorFilter();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    imageButton.clearColorFilter();
+
+            }
+            return false;
+        }
+    };
+
 }

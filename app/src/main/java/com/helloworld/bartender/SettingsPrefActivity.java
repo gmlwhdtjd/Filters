@@ -4,13 +4,10 @@ package com.helloworld.bartender;
  * Created by wilybear on 2018-03-23.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,12 +16,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
 import android.util.Log;
-import android.content.SharedPreferences;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.helloworld.bartender.PreferenceSetting.AppCompatPreferenceActivity;
 
@@ -35,6 +28,10 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
     private static final int REQUEST_DIRECTORY = 0;
+
+    private static final int OPENLICENSE_CODE = 0;
+    private static final int TERMS_CODE = 1;
+    private static final int PRIVACY_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +61,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.preference_layout_setting);
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
             Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
+            Preference termsPref = (findPreference(getString(R.string.key_terms)));
+            Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
             String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
@@ -96,14 +95,32 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(),0);
+                    startDetailActivity(getActivity(),OPENLICENSE_CODE);
                     return true;
                 }
             });
 
+            termsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(),TERMS_CODE);
+                    return true;
+                }
+            });
+
+            privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(),PRIVACY_CODE);
+                    return true;
+                }
+            });
+
+
+
             // feedback preference click listener
-            Preference myPref = findPreference(getString(R.string.key_send_feedback));
-            myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Preference feedbackPref = findPreference(getString(R.string.key_send_feedback));
+            feedbackPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     sendFeedback(getActivity());
                     return true;
@@ -158,9 +175,9 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static void startDetailActivity(Context context,int pageNum){
-        Intent intent = new Intent(context,OpenLicenseActivity.class);
-        intent.putExtra("pageNum", String.valueOf(pageNum));
+    private static void startDetailActivity(Context context,int pageCode){
+        Intent intent = new Intent(context,DetailSettingActivity.class);
+        intent.putExtra("pageCode", pageCode);
         context.startActivity(intent);
     }
 

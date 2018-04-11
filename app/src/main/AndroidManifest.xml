@@ -37,7 +37,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/SettingTheme" />
         <activity
-            android:name=".OpenLicenseActivity"
+            android:name=".DetailSettingActivity"
             android:theme="@style/SettingTheme" />
 
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />

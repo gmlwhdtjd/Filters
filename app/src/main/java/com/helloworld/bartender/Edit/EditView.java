@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewPager;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -27,6 +28,12 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.ViewPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -103,7 +110,7 @@ public class EditView extends CoordinatorLayout {
 
                 float dp = getResources().getDisplayMetrics().density;
 
-                FrameLayout changeView= new FrameLayout(getContext());
+                FrameLayout changeView = new FrameLayout(getContext());
                 changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
 
@@ -150,10 +157,9 @@ public class EditView extends CoordinatorLayout {
                 //update
                 FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
                 int Id = dbHelper.saveFilter(mFilter);
-                if(mFilter.getId()==null){
-                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter,Id),filterListView.getHorizontalAdapter().getItemCount()-1);
-                }
-                else{
+                if (mFilter.getId() == null) {
+                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
+                } else {
                     filterListView.getHorizontalAdapter().updateItem(mFilter);
                 }
                 if (mOnSaveListener != null)
@@ -165,7 +171,7 @@ public class EditView extends CoordinatorLayout {
     public void changeState() {
         if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            backupValues  = new LinkedList<>();
+            backupValues = new LinkedList<>();
 
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
@@ -184,38 +190,33 @@ public class EditView extends CoordinatorLayout {
     public void setFilter(FCameraFilter filter) {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
-
-        TabHost tabHost = findViewById(R.id.tabHost);
-        tabHost.setup();
-        tabHost.clearAllTabs();
-
-        FrameLayout tabContent = findViewById(android.R.id.tabcontent);
-        tabContent.removeAllViews();
-        HashMap<String, LinearLayout> tabs = new HashMap<>();
+//
+//        TabHost tabHost = findViewById(R.id.tabHost);
+//        tabHost.setup();
+//        tabHost.clearAllTabs();
+//
+//        FrameLayout tabContent = findViewById(android.R.id.tabcontent);
+//        tabContent.removeAllViews();
+           HashMap<String, LinearLayout> tabs = new HashMap<>();
+        CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
-            editNameView.setClickable(false);
+//            editNameView.setClickable(false);
 
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
             tab.setOrientation(LinearLayout.VERTICAL);
-            tabContent.addView(tab);
-
-            TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec Original");
-            tmpTabSpec.setContent(tab.getId());
-            tmpTabSpec.setIndicator("Original");
-            tabHost.addTab(tmpTabSpec);
+//            tabContent.addView(tab);
 
             TextView textView = new TextView(getContext());
             textView.setText(getContext().getString(R.string.DefaultFilter_msg));
             textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
             textView.setGravity(Gravity.CENTER);
             textView.setTextSize(20);
-
             tab.addView(textView);
-        }
-        else if (mFilter instanceof RetroFilter) {
+            tabItems.add(CustomViewPagerItem.of("Original",tab));
+        } else if (mFilter instanceof RetroFilter) {
             editNameView.setClickable(true);
 
             for (final RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
@@ -225,13 +226,11 @@ public class EditView extends CoordinatorLayout {
                     tab.setId(View.generateViewId());
                     tab.setGravity(Gravity.CENTER);
                     tab.setOrientation(LinearLayout.VERTICAL);
-                    tabContent.addView(tab);
-
-                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
-                    tmpTabSpec.setContent(tab.getId());
-                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
-                    tabHost.addTab(tmpTabSpec);
-
+                    tabItems.add(CustomViewPagerItem.of(valueType.getPageName(getContext()),tab));
+//                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
+//                    tmpTabSpec.setContent(tab.getId());
+//                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
+//                    tabHost.addTab(tmpTabSpec);
                     tabs.put(valueType.getPageName(getContext()), tab);
                 }
 
@@ -267,19 +266,28 @@ public class EditView extends CoordinatorLayout {
                 tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
+
+
+        CustomViewPagerItemAdapter adapter = new CustomViewPagerItemAdapter(tabItems);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPagerTab.setViewPager(viewPager);
+
     }
+
 
     public interface OnSaveListener {
         void onSaved();
     }
 
-    public FCameraFilter NewFilter(FCameraFilter filter, int Id){
+    public FCameraFilter NewFilter(FCameraFilter filter, int Id) {
         FCameraFilter newFilter = null;
         switch (filter.getClass().getSimpleName()) {
             case "RetroFilter":
-                newFilter = new RetroFilter(getContext(),Id);
-                for(RetroFilter.ValueType valueType : RetroFilter.ValueType.values()){
-                    newFilter.setValueWithType(valueType,filter.getValueWithType(valueType));
+                newFilter = new RetroFilter(getContext(), Id);
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
+                    newFilter.setValueWithType(valueType, filter.getValueWithType(valueType));
                 }
                 newFilter.setName(filter.getName());
                 break;

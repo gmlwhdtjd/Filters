@@ -45,6 +45,7 @@ import java.util.Queue;
 
 public class EditView extends CoordinatorLayout {
 
+    private boolean isOpen;
     BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
     DatabaseHelper dbHelper;
@@ -76,6 +77,7 @@ public class EditView extends CoordinatorLayout {
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
         dbHelper = new DatabaseHelper(getContext());
+        isOpen = false;
 
         // TODO : 변수 세팅
 
@@ -171,6 +173,7 @@ public class EditView extends CoordinatorLayout {
     public void changeState() {
         if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            isOpen = true;
             backupValues = new LinkedList<>();
 
             if (mFilter instanceof RetroFilter) {
@@ -179,6 +182,7 @@ public class EditView extends CoordinatorLayout {
                 }
             }
         } else {
+            isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
@@ -295,6 +299,10 @@ public class EditView extends CoordinatorLayout {
                 break;
         }
         return newFilter;
+    }
+
+    public boolean IsOpen() {
+        return isOpen;
     }
 
 }

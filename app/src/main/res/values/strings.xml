@@ -9,6 +9,7 @@
     <string name="tedpermission_setting">Setting</string>
     <string name="tedpermission_close">Close</string>
     <string name="tedpermission_confirm">Confirm</string>
+    <string name="permission_denied">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
 
     <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
 
@@ -90,5 +91,8 @@ limitations under the License.\n</string>
     <string name="duplicate_filter">Duplicate</string>
     <string name="share_filter">Share</string>
     <string name="gallery_pref">gallery_shared_pref</string>
+    <string name="permission_page_title">Required Permissions</string>
+    <string name="camera_permission_summary">Permissions for taking photos</string>
+    <string name="storage_permission_summary">Permissions required for saving and managing photos</string>
 
 </resources>

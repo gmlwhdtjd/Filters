@@ -22,9 +22,6 @@
             android:key="@string/key_faq"
             android:summary="@string/summary_faq"
             android:title="@string/title_faq">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/url_faq" />
         </Preference>
         <Preference
             android:key="@string/key_send_feedback"
@@ -33,9 +30,6 @@
         <Preference
             android:key="@string/key_terms"
             android:title="@string/title_terms">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/url_terms" />
         </Preference>
 
         <Preference
@@ -45,9 +39,6 @@
         <Preference
             android:key="@string/key_privacy"
             android:title="@string/title_privacy">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/url_privacy" />
         </Preference>
 
     </PreferenceCategory>

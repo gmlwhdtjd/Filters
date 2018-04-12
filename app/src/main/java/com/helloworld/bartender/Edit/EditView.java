@@ -194,7 +194,10 @@ public class EditView extends CoordinatorLayout {
     public void setFilter(FCameraFilter filter) {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
-//
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+
 //        TabHost tabHost = findViewById(R.id.tabHost);
 //        tabHost.setup();
 //        tabHost.clearAllTabs();
@@ -205,7 +208,7 @@ public class EditView extends CoordinatorLayout {
         CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
-//            editNameView.setClickable(false);
+            editNameView.setClickable(false);
 
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
@@ -220,9 +223,10 @@ public class EditView extends CoordinatorLayout {
             textView.setTextSize(20);
             tab.addView(textView);
             tabItems.add(CustomViewPagerItem.of("Original",tab));
+            viewPagerTab.setDistributeEvenly(true);
         } else if (mFilter instanceof RetroFilter) {
             editNameView.setClickable(true);
-
+            viewPagerTab.setDistributeEvenly(false);
             for (final RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {
@@ -273,9 +277,7 @@ public class EditView extends CoordinatorLayout {
 
 
         CustomViewPagerItemAdapter adapter = new CustomViewPagerItemAdapter(tabItems);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
         viewPagerTab.setViewPager(viewPager);
 
     }

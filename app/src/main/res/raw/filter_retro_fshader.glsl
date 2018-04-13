@@ -15,7 +15,6 @@ struct Filter_Var {
     float saturation;
     float blur;
     float aberration;
-    float noiseSize;
     float noiseIntensity;
 };
 

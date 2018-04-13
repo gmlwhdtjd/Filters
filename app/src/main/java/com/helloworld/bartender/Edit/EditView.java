@@ -211,7 +211,7 @@ public class EditView extends CoordinatorLayout {
             tabHost.addTab(tmpTabSpec);
 
             TextView textView = new TextView(getContext());
-            textView.setText(getContext().getString(R.string.DefaultFilter_msg));
+            textView.setText(getContext().getString(R.string.OriginalFilter_msg));
             textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
             textView.setGravity(Gravity.CENTER);
             textView.setTextSize(20);
@@ -253,6 +253,10 @@ public class EditView extends CoordinatorLayout {
                     case RGB_B:
                         curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
                         curSeekBar.setMax(255);
+                        break;
+                    case SATURATION:
+                        curSeekBar.setMax(50);
+                        curSeekBar.setMin(-50);
                         break;
                     default:
                         curSeekBar.setMax(100);

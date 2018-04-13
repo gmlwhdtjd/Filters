@@ -53,6 +53,10 @@ public class NamedSeekBar extends LinearLayout {
         mSeekBar.setMax(value);
     }
 
+    public void setMin(int value) {
+        mSeekBar.setMin(value);
+    }
+
     public void setValue(int value) {
         mValue = value;
         mSeekBar.setProgress(mValue);

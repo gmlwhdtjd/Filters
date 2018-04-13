@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/filterIcon"
         android:adjustViewBounds="true"
-        app:FilterRadioButton_filter_name="@string/DefaultFilter_Name"
+        app:FilterRadioButton_filter_name="@string/OriginalFilter_Name"
         android:checked="false"
         android:padding= "5dp"
         app:FilterRadioButton_filter_image_border_color="@color/filterIcon_border_color"

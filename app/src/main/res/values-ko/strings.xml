@@ -1,24 +1,30 @@
 <resources>
+
+    <!--Retro Filter-->
+    <string name="OriginalFilter_Name">원본</string>
+    <string name="OriginalFilter_msg">
+        원본을 선택하셨습니다.\n\n
+        다른 필터를 선택해 주세요. :)
+    </string>
+
+
     <!--Original Filter-->
-    <string name="OriginalFilter_Page_1">색상</string>
-    <string name="OriginalFilter_Page_2">빛</string>
-    <string name="OriginalFilter_Page_3">초점</string>
-    <string name="OriginalFilter_Page_4">빛번짐</string>
-    <string name="OriginalFilter_Page_5">노이즈</string>
+    <string name="RetroFilter_Page_1">색상</string>
+    <string name="RetroFilter_Page_2">빛</string>
+    <string name="RetroFilter_Page_3">초점</string>
+    <string name="RetroFilter_Page_4">레트로</string>
 
-    <string name="OriginalFilter_COLOR_RATIO">강도</string>
-    <string name="OriginalFilter_RGB_R">빨강</string>
-    <string name="OriginalFilter_RGB_G">초록</string>
-    <string name="OriginalFilter_RGB_B">파랑</string>
-    <string name="OriginalFilter_BRIGHTNESS">밝기</string>
-    <string name="OriginalFilter_SATURATION">채도</string>
-    <string name="OriginalFilter_BLUR">강도</string>
-    <string name="OriginalFilter_FOCUS">반경</string>
-    <string name="OriginalFilter_ABERRATION">강도</string>
-    <string name="OriginalFilter_NOISE_SIZE">크기</string>
-    <string name="OriginalFilter_NOISE_INTENSITY">강도</string>
+    <string name="RetroFilter_COLOR_RATIO">강도</string>
+    <string name="RetroFilter_RGB_R">빨강</string>
+    <string name="RetroFilter_RGB_G">초록</string>
+    <string name="RetroFilter_RGB_B">파랑</string>
+    <string name="RetroFilter_BRIGHTNESS">밝기</string>
+    <string name="RetroFilter_SATURATION">채도</string>
+    <string name="RetroFilter_BLUR">강도</string>
+    <string name="RetroFilter_FOCUS">반경</string>
+    <string name="RetroFilter_ABERRATION">빛번짐</string>
+    <string name="RetroFilter_NOISE_INTENSITY">노이즈</string>
 
-    <string name="DefaultFilter_Name">원본</string>
     <string name="delete_filter">삭제</string>
     <string name="duplicate_filter">복제</string>
     <string name="share_filter">공유</string>

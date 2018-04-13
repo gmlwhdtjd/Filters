@@ -13,28 +13,29 @@
 
     <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
 
-    <string name="DefaultFilter_msg">You chose the original source.\nPlease, Select a different filter.</string>
-
     <!--Original Filter-->
-    <string name="OriginalFilter_Page_1">Color</string>
-    <string name="OriginalFilter_Page_2">Light</string>
-    <string name="OriginalFilter_Page_3">Focus</string>
-    <string name="OriginalFilter_Page_4">Aberration</string>
-    <string name="OriginalFilter_Page_5">Noise</string>
+    <string name="OriginalFilter_Name">Original</string>
+    <string name="OriginalFilter_msg">
+        You chose the original source.\n\n
+        Please, Select a different filter. :)
+    </string>
 
-    <string name="OriginalFilter_COLOR_RATIO">Ratio</string>
-    <string name="OriginalFilter_RGB_R">Red</string>
-    <string name="OriginalFilter_RGB_G">Green</string>
-    <string name="OriginalFilter_RGB_B">Blue</string>
-    <string name="OriginalFilter_BRIGHTNESS">Bright</string>
-    <string name="OriginalFilter_SATURATION">Saturation</string>
-    <string name="OriginalFilter_BLUR">Intensity</string>
-    <string name="OriginalFilter_FOCUS">Radius</string>
-    <string name="OriginalFilter_ABERRATION">Intensity</string>
-    <string name="OriginalFilter_NOISE_SIZE">Size</string>
-    <string name="OriginalFilter_NOISE_INTENSITY">Intensity</string>
+    <!--Retro Filter-->
+    <string name="RetroFilter_Page_1">Color</string>
+    <string name="RetroFilter_Page_2">Light</string>
+    <string name="RetroFilter_Page_3">Focus</string>
+    <string name="RetroFilter_Page_4">Retro</string>
 
-    <string name="DefaultFilter_Name">Original</string>
+    <string name="RetroFilter_COLOR_RATIO">Ratio</string>
+    <string name="RetroFilter_RGB_R">Red</string>
+    <string name="RetroFilter_RGB_G">Green</string>
+    <string name="RetroFilter_RGB_B">Blue</string>
+    <string name="RetroFilter_BRIGHTNESS">Bright</string>
+    <string name="RetroFilter_SATURATION">Saturation</string>
+    <string name="RetroFilter_BLUR">Intensity</string>
+    <string name="RetroFilter_FOCUS">Radius</string>
+    <string name="RetroFilter_ABERRATION">Aberration</string>
+    <string name="RetroFilter_NOISE_INTENSITY">Noise</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_setting">Settings</string>
@@ -73,18 +74,20 @@
     <string name="url_open_license"> open_license://policy</string>
     <string name="url_terms">term url</string>
 
-    <string name="apache_license">Copyright [2018] [Team inha]  \n
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-\n\n
-    http://www.apache.org/licenses/LICENSE-2.0
-\n\n
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.\n</string>
+    <string name="apache_license">
+        Copyright [2018] [Team inha]  \n
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at
+        \n\n
+            http://www.apache.org/licenses/LICENSE-2.0
+        \n\n
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.\n
+    </string>
 
     <!-- Strings related to Popup -->
     <string name="delete_filter">Delete</string>

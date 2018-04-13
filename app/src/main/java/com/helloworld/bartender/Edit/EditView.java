@@ -198,13 +198,7 @@ public class EditView extends CoordinatorLayout {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
-//        TabHost tabHost = findViewById(R.id.tabHost);
-//        tabHost.setup();
-//        tabHost.clearAllTabs();
-//
-//        FrameLayout tabContent = findViewById(android.R.id.tabcontent);
-//        tabContent.removeAllViews();
-           HashMap<String, LinearLayout> tabs = new HashMap<>();
+        HashMap<String, LinearLayout> tabs = new HashMap<>();
         CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
@@ -222,7 +216,7 @@ public class EditView extends CoordinatorLayout {
             textView.setGravity(Gravity.CENTER);
             textView.setTextSize(20);
             tab.addView(textView);
-            tabItems.add(CustomViewPagerItem.of("Original",tab));
+            tabItems.add(CustomViewPagerItem.of("Original", tab));
             viewPagerTab.setDistributeEvenly(true);
         } else if (mFilter instanceof RetroFilter) {
             editNameView.setClickable(true);
@@ -234,11 +228,7 @@ public class EditView extends CoordinatorLayout {
                     tab.setId(View.generateViewId());
                     tab.setGravity(Gravity.CENTER);
                     tab.setOrientation(LinearLayout.VERTICAL);
-                    tabItems.add(CustomViewPagerItem.of(valueType.getPageName(getContext()),tab));
-//                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
-//                    tmpTabSpec.setContent(tab.getId());
-//                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
-//                    tabHost.addTab(tmpTabSpec);
+                    tabItems.add(CustomViewPagerItem.of(valueType.getPageName(getContext()), tab));
                     tabs.put(valueType.getPageName(getContext()), tab);
                 }
 
@@ -281,7 +271,6 @@ public class EditView extends CoordinatorLayout {
         viewPagerTab.setViewPager(viewPager);
 
     }
-
 
     public interface OnSaveListener {
         void onSaved();

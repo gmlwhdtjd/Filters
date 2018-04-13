@@ -1,14 +1,9 @@
 package com.helloworld.bartender.Edit;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.StringRes;
 import android.view.View;
-
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.ogaclejapan.smarttablayout.utils.PagerItems;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItem;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
 
 /**
  * Created by wilybear on 2018-04-12.

@@ -167,6 +167,8 @@ public class FCamera implements LifecycleObserver {
 
     private Flash mFlashSetting;
 
+    private Surface mPreviewSurface;
+
     /**
      * The {@link Size} of camera preview.
      */
@@ -434,7 +436,17 @@ public class FCamera implements LifecycleObserver {
     public void setFlashSetting(Flash flash) {
         if (mFlashSupported) {
             mFlashSetting = flash;
-            createCameraPreviewSession();
+            try {
+                // We set up a CaptureRequest.Builder with the output Surface.
+                mPreviewRequestBuilder
+                        = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                mPreviewRequestBuilder.addTarget(mPreviewSurface);
+
+                // Here, we create a CameraCaptureSession for camera preview.
+                mCameraDevice.createCaptureSession(Arrays.asList(mPreviewSurface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         }
         else
             mFlashSetting = Flash.OFF;
@@ -755,15 +767,15 @@ public class FCamera implements LifecycleObserver {
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 
             // This is the output Surface we need to start preview.
-            Surface surface = new Surface(texture);
+            mPreviewSurface = new Surface(texture);
 
             // We set up a CaptureRequest.Builder with the output Surface.
             mPreviewRequestBuilder
                     = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewRequestBuilder.addTarget(surface);
+            mPreviewRequestBuilder.addTarget(mPreviewSurface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
+            mCameraDevice.createCaptureSession(Arrays.asList(mPreviewSurface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
 
             mFCameraPreview.setCameraCharacteristics(mCharacteristics);
 

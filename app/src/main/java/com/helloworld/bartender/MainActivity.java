@@ -97,13 +97,12 @@ public class MainActivity extends AppCompatActivity {
                         cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
                         break;
                 }
-                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
-                openEffectImg.startAnimation(open);
             }
 
             @Override
             public void onStartPreview() {
-
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
             }
 
             @Override
@@ -184,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
 
         settingBtt.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
             }
         });
-
         settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
@@ -269,7 +265,6 @@ public class MainActivity extends AppCompatActivity {
                 editView.changeState();
             }
         });
-
         editBtt.setOnTouchListener(OnTouchEffectListener);
 
         // 초기 필터 세팅
@@ -352,5 +347,4 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
 }

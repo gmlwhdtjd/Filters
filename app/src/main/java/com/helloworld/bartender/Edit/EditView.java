@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewPager;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -27,6 +28,12 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.ViewPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -188,13 +195,11 @@ public class EditView extends CoordinatorLayout {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
 
-        TabHost tabHost = findViewById(R.id.tabHost);
-        tabHost.setup();
-        tabHost.clearAllTabs();
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
-        FrameLayout tabContent = findViewById(android.R.id.tabcontent);
-        tabContent.removeAllViews();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
+        CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
             editNameView.setClickable(false);
@@ -203,24 +208,19 @@ public class EditView extends CoordinatorLayout {
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
             tab.setOrientation(LinearLayout.VERTICAL);
-            tabContent.addView(tab);
-
-            TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec Original");
-            tmpTabSpec.setContent(tab.getId());
-            tmpTabSpec.setIndicator("Original");
-            tabHost.addTab(tmpTabSpec);
+//            tabContent.addView(tab);
 
             TextView textView = new TextView(getContext());
             textView.setText(getContext().getString(R.string.OriginalFilter_msg));
             textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
             textView.setGravity(Gravity.CENTER);
             textView.setTextSize(20);
-
             tab.addView(textView);
-        }
-        else if (mFilter instanceof RetroFilter) {
+            tabItems.add(CustomViewPagerItem.of("Original", tab));
+            viewPagerTab.setDistributeEvenly(true);
+        } else if (mFilter instanceof RetroFilter) {
             editNameView.setClickable(true);
-
+            viewPagerTab.setDistributeEvenly(false);
             for (final RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
 
                 if (!tabs.containsKey(valueType.getPageName(getContext()))) {
@@ -228,13 +228,7 @@ public class EditView extends CoordinatorLayout {
                     tab.setId(View.generateViewId());
                     tab.setGravity(Gravity.CENTER);
                     tab.setOrientation(LinearLayout.VERTICAL);
-                    tabContent.addView(tab);
-
-                    TabHost.TabSpec tmpTabSpec = tabHost.newTabSpec("Tab Spec" + valueType.getPageName(getContext()));
-                    tmpTabSpec.setContent(tab.getId());
-                    tmpTabSpec.setIndicator(valueType.getPageName(getContext()));
-                    tabHost.addTab(tmpTabSpec);
-
+                    tabItems.add(CustomViewPagerItem.of(valueType.getPageName(getContext()), tab));
                     tabs.put(valueType.getPageName(getContext()), tab);
                 }
 
@@ -274,6 +268,12 @@ public class EditView extends CoordinatorLayout {
                 tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
+
+
+        CustomViewPagerItemAdapter adapter = new CustomViewPagerItemAdapter(tabItems);
+        viewPager.setAdapter(adapter);
+        viewPagerTab.setViewPager(viewPager);
+
     }
 
     public interface OnSaveListener {
@@ -284,9 +284,9 @@ public class EditView extends CoordinatorLayout {
         FCameraFilter newFilter = null;
         switch (filter.getClass().getSimpleName()) {
             case "RetroFilter":
-                newFilter = new RetroFilter(getContext(),Id);
-                for(RetroFilter.ValueType valueType : RetroFilter.ValueType.values()){
-                    newFilter.setValueWithType(valueType,filter.getValueWithType(valueType));
+                newFilter = new RetroFilter(getContext(), Id);
+                for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
+                    newFilter.setValueWithType(valueType, filter.getValueWithType(valueType));
                 }
                 newFilter.setName(filter.getName());
                 break;

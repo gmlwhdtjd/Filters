@@ -12,13 +12,13 @@ public class DetailSettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int pageCode = getIntent().getIntExtra("pageCode",0);
+        int pageCode = getIntent().getIntExtra("pageCode", 0);
         setContentView(R.layout.activity_setting_detail);
-        Toast.makeText(this,String.valueOf(pageCode),Toast.LENGTH_LONG).show();
+        Toast.makeText(this, String.valueOf(pageCode), Toast.LENGTH_LONG).show();
 
         mDetailText = findViewById(R.id.detailText);
 
-        switch (pageCode){
+        switch (pageCode) {
             case 0:
                 mDetailText.setText(R.string.apache_license);
                 break;

@@ -1,6 +1,8 @@
 package com.helloworld.bartender;
 
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,8 +19,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView timerTextView;
     private ImageView captureEffectImg;
     private ImageView openEffectImg;
+    private Animation cameraCaptureBtnUpAnim;
+    private Animation cameraCaptureBtnDownAnim;
+    private Animation cameraCaptueInnerAnim;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         fCameraCapture = new FCameraCapture(this);
         fCameraCapture.setSaveDirectory(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                + File.separator + getString(R.string.app_name));
+                        + File.separator + getString(R.string.app_name));
 
         fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
         fCamera.setCallback(new FCamera.Callback() {
@@ -121,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
         openEffectImg = findViewById(R.id.openEffectImg);
+        cameraCaptureBtnUpAnim = AnimationUtils.loadAnimation(this, R.anim.capture_btn_effect_scake_up);
+        cameraCaptureBtnDownAnim = AnimationUtils.loadAnimation(this, R.anim.capture_btn_effect_scale_down);
+        cameraCaptueInnerAnim = AnimationUtils.loadAnimation(this, R.anim.capture_inner_effect);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);
@@ -241,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 cameraCaptureBtt.setClickable(false);
-
                 new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -262,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 }.start();
             }
         });
+        cameraCaptureBtt.setOnTouchListener(OnCameraBtnTouchListener);
 
         editBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,16 +285,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref),0);
-        String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
+        String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
         fCameraCapture.setSaveDirectory(path);
     }
 
-    public void setCameraFilter(final FCameraFilter filter){
+    public void setCameraFilter(final FCameraFilter filter) {
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
-        
+
         changeCaptureInnerColor(filter);
         editView.setOnSaveListener(new EditView.OnSaveListener() {
             @Override
@@ -303,8 +309,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
-        }
-        else if (filter instanceof RetroFilter) {
+        } else if (filter instanceof RetroFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[3];
             Color.RGBToHSV(
@@ -318,18 +323,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public FCameraCapture getFCameraCapture(){
+    public FCameraCapture getFCameraCapture() {
         return fCameraCapture;
     }
 
     @Override
     public void onBackPressed() {
-        if(editView.IsOpen()) {
+        if (editView.IsOpen()) {
             editView.changeState();
-        }else if(mHorizontal_adapter.isPopupMenuOpen()){
+        } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -347,6 +351,44 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     imageButton.clearColorFilter();
+
+            }
+            return false;
+        }
+    };
+
+    public View.OnTouchListener OnCameraBtnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleX", 1.1f);
+                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleY", 1.1f);
+                    scaleUpX.setDuration(100);
+                    scaleUpY.setDuration(100);
+
+                    AnimatorSet scaleUp = new AnimatorSet();
+                    scaleUp.play(scaleUpX).with(scaleUpY);
+                    scaleUp.start();
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+                    cameraCaptureInnerImg.startAnimation(cameraCaptueInnerAnim);
+                case MotionEvent.ACTION_CANCEL:
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleX", 1.0f);
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleY", 1.0f);
+                    scaleDownX.setDuration(125);
+                    scaleDownY.setDuration(125);
+
+                    AnimatorSet scaleDown = new AnimatorSet();
+                    scaleDown.play(scaleDownX).with(scaleDownY);
+
+                    scaleDown.start();
+
 
             }
             return false;

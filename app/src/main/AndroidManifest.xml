@@ -28,7 +28,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -39,9 +38,10 @@
         <activity
             android:name=".DetailSettingActivity"
             android:theme="@style/SettingTheme" />
-
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
-
+        <activity android:name=".FaqActivity"
+            android:theme="@style/SettingTheme"
+           />
     </application>
 
 </manifest>

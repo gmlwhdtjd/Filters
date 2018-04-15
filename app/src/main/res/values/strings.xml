@@ -51,7 +51,6 @@
     <string name="summary_vibrate">Vibrate on long press</string>
     <string name="key_vibrate">key_vibrate</string>
     <string name="key_send_feedback">key_send_feedback</string>
-    <string name="title_activity_settings">Settings</string>
     <string name="key_review">key_review</string>
     <string name="title_review">Review</string>
     <string name="summary_review">Review and rate this app</string>

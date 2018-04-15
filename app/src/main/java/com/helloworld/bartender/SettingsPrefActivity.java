@@ -37,6 +37,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.title_activity_setting));
         appPackageName = getApplicationContext().getPackageName();
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
@@ -63,6 +64,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
             Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
+            Preference faqPref = (findPreference(getString(R.string.key_faq)));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
             String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
@@ -116,7 +118,14 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-
+            faqPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(),FaqActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+            });
 
             // feedback preference click listener
             Preference feedbackPref = findPreference(getString(R.string.key_send_feedback));

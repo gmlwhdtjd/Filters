@@ -47,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView timerTextView;
     private ImageView captureEffectImg;
     private ImageView openEffectImg;
-    private Animation cameraCaptureBtnUpAnim;
-    private Animation cameraCaptureBtnDownAnim;
-    private Animation cameraCaptueInnerAnim;
+    private Animation cameraCaptureInnerAnim;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -124,9 +122,7 @@ public class MainActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
         openEffectImg = findViewById(R.id.openEffectImg);
-        cameraCaptureBtnUpAnim = AnimationUtils.loadAnimation(this, R.anim.capture_btn_effect_scake_up);
-        cameraCaptureBtnDownAnim = AnimationUtils.loadAnimation(this, R.anim.capture_btn_effect_scale_down);
-        cameraCaptueInnerAnim = AnimationUtils.loadAnimation(this, R.anim.capture_inner_effect);
+        cameraCaptureInnerAnim = AnimationUtils.loadAnimation(this, R.anim.capture_inner_effect);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);
@@ -144,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
         // 상단 버튼 세팅
-        cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
+        cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 fCamera.switchCameraFacing();
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
@@ -161,11 +157,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
-        cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
+        cameraFlashBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
                         fCamera.setFlashSetting(FCamera.Flash.OFF);
@@ -193,9 +190,9 @@ public class MainActivity extends AppCompatActivity {
 
         cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
 
-        cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
+        cameraTimerBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 switch (cameraTimerState) {
                     case 0:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_3);
@@ -219,9 +216,9 @@ public class MainActivity extends AppCompatActivity {
 
         cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
 
-        settingBtt.setOnClickListener(new View.OnClickListener() {
+        settingBtt.setOnClickListener(new  OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void  onSingleClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
             }
         });
@@ -229,9 +226,9 @@ public class MainActivity extends AppCompatActivity {
         settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
-        galleryBtt.setOnClickListener(new View.OnClickListener() {
+        galleryBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 Intent AlbumIntent = new Intent(Intent.ACTION_VIEW);
 
                 AlbumIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
@@ -260,6 +257,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onFinish() {
                         timerTextView.setText("");
 
+                        ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+                        cameraCaptureInnerImg.startAnimation(cameraCaptureInnerAnim);
                         fCamera.takePicture();
 
                         cameraCaptureBtt.setClickable(true);
@@ -269,9 +268,9 @@ public class MainActivity extends AppCompatActivity {
         });
         cameraCaptureBtt.setOnTouchListener(OnCameraBtnTouchListener);
 
-        editBtt.setOnClickListener(new View.OnClickListener() {
+        editBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 editView.changeState();
             }
         });
@@ -374,8 +373,7 @@ public class MainActivity extends AppCompatActivity {
                     scaleUp.start();
                     return false;
                 case MotionEvent.ACTION_UP:
-                    ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
-                    cameraCaptureInnerImg.startAnimation(cameraCaptueInnerAnim);
+
                 case MotionEvent.ACTION_CANCEL:
                     ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(cameraCaptureBtt,
                             "scaleX", 1.0f);

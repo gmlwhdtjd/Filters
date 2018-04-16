@@ -41,6 +41,7 @@
     <string name="pref_header_about">About</string>
     <string name="summary_about">About Summary</string>
     <string name="app_version">1.0</string>
+    <string name="key_app_version">key_app_version</string>
     <string name="summary_support">support summary</string>
     <string name="title_send_feedback">Send Feedback</string>
     <string name="title_faq">FAQ</string>

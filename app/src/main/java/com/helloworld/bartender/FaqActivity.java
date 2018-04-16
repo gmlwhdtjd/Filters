@@ -34,9 +34,11 @@ public class FaqActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this,linearLayoutManager.getOrientation()));
         recyclerView.setLayoutManager(linearLayoutManager);
 
+
+        //이곳에 question 추가
         final List<QuestionModel> data = new ArrayList<>();
         data.add(new QuestionModel("광각 일반 렌즈가 둘 다 있는 스마트폰을 쓰는데 광각에서 일반렌즈로 어떻게 바꾸나요?"
-                ,"광각, 일반 카메라를 다 지원하고 있습니다.\n 광각모드에서 상단의 카메라전환 아이콘을 한번만 누르시면 일반모드로 촬영가능하십니다.",
+                ,"광각, 일반 카메라를 다 지원하고 있습니다.\n광각모드에서 상단의 카메라전환 아이콘을 한번만 누르시면 일반모드로 촬영가능하십니다.",
                 Utils.createInterpolator(Utils.ACCELERATE_DECELERATE_INTERPOLATOR)));
         data.add(new QuestionModel(
                 "question 질문"

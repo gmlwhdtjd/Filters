@@ -5,6 +5,7 @@ package com.helloworld.bartender;
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,10 +17,12 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.helloworld.bartender.PreferenceSetting.AppCompatPreferenceActivity;
+import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
@@ -28,7 +31,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
     private static final int REQUEST_DIRECTORY = 0;
-
+    private static String device_version="";
     private static final int OPENLICENSE_CODE = 0;
     private static final int TERMS_CODE = 1;
     private static final int PRIVACY_CODE = 2;
@@ -65,6 +68,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
             Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
+            Preference versionPref = (findPreference(getString(R.string.key_app_version)));
+
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
             String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
@@ -90,6 +95,56 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                             config);
 
                     startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+                    return true;
+                }
+            });
+
+            try {
+                device_version = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            versionPref.setSummary(device_version);
+
+            versionPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String store_version ="1";
+                    try {
+                        store_version = MarketVersionChecker.getMarketVersion(getActivity().getPackageName());
+                    }catch (Exception e){
+                        Log.d("MarketNotExist",e.toString());
+                    }
+                    if (store_version.compareTo(device_version) > 0) {
+                        //need update
+                        AlertDialog.Builder mDialog;
+                        mDialog = new AlertDialog.Builder(getActivity());
+                        mDialog.setMessage("새로운 버전이 업데이트 되었습니다.")
+                                .setCancelable(true)
+                                .setPositiveButton("업데이트 바로가기",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog,
+                                                                int id) {
+                                                Intent marketLaunch = new Intent(
+                                                        Intent.ACTION_VIEW);
+                                                marketLaunch.setData(Uri
+                                                        .parse("https://play.google.com/store/apps/details?id="+appPackageName));
+                                                startActivity(marketLaunch);
+                                            }
+                                        });
+                        AlertDialog alert = mDialog.create();
+                        alert.setTitle("안 내");
+                        alert.show();
+                    } else {
+                        AlertDialog.Builder mDialog;
+                        mDialog = new AlertDialog.Builder(getActivity());
+                        mDialog.setMessage("최신 버전 입니다.")
+                                .setCancelable(true);
+                        AlertDialog alert = mDialog.create();
+                        alert.setTitle("안 내");
+                        alert.show();
+                    }
+
                     return true;
                 }
             });

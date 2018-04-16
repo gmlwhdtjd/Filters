@@ -28,6 +28,7 @@ import com.helloworld.bartender.FilterableCamera.FCameraPreview;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
+import com.helloworld.bartender.SingleClickListener.OnSingleClickListener;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.helloworld.bartender;
+package com.helloworld.bartender.SingleClickListener;
 
 /**
  * Created by samer on 2018-04-15.

@@ -38,4 +38,6 @@ dependencies {
     compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'
     implementation 'com.github.GrenderG:Toasty:1.2.1'
     compile 'com.github.aakira:expandable-layout:1.6.0@aar'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
+
 }

@@ -41,7 +41,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private Animation anim;
     private Set<horizontalViewHolder> mBoundViewHolders = new HashSet<>();
 
-    @Override
     public int getItemViewType(int position) {
         return (position == mFilterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
@@ -173,6 +172,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     mEditView.changeState();
                 }
             });
+            holder.mEndBtn.setOnTouchListener(((MainActivity) mContext).OnTouchEffectListener);
         } else {
             final FCameraFilter filter = mFilterList.get(holder.getAdapterPosition());
             holder.mFilterRadioBtn.setFilterImageDrawable(dbHelper.getFilterIconImage(filter.getId()));

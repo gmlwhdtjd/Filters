@@ -119,8 +119,8 @@ public class CustomPopup {
 
         anchor.getLocationOnScreen(location);
 
-        Rect anchorRect = new Rect(location[0], location[1], location[0]
-                + anchor.getWidth(), location[1] + anchor.getHeight());
+        //left,top,right,bottom
+        Rect anchorRect = new Rect(location[0], location[1], location[0] + anchor.getWidth(), location[1] + anchor.getHeight());
 
         mView.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -145,13 +145,13 @@ public class CustomPopup {
                 .getLayoutParams();
         int xPos = 0;
 
-        // ETXTREME RIGHT CLIKED
+        // ETXTREME RIGHT CLIKED`
         if (anchorRect.left + rootWidth > screenWidth) {
             xPos = (screenWidth - rootWidth);
         }
         // ETXTREME LEFT CLIKED
-        else if (anchorRect.left - (rootWidth / 2) < 0) {
-            xPos = anchorRect.left;
+        else if (anchorRect.left - (rootWidth/2) < 0) {
+            xPos = 0;
         }
         // INBETWEEN
         else {

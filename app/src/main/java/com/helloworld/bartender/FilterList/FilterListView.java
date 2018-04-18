@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -70,15 +72,16 @@ public class FilterListView extends CoordinatorLayout {
         //filterList
         filterListBehavior = BottomSheetBehavior.from(findViewById(R.id.filterListLayout));
 
-        filterList = findViewById(R.id.filterList);
+        filterList = (RecyclerView) findViewById(R.id.filterList);
         mLayoutManger = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         filterList.setLayoutManager(mLayoutManger);
         int resId = R.anim.layout_filter_list_slide;
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getContext(), resId);
         filterList.setLayoutAnimation(animation);
         filterList.setHasFixedSize(true);
-
         populateRecyclerView(option);
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(filterList);
 
         filterListBtt = findViewById(R.id.filterListBtt);
         filterListBtt.setOnClickListener(new View.OnClickListener() {

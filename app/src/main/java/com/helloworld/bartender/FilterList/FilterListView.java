@@ -2,6 +2,7 @@ package com.helloworld.bartender.FilterList;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -93,12 +94,12 @@ public class FilterListView extends CoordinatorLayout {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+                    ((Animatable) filterListBtt.getDrawable()).start();
                     //     runLayoutAnimation(filterList);
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     filterListBtt.setImageResource(R.drawable.ic_down_to_up);
                     filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+                    ((Animatable) filterListBtt.getDrawable()).start();
                 }
             }
 

@@ -4,6 +4,7 @@ package com.helloworld.bartender;
  * Created by wilybear on 2018-03-23.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +20,14 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroupOverlay;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.helloworld.bartender.PreferenceSetting.AppCompatPreferenceActivity;
 import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
@@ -31,7 +39,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
     private static final int REQUEST_DIRECTORY = 0;
-    private static String device_version="";
+    private static String device_version = "";
     private static final int OPENLICENSE_CODE = 0;
     private static final int TERMS_CODE = 1;
     private static final int PRIVACY_CODE = 2;
@@ -46,7 +54,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
     }
 
-    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onResume() {
             super.onResume();
@@ -55,7 +63,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
 
         @Override
         public void onPause() {
-           getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
             super.onPause();
         }
 
@@ -71,10 +79,10 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
 
 
-            SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
-            String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
-            if(path!=null){
-            galleryPath.setSummary(path);
+            SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
+            String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
+            if (path != null) {
+                galleryPath.setSummary(path);
             }
             // gallery EditText change listener
             galleryPath.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -109,17 +117,25 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             versionPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    String store_version ="1";
+                    String store_version = "1";
                     try {
                         store_version = MarketVersionChecker.getMarketVersion(getActivity().getPackageName());
-                    }catch (Exception e){
-                        Log.d("MarketNotExist",e.toString());
+                    } catch (Exception e) {
+                        Log.d("MarketNotExist", e.toString());
                     }
                     if (store_version.compareTo(device_version) > 0) {
                         //need update
                         AlertDialog.Builder mDialog;
                         mDialog = new AlertDialog.Builder(getActivity());
-                        mDialog.setMessage("새로운 버전이 업데이트 되었습니다.")
+
+                        TextView message = new TextView(getActivity());
+                        message.setText("새로운 버전이 업데이트 되었습니다.");
+                        message.setGravity(Gravity.CENTER);
+                        message.setTextSize(20.0f);
+                        message.setPadding(0, 15, 0, 0);
+
+                        mDialog.setTitle("안내")
+                                .setView(message)
                                 .setCancelable(true)
                                 .setPositiveButton("업데이트 바로가기",
                                         new DialogInterface.OnClickListener() {
@@ -128,20 +144,22 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                                                 Intent marketLaunch = new Intent(
                                                         Intent.ACTION_VIEW);
                                                 marketLaunch.setData(Uri
-                                                        .parse("https://play.google.com/store/apps/details?id="+appPackageName));
+                                                        .parse("https://play.google.com/store/apps/details?id=" + appPackageName));
                                                 startActivity(marketLaunch);
                                             }
-                                        });
+                                        })
+                                .setNegativeButton("Cancel", null);
                         AlertDialog alert = mDialog.create();
-                        alert.setTitle("안 내");
                         alert.show();
                     } else {
                         AlertDialog.Builder mDialog;
                         mDialog = new AlertDialog.Builder(getActivity());
                         mDialog.setMessage("최신 버전 입니다.")
-                                .setCancelable(true);
+                                .setTitle(device_version)
+                                .setCancelable(true)
+                                .setNegativeButton("Cancel", null);
                         AlertDialog alert = mDialog.create();
-                        alert.setTitle("안 내");
+
                         alert.show();
                     }
 
@@ -152,7 +170,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(),OPENLICENSE_CODE);
+                    startDetailActivity(getActivity(), OPENLICENSE_CODE);
                     return true;
                 }
             });
@@ -160,7 +178,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             termsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(),TERMS_CODE);
+                    startDetailActivity(getActivity(), TERMS_CODE);
                     return true;
                 }
             });
@@ -168,7 +186,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(),PRIVACY_CODE);
+                    startDetailActivity(getActivity(), PRIVACY_CODE);
                     return true;
                 }
             });
@@ -176,7 +194,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             faqPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(getActivity(),FaqActivity.class);
+                    Intent intent = new Intent(getActivity(), FaqActivity.class);
                     startActivity(intent);
                     return true;
                 }
@@ -210,9 +228,9 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                         resultCode));
 
                 if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                    SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
+                    SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
                     SharedPreferences.Editor editor = pref.edit();
-                    editor.putString(getString(R.string.key_gallery_name),data
+                    editor.putString(getString(R.string.key_gallery_name), data
                             .getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
                     editor.commit();
                     Preference galleryPath = findPreference(getString(R.string.key_gallery_name));
@@ -239,8 +257,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static void startDetailActivity(Context context,int pageCode){
-        Intent intent = new Intent(context,DetailSettingActivity.class);
+    private static void startDetailActivity(Context context, int pageCode) {
+        Intent intent = new Intent(context, DetailSettingActivity.class);
         intent.putExtra("pageCode", pageCode);
         context.startActivity(intent);
     }

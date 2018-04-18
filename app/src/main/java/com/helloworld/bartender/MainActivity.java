@@ -4,13 +4,19 @@ package com.helloworld.bartender;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,6 +35,7 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.SingleClickListener.OnSingleClickListener;
+import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
@@ -64,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     private FilterListView mFilterListView;
     private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
+
+    private String device_version;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -280,6 +289,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 초기 필터 세팅
         setCameraFilter(mHorizontal_adapter.getDefaultFilter());
+
+        //버전 체크
+        checkVersion();
     }
 
     @Override
@@ -393,5 +405,48 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    private void checkVersion(){
+        try {
+         device_version = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String store_version = "1";
+        try {
+            store_version = MarketVersionChecker.getMarketVersion(this.getPackageName());
+        } catch (Exception e) {
+            Log.d("MarketNotExist", e.toString());
+        }
+        if (store_version.compareTo(device_version) > 0) {
+            AlertDialog.Builder mDialog;
+            mDialog = new AlertDialog.Builder(this);
+
+            TextView message = new TextView(this);
+            message.setText("새로운 버전이 업데이트 되었습니다.");
+            message.setGravity(Gravity.CENTER);
+            message.setTextSize(20.0f);
+            message.setPadding(0, 15, 0, 0);
+
+            mDialog.setTitle("안내")
+                    .setView(message)
+                    .setCancelable(true)
+                    .setPositiveButton("업데이트 바로가기",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int id) {
+                                    Intent marketLaunch = new Intent(
+                                            Intent.ACTION_VIEW);
+                                    marketLaunch.setData(Uri
+                                            .parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName()));
+                                    startActivity(marketLaunch);
+                                }
+                            })
+                    .setNegativeButton("Cancel", null);
+            AlertDialog alert = mDialog.create();
+            alert.show();
+        }
+    }
+
 
 }

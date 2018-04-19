@@ -40,6 +40,8 @@ import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
 public class MainActivity extends AppCompatActivity {
@@ -346,7 +348,20 @@ public class MainActivity extends AppCompatActivity {
         } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
         } else {
-            super.onBackPressed();
+            //앱 종료를 묻는 팝업
+            SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
+                    .setCancelText("Cancel")
+                    .setConfirmText("Quit")
+                    .setContentText("Do you want to quit?");
+            finishDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    finish();
+                }
+            });
+
+            finishDialog.show();
+
         }
     }
 

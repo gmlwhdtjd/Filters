@@ -39,5 +39,6 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.2.1'
     compile 'com.github.aakira:expandable-layout:1.6.0@aar'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
+    compile 'cn.pedant.sweetalert:library:1.3'
 
 }

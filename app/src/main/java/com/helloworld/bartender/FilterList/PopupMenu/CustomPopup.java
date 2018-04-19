@@ -68,13 +68,13 @@ public class CustomPopup {
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));
         PopupOption option2 = new PopupOption(1, mContext.getString(R.string.duplicate_filter));
-        PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
+ //       PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
 
         this.addItem(option1);
         this.addSeperator();
         this.addItem(option2);
-        this.addSeperator();
-        this.addItem(option3);
+//        this.addSeperator();
+//        this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override

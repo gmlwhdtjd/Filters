@@ -1,13 +1,17 @@
 package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.ImageButton;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
@@ -23,6 +27,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -204,7 +210,18 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.getCircleImageView().startAnimation(anim);
+                CircleImageView v = holder.mFilterRadioBtn.getCircleImageView();
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(v,
+                        "scaleX", 0.85f);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(v,
+                        "scaleY", 0.85f);
+                scaleUpX.setDuration(150);
+                scaleUpY.setDuration(150);
+
+                AnimatorSet scaleDown = new AnimatorSet();
+                scaleDown.setInterpolator(new AccelerateDecelerateInterpolator());
+                scaleDown.play(scaleUpX).with(scaleUpY);
+                scaleDown.start();
             }
         }
     }
@@ -212,7 +229,18 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void stopAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.getCircleImageView().clearAnimation();
+                CircleImageView v = holder.mFilterRadioBtn.getCircleImageView();
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(v,
+                        "scaleX", 1.0f);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(v,
+                        "scaleY", 1.0f);
+                scaleUpX.setDuration(150);
+                scaleUpY.setDuration(150);
+
+                AnimatorSet scaleUp = new AnimatorSet();
+                scaleUp.play(scaleUpX).with(scaleUpY);
+                scaleUp.setInterpolator(new AccelerateDecelerateInterpolator());
+                scaleUp.start();
             }
         }
     }

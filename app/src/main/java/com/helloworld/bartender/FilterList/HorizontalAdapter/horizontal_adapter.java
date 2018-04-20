@@ -1,14 +1,20 @@
 package com.helloworld.bartender.FilterList.HorizontalAdapter;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Vibrator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
@@ -23,6 +29,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -40,8 +48,9 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private CustomPopup mCustomPopup;
     private Animation anim;
     private Set<horizontalViewHolder> mBoundViewHolders = new HashSet<>();
+    private LinearLayoutManager mLinearLayoutManager;
 
-    @Override
+
     public int getItemViewType(int position) {
         return (position == mFilterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
@@ -136,12 +145,13 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         notifyItemChanged(position);
     }
 
-    public horizontal_adapter(List<FCameraFilter> filterList, Context context, RecyclerView recyclerView) {
+    public horizontal_adapter(List<FCameraFilter> filterList, Context context, RecyclerView recyclerView, LinearLayoutManager linearLayoutManager) {
         mFilterList = filterList;
         mContext = context;
         mRecyclerV = recyclerView;
         vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         anim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+        mLinearLayoutManager =linearLayoutManager;
     }
 
     public horizontal_adapter.horizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -173,6 +183,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     mEditView.changeState();
                 }
             });
+            holder.mEndBtn.setOnTouchListener(((MainActivity) mContext).OnTouchEffectListener);
         } else {
             final FCameraFilter filter = mFilterList.get(holder.getAdapterPosition());
             holder.mFilterRadioBtn.setFilterImageDrawable(dbHelper.getFilterIconImage(filter.getId()));
@@ -193,6 +204,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     @Override
                     public boolean onLongClick(View v) {
                         vibe.vibrate(50);
+
                         mCustomPopup.show(v, filter, holder.getAdapterPosition());
                         return true;
                     }
@@ -204,7 +216,18 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.getCircleImageView().startAnimation(anim);
+                CircleImageView v = holder.mFilterRadioBtn.getCircleImageView();
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(v,
+                        "scaleX", 0.85f);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(v,
+                        "scaleY", 0.85f);
+                scaleUpX.setDuration(150);
+                scaleUpY.setDuration(150);
+
+                AnimatorSet scaleDown = new AnimatorSet();
+                scaleDown.setInterpolator(new AccelerateDecelerateInterpolator());
+                scaleDown.play(scaleUpX).with(scaleUpY);
+                scaleDown.start();
             }
         }
     }
@@ -212,7 +235,18 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private void stopAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
             if (holder.getAdapterPosition() != position && holder.getAdapterPosition() != 0) {
-                holder.mFilterRadioBtn.getCircleImageView().clearAnimation();
+                CircleImageView v = holder.mFilterRadioBtn.getCircleImageView();
+                ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(v,
+                        "scaleX", 1.0f);
+                ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(v,
+                        "scaleY", 1.0f);
+                scaleUpX.setDuration(150);
+                scaleUpY.setDuration(150);
+
+                AnimatorSet scaleUp = new AnimatorSet();
+                scaleUp.play(scaleUpX).with(scaleUpY);
+                scaleUp.setInterpolator(new AccelerateDecelerateInterpolator());
+                scaleUp.start();
             }
         }
     }

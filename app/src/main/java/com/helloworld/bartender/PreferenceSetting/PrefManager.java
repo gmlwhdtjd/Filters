@@ -1,4 +1,4 @@
-package com.helloworld.bartender;
+package com.helloworld.bartender.PreferenceSetting;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -68,13 +68,13 @@ public class CustomPopup {
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));
         PopupOption option2 = new PopupOption(1, mContext.getString(R.string.duplicate_filter));
-        PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
+ //       PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
 
         this.addItem(option1);
         this.addSeperator();
         this.addItem(option2);
-        this.addSeperator();
-        this.addItem(option3);
+//        this.addSeperator();
+//        this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
@@ -119,8 +119,8 @@ public class CustomPopup {
 
         anchor.getLocationOnScreen(location);
 
-        Rect anchorRect = new Rect(location[0], location[1], location[0]
-                + anchor.getWidth(), location[1] + anchor.getHeight());
+        //left,top,right,bottom
+        Rect anchorRect = new Rect(location[0], location[1], location[0] + anchor.getWidth(), location[1] + anchor.getHeight());
 
         mView.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -145,13 +145,13 @@ public class CustomPopup {
                 .getLayoutParams();
         int xPos = 0;
 
-        // ETXTREME RIGHT CLIKED
+        // ETXTREME RIGHT CLIKED`
         if (anchorRect.left + rootWidth > screenWidth) {
             xPos = (screenWidth - rootWidth);
         }
         // ETXTREME LEFT CLIKED
-        else if (anchorRect.left - (rootWidth / 2) < 0) {
-            xPos = anchorRect.left;
+        else if (anchorRect.left - (rootWidth/2) < 0) {
+            xPos = 0;
         }
         // INBETWEEN
         else {

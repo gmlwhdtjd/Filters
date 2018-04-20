@@ -26,6 +26,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
+import com.helloworld.bartender.PreferenceSetting.PrefManager;
 
 import java.util.ArrayList;
 

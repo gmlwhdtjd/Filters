@@ -132,6 +132,8 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:scaleType="center"
+                    android:scaleX="1"
+                    android:scaleY="1"
                     app:srcCompat="@drawable/button_capture" />
 
                 <ImageView

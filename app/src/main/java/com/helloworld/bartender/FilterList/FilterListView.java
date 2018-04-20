@@ -140,7 +140,7 @@ public class FilterListView extends CoordinatorLayout {
     //populate recyclerview
     public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList);
+        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList,mLayoutManger);
         filterList.setAdapter(adapter);
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);

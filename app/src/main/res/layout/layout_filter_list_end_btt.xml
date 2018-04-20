@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/ic_add_circle_outline_white_48dp" />
+        app:srcCompat="@drawable/ic_plus" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

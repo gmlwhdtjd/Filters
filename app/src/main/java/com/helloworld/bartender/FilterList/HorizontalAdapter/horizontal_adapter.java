@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Vibrator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
@@ -46,6 +48,8 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private CustomPopup mCustomPopup;
     private Animation anim;
     private Set<horizontalViewHolder> mBoundViewHolders = new HashSet<>();
+    private LinearLayoutManager mLinearLayoutManager;
+
 
     public int getItemViewType(int position) {
         return (position == mFilterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
@@ -141,12 +145,13 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         notifyItemChanged(position);
     }
 
-    public horizontal_adapter(List<FCameraFilter> filterList, Context context, RecyclerView recyclerView) {
+    public horizontal_adapter(List<FCameraFilter> filterList, Context context, RecyclerView recyclerView, LinearLayoutManager linearLayoutManager) {
         mFilterList = filterList;
         mContext = context;
         mRecyclerV = recyclerView;
         vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         anim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+        mLinearLayoutManager =linearLayoutManager;
     }
 
     public horizontal_adapter.horizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -199,6 +204,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     @Override
                     public boolean onLongClick(View v) {
                         vibe.vibrate(50);
+
                         mCustomPopup.show(v, filter, holder.getAdapterPosition());
                         return true;
                     }

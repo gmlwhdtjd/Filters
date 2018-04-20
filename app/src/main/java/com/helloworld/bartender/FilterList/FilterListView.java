@@ -91,14 +91,15 @@ public class FilterListView extends CoordinatorLayout {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
-                    //     runLayoutAnimation(filterList);
+                    // TODO : Samsong Note 5 (Android 6.0.1, API 23)에서 크래쉬 발생 -> 아마 버전 문제인것으로 판단됨
+//                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     filterListBtt.setImageResource(R.drawable.ic_down_to_up);
                     filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
-                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
+//                    ((AnimatedVectorDrawable) filterListBtt.getDrawable()).start();
                 }
             }
 

@@ -23,11 +23,21 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Size;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
+import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
@@ -41,8 +51,13 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class FCameraPreview extends GLSurfaceView {
 
+    private FCamera mFCamera;
+
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
+
+    private int mDiffWidth = 0;
+    private int mDiffHeight = 0;
 
     private previewRenderer mRenderer;
     private Callback mCallback;
@@ -60,6 +75,18 @@ public class FCameraPreview extends GLSurfaceView {
         this.setRenderMode ( GLSurfaceView.RENDERMODE_WHEN_DIRTY );
     }
 
+    void setFCamera(FCamera fCamera){
+        mFCamera = fCamera;
+    }
+
+    public int getDifferenceHeight() {
+        return mDiffHeight;
+    }
+
+    public int getDifferenceWidth() {
+        return mDiffWidth;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -69,6 +96,27 @@ public class FCameraPreview extends GLSurfaceView {
     public void onPause() {
         mRenderer.onPause();
         super.onPause();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.d("test", "onTouchEvent: down");
+                if (mFCamera != null) {
+                    mFCamera.touchToFocus(event);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d("test", "onTouchEvent: up");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d("test", "onTouchEvent: move");
+                break;
+            default:
+        }
+
+        return super.onTouchEvent(event);
     }
 
     public void setFilter(FCameraFilter filter) {
@@ -114,8 +162,12 @@ public class FCameraPreview extends GLSurfaceView {
         } else {
             if (width > height * mRatioWidth / mRatioHeight) {
                 setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
+                mDiffWidth = 0;
+                mDiffHeight = height - width * mRatioHeight / mRatioWidth;
             } else {
                 setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+                mDiffWidth = width - height * mRatioWidth / mRatioHeight;
+                mDiffHeight = 0;
             }
         }
     }

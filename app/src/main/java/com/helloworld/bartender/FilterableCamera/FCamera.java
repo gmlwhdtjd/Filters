@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -22,9 +23,11 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -38,6 +41,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.widget.Toast;
 
@@ -124,7 +128,7 @@ public class FCamera implements LifecycleObserver {
      */
     private String mCameraId;
 
-    CameraCharacteristics mCharacteristics;
+    private CameraCharacteristics mCharacteristics;
 
     /**
      * An {@link FCameraPreview} for camera preview.
@@ -166,6 +170,8 @@ public class FCamera implements LifecycleObserver {
     private boolean mFlashSupported;
 
     private Flash mFlashSetting;
+
+    private Surface mPreviewSurface;
 
     /**
      * The {@link Size} of camera preview.
@@ -310,7 +316,7 @@ public class FCamera implements LifecycleObserver {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == 0) {
+                    if (afState == null) {
                         mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
@@ -375,6 +381,7 @@ public class FCamera implements LifecycleObserver {
 
         mActivity = activity;
         mFCameraPreview = fCameraPreview;
+        mFCameraPreview.setFCamera(this);
         mFCameraPreview.setCallback(new FCameraPreview.Callback() {
             @Override
             public void onSurfaceCreated(int width, int height) {
@@ -434,7 +441,21 @@ public class FCamera implements LifecycleObserver {
     public void setFlashSetting(Flash flash) {
         if (mFlashSupported) {
             mFlashSetting = flash;
-            createCameraPreviewSession();
+            try {
+                mPreviewRequestBuilder
+                        = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                mPreviewRequestBuilder.addTarget(mPreviewSurface);
+
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                setAutoFlash(mPreviewRequestBuilder);
+
+                mPreviewRequest = mPreviewRequestBuilder.build();
+                mCaptureSession.setRepeatingRequest(mPreviewRequest,
+                        mCaptureCallback, mBackgroundHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
         }
         else
             mFlashSetting = Flash.OFF;
@@ -442,6 +463,63 @@ public class FCamera implements LifecycleObserver {
 
     public Flash getFlashSetting() {
         return mFlashSetting;
+    }
+
+    private boolean mManualFocusEngaged;
+
+    /**
+     * This method has been referenced from royshil/AndroidCamera2TouchToFocus.java
+     *
+     * Original Code
+     * https://gist.github.com/royshil/8c760c2485257c85a11cafd958548482
+     *
+     * Modified by Hui-Jong Lee
+     * @param event
+     */
+    void touchToFocus(MotionEvent event) {
+        if (mCharacteristics != null) {
+            final Rect sensorArraySize = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+
+            if (sensorArraySize != null && !mManualFocusEngaged) {
+                Log.d(TAG, "touchToFocus: " + event.getX() + ", " + event.getY());
+                Log.d(TAG, "touchToFocus: " + sensorArraySize.width() + ", " + sensorArraySize.height());
+
+                int x, y;
+
+                // TODO : 전면카메라에 대해서 좌우 반전 필요
+                switch (mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)) {
+                    case 0:
+                        x = (int) ((event.getX() / (float) mPreviewSize.getWidth() * (float) sensorArraySize.width()));
+                        y = (int) ((event.getY() / (float) mPreviewSize.getHeight() * (float) sensorArraySize.height()));
+                        break;
+                    case 90:
+                        x = (int) (((event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.width());
+                        y = (int) ((1 - (event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.height());
+                        break;
+                    case 180:
+                        x = (int) ((1 - (event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.width());
+                        y = (int) ((1 - (event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.height());
+                        break;
+                    case 270:
+                        x = (int) ((1 - (event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.width());
+                        y = (int) (((event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.height());
+                        break;
+                    default:
+                        x = (int) (0.5 * (float) sensorArraySize.width());
+                        y = (int) (0.5 * (float) sensorArraySize.height());
+                }
+
+                final int halfTouchWidth = (int) event.getTouchMajor();
+                final int halfTouchHeight = (int) event.getTouchMinor();
+                MeteringRectangle focusAreaTouch = new MeteringRectangle(
+                        Math.max(x - halfTouchWidth, 0),
+                        Math.max(y - halfTouchHeight, 0),
+                        halfTouchWidth * 2,
+                        halfTouchHeight * 2,
+                        MeteringRectangle.METERING_WEIGHT_MAX - 1);
+
+            }
+        }
     }
 
     /**
@@ -755,15 +833,15 @@ public class FCamera implements LifecycleObserver {
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 
             // This is the output Surface we need to start preview.
-            Surface surface = new Surface(texture);
+            mPreviewSurface = new Surface(texture);
 
             // We set up a CaptureRequest.Builder with the output Surface.
             mPreviewRequestBuilder
                     = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewRequestBuilder.addTarget(surface);
+            mPreviewRequestBuilder.addTarget(mPreviewSurface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
+            mCameraDevice.createCaptureSession(Arrays.asList(mPreviewSurface, mImageReader.getSurface()), mCaptureSessionStateCallback, null);
 
             mFCameraPreview.setCameraCharacteristics(mCharacteristics);
 
@@ -930,10 +1008,11 @@ public class FCamera implements LifecycleObserver {
      */
     private void unlockFocus() {
         try {
-            // Reset the auto-focus trigger
+            // Reset the af, ae trigger
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                     CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            setAutoFlash(mPreviewRequestBuilder);
+            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_CANCEL);
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
                     mBackgroundHandler);
             // After this, the camera will go back to the normal state of preview.

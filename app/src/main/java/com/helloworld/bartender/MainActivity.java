@@ -19,8 +19,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private int cameraTimerState = 0;
 
     // 카메라 애니메이션 관련
+    private FrameLayout cameraFrame;
     private TextView timerTextView;
     private ImageView captureEffectImg;
     private ImageView openEffectImg;
@@ -110,13 +113,12 @@ public class MainActivity extends AppCompatActivity {
                         cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
                         break;
                 }
-                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
-                openEffectImg.startAnimation(open);
             }
 
             @Override
             public void onStartPreview() {
-
+                Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
+                openEffectImg.startAnimation(open);
             }
 
             @Override
@@ -131,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 카메라 애니메이션 관련
+        cameraFrame = findViewById(R.id.cameraFrame);
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
         openEffectImg = findViewById(R.id.openEffectImg);
@@ -150,6 +153,39 @@ public class MainActivity extends AppCompatActivity {
         editView = findViewById(R.id.editView);
         mFilterListView = findViewById(R.id.filterListView);
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
+
+        fCameraPreview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d("Main", "onTouchEvent: down");
+                        ImageView focusImg = new ImageView(MainActivity.this);
+                        focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
+
+                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(
+                                (int) event.getX() + fCameraPreview.getDifferenceWidth()/2 - focusImg.getDrawable().getIntrinsicWidth()/2,
+                                (int) event.getY() + fCameraPreview.getDifferenceHeight()/2 - focusImg.getDrawable().getIntrinsicHeight()/2,
+                                0,0);
+
+                        cameraFrame.addView(focusImg, params);
+
+                        Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
+                        focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
+                        focusImg.startAnimation(focusAni);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d("Main", "onTouchEvent: up");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d("Main", "onTouchEvent: move");
+                        break;
+                    default:
+                }
+                return false;
+            }
+        });
 
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
@@ -199,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraTimerBtt.setOnClickListener(new OnSingleClickListener() {
@@ -225,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
 
         settingBtt.setOnClickListener(new  OnSingleClickListener() {
@@ -234,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
             }
         });
-
         settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
@@ -286,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
                 editView.changeState();
             }
         });
-
         editBtt.setOnTouchListener(OnTouchEffectListener);
 
         // 초기 필터 세팅
@@ -384,6 +416,31 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private class FocusAnimationListener implements Animation.AnimationListener {
+
+        private View mView;
+
+        public FocusAnimationListener(View view) {
+            mView = view;
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+            if (mView != null) {
+                cameraFrame.removeView(mView);
+            }
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    }
+
     public View.OnTouchListener OnCameraBtnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -462,6 +519,4 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
-
-
 }

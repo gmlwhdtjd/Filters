@@ -95,6 +95,7 @@ public class FilterListView extends CoordinatorLayout {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
                     ((Animatable) filterListBtt.getDrawable()).start();

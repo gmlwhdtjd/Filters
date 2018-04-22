@@ -35,6 +35,8 @@ import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
@@ -124,43 +126,29 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                         Log.d("MarketNotExist", e.toString());
                     }
                     if (store_version.compareTo(device_version) > 0) {
-                        //need update
-                        AlertDialog.Builder mDialog;
-                        mDialog = new AlertDialog.Builder(getActivity());
-
-                        TextView message = new TextView(getActivity());
-                        message.setText("새로운 버전이 업데이트 되었습니다.");
-                        message.setGravity(Gravity.CENTER);
-                        message.setTextSize(20.0f);
-                        message.setPadding(0, 15, 0, 0);
-
-                        mDialog.setTitle("안내")
-                                .setView(message)
-                                .setCancelable(true)
-                                .setPositiveButton("업데이트 바로가기",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog,
-                                                                int id) {
-                                                Intent marketLaunch = new Intent(
-                                                        Intent.ACTION_VIEW);
-                                                marketLaunch.setData(Uri
-                                                        .parse("https://play.google.com/store/apps/details?id=" + appPackageName));
-                                                startActivity(marketLaunch);
-                                            }
-                                        })
-                                .setNegativeButton("Cancel", null);
-                        AlertDialog alert = mDialog.create();
-                        alert.show();
+                        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("New Update")
+                                .setContentText(getString(R.string.update_message))
+                                .showCancelButton(true)
+                                .setCancelText("Not Now")
+                                .setConfirmText("Update Now")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        Intent marketLaunch = new Intent(
+                                                Intent.ACTION_VIEW);
+                                        marketLaunch.setData(Uri
+                                                .parse("https://play.google.com/store/apps/details?id=" + getActivity().getPackageName()));
+                                        startActivity(marketLaunch);
+                                    }
+                                })
+                                .show();
                     } else {
-                        AlertDialog.Builder mDialog;
-                        mDialog = new AlertDialog.Builder(getActivity());
-                        mDialog.setMessage("최신 버전 입니다.")
-                                .setTitle(device_version)
-                                .setCancelable(true)
-                                .setNegativeButton("Cancel", null);
-                        AlertDialog alert = mDialog.create();
-
-                        alert.show();
+                        new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE)
+                                .setTitleText(getString(R.string.title_new_update))
+                                .setConfirmText("Okay")
+                                .show();
                     }
 
                     return true;

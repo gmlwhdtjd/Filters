@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * Created by huijonglee on 2018. 2. 27..
  */
@@ -107,34 +109,59 @@ public class EditView extends CoordinatorLayout {
         editNameView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Change Filter Name");
-
-                float dp = getResources().getDisplayMetrics().density;
-
-                FrameLayout changeView = new FrameLayout(getContext());
-                changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
 
                 final EditText input = new EditText(getContext());
                 InputFilter[] FilterArray = new InputFilter[1];
                 FilterArray[0] = new InputFilter.LengthFilter(9);
                 input.setFilters(FilterArray);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
-                changeView.addView(input);
 
-                builder.setView(changeView);
+                float dp = getResources().getDisplayMetrics().density;
+                SweetAlertDialog dialog = new SweetAlertDialog(getContext(), SweetAlertDialog.NORMAL_TYPE)
+                        .setTitleText("Change Filter Name")
+                        .setConfirmText("Confirm")
+                        .setCancelText("Cancel")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                mFilter.setName(input.getText().toString());
+                                editNameView.setText(mFilter.getName());
+                            }
+                        });
+                dialog.show();
+                LinearLayout linearLayout = (LinearLayout) dialog.findViewById(R.id.loading);
+                linearLayout.setPadding((int) (24 * dp), (int) (24 * dp), (int) (24 * dp), (int) (24 * dp));
+                int index = linearLayout.indexOfChild(linearLayout.findViewById(R.id.content_text));
+                linearLayout.addView(input, index + 1);
 
-                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mFilter.setName(input.getText().toString());
-                        editNameView.setText(mFilter.getName());
-                    }
-                });
-                builder.setNegativeButton("Cancel", null);
-
-                builder.show();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                builder.setTitle("Change Filter Name");
+//
+//                float dp = getResources().getDisplayMetrics().density;
+//
+//                FrameLayout changeView = new FrameLayout(getContext());
+//                changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//                changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
+//
+//                final EditText input = new EditText(getContext());
+//                InputFilter[] FilterArray = new InputFilter[1];
+//                FilterArray[0] = new InputFilter.LengthFilter(9);
+//                input.setFilters(FilterArray);
+//                input.setInputType(InputType.TYPE_CLASS_TEXT);
+//                changeView.addView(input);
+//
+//                builder.setView(changeView);
+//
+//                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mFilter.setName(input.getText().toString());
+//                        editNameView.setText(mFilter.getName());
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", null);
+//
+//                builder.show();
             }
         });
 

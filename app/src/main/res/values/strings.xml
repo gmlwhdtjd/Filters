@@ -54,7 +54,7 @@
     <string name="key_send_feedback">key_send_feedback</string>
     <string name="key_review">key_review</string>
     <string name="title_review">Review</string>
-    <string name="summary_review">Review and rate this app</string>
+    <string name="summary_review">Write a review and rate</string>
     <string name="default_gallery_storage">My Videos</string>
     <string name="key_gallery_name">key_gallery_name</string>
     <string name="title_gallery_storage">Default Storage</string>
@@ -85,6 +85,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.\n</string>
+
+    <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>
+    <string name="title_new_update">This is Newest Version</string>
 
     <!-- Strings related to Popup -->
     <string name="delete_filter">Delete</string>

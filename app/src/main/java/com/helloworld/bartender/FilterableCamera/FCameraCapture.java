@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.opengl.GLES20;
@@ -16,6 +17,7 @@ import android.util.Size;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
+import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 import java.io.File;
@@ -211,6 +213,19 @@ public class FCameraCapture {
         Bitmap bitmap = Bitmap.createBitmap(imageSize.getWidth(), imageSize.getHeight(), Bitmap.Config.ARGB_8888);
 
         bitmap.copyPixelsFromBuffer(mImageBuffer);
+
+        int direction = ((MainActivity)mContext).getDirection();
+        Matrix rotMat = new Matrix();
+        if(direction==1)
+            rotMat.postRotate(90);
+        else if(direction == 2)
+            rotMat.postRotate(180);
+        else if(direction == 3)
+            rotMat.postRotate(-90);
+        else
+            rotMat.postRotate(0);
+
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMat, false);
 
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());

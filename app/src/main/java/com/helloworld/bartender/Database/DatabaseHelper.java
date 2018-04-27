@@ -133,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         switch (filter.getClass().getSimpleName()) {
             case TYPE0_DEFAULT_NAME:
-                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.default_image);
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.filter_icon_image);
                 bitmap = drawable.getBitmap();
                 saveBitmapDrawable(bitmap, lastInsertedId);
 
@@ -146,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.replace(TYPE1_FILTER_NAME, null, values);
 
                 FCameraCapture cameraCapture = ((MainActivity) mContext).getFCameraCapture();
-                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.filter_icon_image);
                 bitmap = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
                 saveBitmapDrawable(bitmap, lastInsertedId);
                 break;

@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
@@ -555,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public View.OnTouchListener OnCameraBtnTouchListener = new View.OnTouchListener() {
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {

@@ -1,5 +1,6 @@
 package com.helloworld.bartender;
 
+import android.content.Context;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -19,10 +21,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.hardware.SensorEvent;
+import android.hardware.Sensor;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
@@ -74,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
     private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
+    private SensorManager mSensorManager;
+    private SensorEventListener mSensorEventListener;
+    private Sensor mSensor;
+    private double angleXY;
+    private int direction = 0;
+    private int priorDirection = 0;
+
     private String device_version;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -87,6 +101,13 @@ public class MainActivity extends AppCompatActivity {
         RateThisApp.showRateDialogIfNeeded(this);
         RateThisApp.Config config = new RateThisApp.Config(1, 3);
         RateThisApp.init(config);
+
+        // 카메라 센서
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorEventListener = new sensorEventListener();
+        mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
+
 
         // 카메라 관련
         fCameraPreview = findViewById(R.id.cameraView);
@@ -328,12 +349,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
-        String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
+        mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref),0);
+        String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
         fCameraCapture.setSaveDirectory(path);
     }
 
-    public void setCameraFilter(final FCameraFilter filter) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(mSensorEventListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSensorManager.unregisterListener(mSensorEventListener);
+    }
+
+    public void setCameraFilter(final FCameraFilter filter){
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
@@ -370,6 +404,88 @@ public class MainActivity extends AppCompatActivity {
         return fCameraCapture;
     }
 
+    private class sensorEventListener implements SensorEventListener {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            double x = event.values[0];
+            double y = event.values[1];
+
+            Animation rotAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_effect);
+
+
+            angleXY = Math.atan2(x, y) * 180/Math.PI;
+
+            if(angleXY >= -30 && angleXY <= 30) {
+                direction = 0;
+                if(priorDirection != direction) {
+                    changeDirection(priorDirection, direction);
+                    priorDirection = direction;
+                }
+                Log.d("asdf", "onSensorChanged: " + direction);
+            }
+            else if(angleXY >= 60 && angleXY <= 120) {
+                direction = 3;
+                if(priorDirection != direction) {
+                    changeDirection(priorDirection, direction);
+                    priorDirection = direction;
+                }
+            }
+            else if(angleXY >= -120 && angleXY <= -60) {
+                direction = 1;
+                if(priorDirection != direction) {
+                    changeDirection(priorDirection, direction);
+                    priorDirection = direction;
+                }
+                Log.d("asdf", "onSensorChanged: " + direction);
+            }
+            else if(angleXY >= 150 || angleXY <= -150) {
+                direction = 2;
+                if(priorDirection != direction) {
+                    changeDirection(priorDirection, direction);
+                    priorDirection = direction;
+                }
+                Log.d("asdf", "onSensorChanged: " + direction);
+            }
+
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void changeDirection(int prior, int direction) {
+        float from = prior * (-90);
+        float to = 0;
+        float dmp = direction - prior;
+        if(dmp == 1 || dmp == -3)
+            to = from - 90;
+        else if(dmp == -1 || dmp == 3)
+            to = from + 90;
+        else if(dmp == 2 || dmp == -2)
+            to = from + 180;
+        RotateAnimation rotAnim = new RotateAnimation(from, to, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        rotAnim.setDuration(500);
+        rotAnim.setFillAfter(true);
+        rotAnim.setInterpolator(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator));
+        cameraSwitchingBtt.startAnimation(rotAnim);
+        cameraFlashBtt.startAnimation(rotAnim);
+        cameraTimerBtt.startAnimation(rotAnim);
+        settingBtt.startAnimation(rotAnim);
+        rotAnim = new RotateAnimation(from, to, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        rotAnim.setDuration(500);
+        rotAnim.setFillAfter(true);
+        rotAnim.setInterpolator(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator));
+        galleryBtt.startAnimation(rotAnim);
+        editBtt.startAnimation(rotAnim);
+    }
+  
     @Override
     public void onBackPressed() {
         if (editView.IsOpen()) {

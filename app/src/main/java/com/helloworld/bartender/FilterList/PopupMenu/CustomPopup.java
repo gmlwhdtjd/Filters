@@ -95,6 +95,7 @@ public class CustomPopup {
                                         deleteDialog.setTitleText("Deleted!")
                                                 .setContentText("Your filter has been deleted!")
                                                 .setConfirmText("OK")
+                                                .showCancelButton(false)
                                                 .setConfirmClickListener(null)
                                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
 

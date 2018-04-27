@@ -1,4 +1,4 @@
-package com.helloworld.bartender.FaqListView;
+package com.helloworld.bartender.SettingConponents.FaqListView;
 
 import android.animation.TimeInterpolator;
 

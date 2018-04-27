@@ -4,9 +4,7 @@ package com.helloworld.bartender;
  * Created by wilybear on 2018-03-23.
  */
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,19 +16,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroupOverlay;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.helloworld.bartender.PreferenceSetting.AppCompatPreferenceActivity;
-import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
+import com.helloworld.bartender.SettingConponents.AppCompatPreferenceActivity;
+import com.helloworld.bartender.SettingConponents.VersionChecker.MarketVersionChecker;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;

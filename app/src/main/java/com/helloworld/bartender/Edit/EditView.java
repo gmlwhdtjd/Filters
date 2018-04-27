@@ -126,6 +126,7 @@ public class EditView extends CoordinatorLayout {
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 mFilter.setName(input.getText().toString());
                                 editNameView.setText(mFilter.getName());
+                                sweetAlertDialog.dismissWithAnimation();
                             }
                         });
                 dialog.show();

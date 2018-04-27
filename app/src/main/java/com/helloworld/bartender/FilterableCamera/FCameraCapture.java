@@ -132,7 +132,7 @@ public class FCameraCapture {
                 initGL(mImageSize.getWidth(), mImageSize.getHeight());
 
                 Integer facing = mCameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                if (facing != CameraCharacteristics.LENS_FACING_FRONT) {
                     mVertexBuffer = FCameraGLUtils.getDefaultVertexBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL | FCameraGLUtils.CAMERA_FLIP_UD);
                     mTexCoordBuffer = FCameraGLUtils.getDefaultmTexCoordBuffers(orientation, FCameraGLUtils.CAMERA_FLIP_RL| FCameraGLUtils.CAMERA_FLIP_UD);
                 }

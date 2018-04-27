@@ -196,7 +196,6 @@ public class RetroFilter extends FCameraFilter {
     private float blur;
     private float aberration;
     private float focus;
-    private float noiseSize;
     private float noiseIntensity;
 
     private float[] mask = new float[25];
@@ -229,7 +228,6 @@ public class RetroFilter extends FCameraFilter {
         BLUR,
         FOCUS,
         ABERRATION,
-        NOISE_SIZE,
         NOISE_INTENSITY;
 
         @Override
@@ -239,18 +237,16 @@ public class RetroFilter extends FCameraFilter {
                 case RGB_R:
                 case RGB_G:
                 case RGB_B:
-                    return context.getString(R.string.OriginalFilter_Page_1);
+                    return context.getString(R.string.RetroFilter_Page_1);
                 case BRIGHTNESS:
                 case SATURATION:
-                    return context.getString(R.string.OriginalFilter_Page_2);
+                    return context.getString(R.string.RetroFilter_Page_2);
                 case BLUR:
                 case FOCUS:
-                    return context.getString(R.string.OriginalFilter_Page_3);
+                    return context.getString(R.string.RetroFilter_Page_3);
                 case ABERRATION:
-                    return context.getString(R.string.OriginalFilter_Page_4);
-                case NOISE_SIZE:
                 case NOISE_INTENSITY:
-                    return context.getString(R.string.OriginalFilter_Page_5);
+                    return context.getString(R.string.RetroFilter_Page_4);
                 default:
                     return "default";
             }
@@ -260,27 +256,25 @@ public class RetroFilter extends FCameraFilter {
         public String getValueName(Context context) {
             switch (this) {
                 case COLOR_RATIO:
-                    return context.getString(R.string.OriginalFilter_COLOR_RATIO);
+                    return context.getString(R.string.RetroFilter_COLOR_RATIO);
                 case RGB_R:
-                    return context.getString(R.string.OriginalFilter_RGB_R);
+                    return context.getString(R.string.RetroFilter_RGB_R);
                 case RGB_G:
-                    return context.getString(R.string.OriginalFilter_RGB_G);
+                    return context.getString(R.string.RetroFilter_RGB_G);
                 case RGB_B:
-                    return context.getString(R.string.OriginalFilter_RGB_B);
+                    return context.getString(R.string.RetroFilter_RGB_B);
                 case BRIGHTNESS:
-                    return context.getString(R.string.OriginalFilter_BRIGHTNESS);
+                    return context.getString(R.string.RetroFilter_BRIGHTNESS);
                 case SATURATION:
-                    return context.getString(R.string.OriginalFilter_SATURATION);
+                    return context.getString(R.string.RetroFilter_SATURATION);
                 case BLUR:
-                    return context.getString(R.string.OriginalFilter_BLUR);
+                    return context.getString(R.string.RetroFilter_BLUR);
                 case FOCUS:
-                    return context.getString(R.string.OriginalFilter_FOCUS);
+                    return context.getString(R.string.RetroFilter_FOCUS);
                 case ABERRATION:
-                    return context.getString(R.string.OriginalFilter_ABERRATION);
-                case NOISE_SIZE:
-                    return context.getString(R.string.OriginalFilter_NOISE_SIZE);
+                    return context.getString(R.string.RetroFilter_ABERRATION);
                 case NOISE_INTENSITY:
-                    return context.getString(R.string.OriginalFilter_NOISE_INTENSITY);
+                    return context.getString(R.string.RetroFilter_NOISE_INTENSITY);
                 default:
                     return "default";
             }
@@ -309,7 +303,7 @@ public class RetroFilter extends FCameraFilter {
                     brightness = (float) value / 100;
                     break;
                 case SATURATION:
-                    saturation = (float) value / 100;
+                    saturation = (float) (value + 50) / 100;
                     break;
                 case BLUR:
                     blur = (float) value / 25 + 0.0001f;
@@ -320,9 +314,6 @@ public class RetroFilter extends FCameraFilter {
                     break;
                 case ABERRATION:
                     aberration = (float) value / 100;
-                    break;
-                case NOISE_SIZE:
-                    noiseSize = (float) value / 100;
                     break;
                 case NOISE_INTENSITY:
                     noiseIntensity = (float) value / 100;
@@ -348,15 +339,13 @@ public class RetroFilter extends FCameraFilter {
                 case BRIGHTNESS:
                     return (int) (brightness * 100);
                 case SATURATION:
-                    return (int) (saturation * 100);
+                    return (int) (saturation * 100) - 50;
                 case BLUR:
                     return (int) (blur * 25);
                 case FOCUS:
                     return (int) (focus * 100);
                 case ABERRATION:
                     return (int) (aberration * 100);
-                case NOISE_SIZE:
-                    return (int) (noiseSize * 100);
                 case NOISE_INTENSITY:
                     return (int) (noiseIntensity * 100);
                 default:
@@ -375,7 +364,6 @@ public class RetroFilter extends FCameraFilter {
                 0, 255, 255, 255,
                 0, 0,
                 0, 0,
-                0,
                 0, 0);
     }
 
@@ -383,8 +371,7 @@ public class RetroFilter extends FCameraFilter {
                        int colorRatio, int red, int green, int blue,
                        int brightness, int saturation,
                        int blur, int focus,
-                       int aberration,
-                       int noiseSize, int noiseIntensity) {
+                       int aberration, int noiseIntensity) {
         super(context, R.raw.filter_default_vshader, R.raw.filter_retro_fshader, id);
 
         setName(name);
@@ -397,7 +384,6 @@ public class RetroFilter extends FCameraFilter {
         setValueWithType(ValueType.BLUR, blur);
         setValueWithType(ValueType.FOCUS, focus);
         setValueWithType(ValueType.ABERRATION, aberration);
-        setValueWithType(ValueType.NOISE_SIZE, noiseSize);
         setValueWithType(ValueType.NOISE_INTENSITY, noiseIntensity);
 
     }
@@ -442,9 +428,6 @@ public class RetroFilter extends FCameraFilter {
 
         int abeLocation = GLES20.glGetUniformLocation(program, "variables.aberration");
         GLES20.glUniform1f(abeLocation, aberration);
-
-        int nsLocation = GLES20.glGetUniformLocation(program, "variables.noiseSize");
-        GLES20.glUniform1f(nsLocation, noiseSize);
 
         int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
         GLES20.glUniform1f(niLocation, noiseIntensity);

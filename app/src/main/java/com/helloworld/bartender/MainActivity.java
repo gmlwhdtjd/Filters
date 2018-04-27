@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Picture;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -112,9 +113,17 @@ public class MainActivity extends AppCompatActivity {
         // 카메라 관련
         fCameraPreview = findViewById(R.id.cameraView);
         fCameraCapture = new FCameraCapture(this);
-        fCameraCapture.setSaveDirectory(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                        + File.separator + getString(R.string.app_name));
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
+        String path = sp.getString(getString(R.string.key_gallery_name), "default");
+
+        if (path.equals("default")) {
+            fCameraCapture.setSaveDirectory(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    + File.separator + getString(R.string.app_name));
+        }else {
+            fCameraCapture.setSaveDirectory(path);
+        }
+
 
         fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
         fCamera.setCallback(new FCamera.Callback() {
@@ -183,9 +192,9 @@ public class MainActivity extends AppCompatActivity {
 
                         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         params.setMargins(
-                                (int) event.getX() + fCameraPreview.getDifferenceWidth()/2 - focusImg.getDrawable().getIntrinsicWidth()/2,
-                                (int) event.getY() + fCameraPreview.getDifferenceHeight()/2 - focusImg.getDrawable().getIntrinsicHeight()/2,
-                                0,0);
+                                (int) event.getX() + fCameraPreview.getDifferenceWidth() / 2 - focusImg.getDrawable().getIntrinsicWidth() / 2,
+                                (int) event.getY() + fCameraPreview.getDifferenceHeight() / 2 - focusImg.getDrawable().getIntrinsicHeight() / 2,
+                                0, 0);
 
                         cameraFrame.addView(focusImg, params);
 
@@ -350,8 +359,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
-        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref),0);
-        String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
+        String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
         fCameraCapture.setSaveDirectory(path);
     }
 
@@ -367,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
         mSensorManager.unregisterListener(mSensorEventListener);
     }
 
-    public void setCameraFilter(final FCameraFilter filter){
+    public void setCameraFilter(final FCameraFilter filter) {
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
@@ -414,34 +423,31 @@ public class MainActivity extends AppCompatActivity {
             Animation rotAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_effect);
 
 
-            angleXY = Math.atan2(x, y) * 180/Math.PI;
+            angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
-            if(angleXY >= -30 && angleXY <= 30) {
+            if (angleXY >= -30 && angleXY <= 30) {
                 direction = 0;
-                if(priorDirection != direction) {
+                if (priorDirection != direction) {
                     changeDirection(priorDirection, direction);
                     priorDirection = direction;
                 }
                 Log.d("asdf", "onSensorChanged: " + direction);
-            }
-            else if(angleXY >= 60 && angleXY <= 120) {
+            } else if (angleXY >= 60 && angleXY <= 120) {
                 direction = 3;
-                if(priorDirection != direction) {
+                if (priorDirection != direction) {
                     changeDirection(priorDirection, direction);
                     priorDirection = direction;
                 }
-            }
-            else if(angleXY >= -120 && angleXY <= -60) {
+            } else if (angleXY >= -120 && angleXY <= -60) {
                 direction = 1;
-                if(priorDirection != direction) {
+                if (priorDirection != direction) {
                     changeDirection(priorDirection, direction);
                     priorDirection = direction;
                 }
                 Log.d("asdf", "onSensorChanged: " + direction);
-            }
-            else if(angleXY >= 150 || angleXY <= -150) {
+            } else if (angleXY >= 150 || angleXY <= -150) {
                 direction = 2;
-                if(priorDirection != direction) {
+                if (priorDirection != direction) {
                     changeDirection(priorDirection, direction);
                     priorDirection = direction;
                 }
@@ -464,11 +470,11 @@ public class MainActivity extends AppCompatActivity {
         float from = prior * (-90);
         float to = 0;
         float dmp = direction - prior;
-        if(dmp == 1 || dmp == -3)
+        if (dmp == 1 || dmp == -3)
             to = from - 90;
-        else if(dmp == -1 || dmp == 3)
+        else if (dmp == -1 || dmp == 3)
             to = from + 90;
-        else if(dmp == 2 || dmp == -2)
+        else if (dmp == 2 || dmp == -2)
             to = from + 180;
         RotateAnimation rotAnim = new RotateAnimation(from, to, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         rotAnim.setDuration(500);
@@ -485,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.startAnimation(rotAnim);
         editBtt.startAnimation(rotAnim);
     }
-  
+
     @Override
     public void onBackPressed() {
         if (editView.IsOpen()) {
@@ -590,6 +596,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
 
     private void checkVersion() {
         try {

@@ -44,6 +44,10 @@
         <activity android:name=".FaqActivity"
             android:theme="@style/SettingTheme"
            />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="02ec56deb319ed65e07ff74fe30cbf5c07859c70" />
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

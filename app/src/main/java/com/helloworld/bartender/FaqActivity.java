@@ -8,11 +8,10 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 
 import com.github.aakira.expandablelayout.Utils;
-import com.helloworld.bartender.FaqListView.FaqRecyclerAdapter;
-import com.helloworld.bartender.FaqListView.QuestionModel;
+import com.helloworld.bartender.SettingConponents.FaqListView.FaqRecyclerAdapter;
+import com.helloworld.bartender.SettingConponents.FaqListView.QuestionModel;
 
 import java.util.ArrayList;
 import java.util.List;

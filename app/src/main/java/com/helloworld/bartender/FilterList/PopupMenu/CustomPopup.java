@@ -26,6 +26,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class CustomPopup {
 
@@ -48,7 +50,7 @@ public class CustomPopup {
     private FCameraFilter mSelectedFilter;
     private int mSelectedPosition;
 
-    public CustomPopup(Context context, int viewResource) {
+    public CustomPopup(final Context context, int viewResource) {
         mContext = context;
         mWindow = new PopupWindow(context);
         mIsPopupMenuOpen = false;
@@ -79,13 +81,31 @@ public class CustomPopup {
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
-                FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
+                final FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
                 switch (itemId) {
                     case 0:
-                        dbHelper.deleteFilter(mSelectedFilter.getId(), mSelectedPosition);
-                        if (filterListView.getHorizontalAdapter().removeItem(mSelectedPosition)) {
-                            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
-                        }
+                        final SweetAlertDialog deleteDialog = new SweetAlertDialog(context,SweetAlertDialog.WARNING_TYPE);
+                                deleteDialog.setTitleText("Are you sure?")
+                                .setContentText("Won't be able to recover this filter")
+                                .setConfirmText("Yes, delete it!")
+                                .setCancelText("No, cancel")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        deleteDialog.setTitleText("Deleted!")
+                                                .setContentText("Your filter has been deleted!")
+                                                .setConfirmText("OK")
+                                                .showCancelButton(false)
+                                                .setConfirmClickListener(null)
+                                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+                                        dbHelper.deleteFilter(mSelectedFilter.getId(), mSelectedPosition);
+                                        if (filterListView.getHorizontalAdapter().removeItem(mSelectedPosition)) {
+                                            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+                                        }
+                                    }
+                                });
+                                deleteDialog.show();
                         break;
                     case 1:
                         FCameraFilter pastedFilter = dbHelper.pasteFilter(mSelectedFilter, mSelectedPosition);

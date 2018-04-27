@@ -13,12 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
 
+import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.R;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.ItemTouchHelperCallback;
@@ -38,7 +41,7 @@ public class FilterListView extends CoordinatorLayout {
     private LinearLayoutManager mLayoutManger;
     private ImageButton filterListBtt;
     private horizontal_adapter adapter;
-
+    private SnapHelper snapHelper;
 
     public FilterListView(Context context) {
         super(context);
@@ -80,8 +83,11 @@ public class FilterListView extends CoordinatorLayout {
         filterList.setLayoutAnimation(animation);
         filterList.setHasFixedSize(true);
         populateRecyclerView(option);
-        SnapHelper snapHelper = new LinearSnapHelper();
+
+        snapHelper = new GravitySnapHelper(Gravity.START);
         snapHelper.attachToRecyclerView(filterList);
+
+
 
         filterListBtt = findViewById(R.id.filterListBtt);
         filterListBtt.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +147,7 @@ public class FilterListView extends CoordinatorLayout {
     //populate recyclerview
     public void populateRecyclerView(String option) {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList,mLayoutManger);
+        adapter = new horizontal_adapter(dbHelper.getFilterList(option), getContext(), filterList, mLayoutManger);
         filterList.setAdapter(adapter);
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);

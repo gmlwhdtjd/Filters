@@ -45,4 +45,7 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
+
+    <!--<color name="blue_btn_bg_color">#a8ff99</color>-->
+    <!--<color name="blue_btn_bg_pressed_color">#7ac675</color>-->
 </resources>

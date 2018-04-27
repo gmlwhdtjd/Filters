@@ -4,7 +4,6 @@ package com.helloworld.bartender;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,10 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +34,7 @@ import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.SingleClickListener.OnSingleClickListener;
-import com.helloworld.bartender.VersionChecker.MarketVersionChecker;
+import com.helloworld.bartender.SettingConponents.VersionChecker.MarketVersionChecker;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         //rate this app
         RateThisApp.onCreate(this);
         RateThisApp.showRateDialogIfNeeded(this);
-        RateThisApp.Config config = new RateThisApp.Config(1, 2);
+        RateThisApp.Config config = new RateThisApp.Config(1, 3);
         RateThisApp.init(config);
 
         // 카메라 관련
@@ -262,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
         });
         cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
 
-        settingBtt.setOnClickListener(new  OnSingleClickListener() {
+        settingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void  onSingleClick(View v) {
+            public void onSingleClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
             }
         });
@@ -478,45 +475,38 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void checkVersion(){
+    private void checkVersion() {
         try {
-         device_version = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+            device_version = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        String store_version = "1";
+        String store_version = "2";
         try {
             store_version = MarketVersionChecker.getMarketVersion(this.getPackageName());
         } catch (Exception e) {
             Log.d("MarketNotExist", e.toString());
         }
         if (store_version.compareTo(device_version) > 0) {
-            AlertDialog.Builder mDialog;
-            mDialog = new AlertDialog.Builder(this);
 
-            TextView message = new TextView(this);
-            message.setText("새로운 버전이 업데이트 되었습니다.");
-            message.setGravity(Gravity.CENTER);
-            message.setTextSize(20.0f);
-            message.setPadding(0, 15, 0, 0);
-
-            mDialog.setTitle("안내")
-                    .setView(message)
-                    .setCancelable(true)
-                    .setPositiveButton("업데이트 바로가기",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int id) {
-                                    Intent marketLaunch = new Intent(
-                                            Intent.ACTION_VIEW);
-                                    marketLaunch.setData(Uri
-                                            .parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName()));
-                                    startActivity(marketLaunch);
-                                }
-                            })
-                    .setNegativeButton("Cancel", null);
-            AlertDialog alert = mDialog.create();
-            alert.show();
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("New Update")
+                    .setContentText(getString(R.string.update_message))
+                    .showCancelButton(true)
+                    .setCancelText("Not Now")
+                    .setConfirmText("Update Now")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            Intent marketLaunch = new Intent(
+                                    Intent.ACTION_VIEW);
+                            marketLaunch.setData(Uri
+                                    .parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName()));
+                            startActivity(marketLaunch);
+                        }
+                    })
+                    .show();
         }
     }
 }

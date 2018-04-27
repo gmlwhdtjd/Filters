@@ -1,4 +1,4 @@
-package com.helloworld.bartender.PreferenceSetting;
+package com.helloworld.bartender.SettingConponents;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

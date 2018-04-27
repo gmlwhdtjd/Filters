@@ -1019,6 +1019,17 @@ public class FCamera implements LifecycleObserver {
             mState = STATE_PREVIEW;
             mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
                     mBackgroundHandler);
+
+            if (mCallback != null){
+                Handler mainHandler = new Handler(mActivity.getMainLooper());
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onCaptured();
+                    }
+                });
+            }
+
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -1100,6 +1111,7 @@ public class FCamera implements LifecycleObserver {
         void onOpened();
         void onStartPreview();
         void onCapture();
+        void onCaptured();
         void onClose();
     }
 }

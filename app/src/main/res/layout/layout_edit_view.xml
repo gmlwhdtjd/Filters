@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,71 +12,83 @@
         android:background="@color/main_white"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <TabHost
-            android:id="@+id/tabHost"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/topPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:id="@+id/topPanel"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:id="@+id/editCloseBtt"
+                    android:layout_width="@android:dimen/app_icon_size"
+                    android:layout_height="@android:dimen/app_icon_size"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:backgroundTint="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_cancel" />
+
+                <TextView
+                    android:id="@+id/editNameView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toEndOf="@+id/editCloseBtt"
+                    android:maxLength="10"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
 
-                    <ImageButton
-                        android:id="@+id/editCloseBtt"
-                        android:layout_width="@android:dimen/app_icon_size"
-                        android:layout_height="@android:dimen/app_icon_size"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:backgroundTint="@android:color/transparent"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_cancel" />
+                <Button
+                    android:id="@+id/editSaveBtt"
+                    style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="8dp"
+                    android:text="Save"
+                    android:textColor="@color/main_back"
+                    android:textStyle="italic" />
 
-                    <TextView
-                        android:id="@+id/editNameView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="8dp"
-                        android:maxLength="10"
-                        android:layout_toEndOf="@+id/editCloseBtt"
-                        android:textAllCaps="false"
-                        android:textSize="18sp"
-                        android:textStyle="italic" />
+            </RelativeLayout>
 
-                    <Button
-                        android:id="@+id/editSaveBtt"
-                        style="@android:style/Widget.DeviceDefault.Button.Borderless.Small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="8dp"
-                        android:text="Save"
-                        android:textColor="@color/main_back"
-                        android:textStyle="italic" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                </RelativeLayout>
-
-                <FrameLayout
-                    android:id="@android:id/tabcontent"
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:paddingHorizontal="20dp" />
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    />
 
-                <TabWidget
-                    android:id="@android:id/tabs"
+                <com.ogaclejapan.smarttablayout.SmartTabLayout
+                    android:id="@+id/viewpagertab"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="48dp"
+                    android:paddingBottom="4dp"
+                    app:stl_defaultTabTextColor="@android:color/black"
+                    app:stl_defaultTabTextMinWidth="120dp"
+                    app:stl_indicatorAlwaysInCenter="true"
+                    app:stl_indicatorColor="@android:color/black"
+                    app:stl_indicatorCornerRadius="1.5dp"
+                    app:stl_indicatorInterpolation="smart"
+                    app:stl_indicatorThickness="3dp"
+                    app:stl_underlineColor="@android:color/transparent"
+                    android:layout_below="@id/viewpager"/>
 
-            </LinearLayout>
 
-        </TabHost>
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </FrameLayout>
 

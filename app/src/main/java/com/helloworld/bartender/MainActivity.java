@@ -1,19 +1,28 @@
 package com.helloworld.bartender;
 
 import android.content.Context;
+
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,19 +31,22 @@ import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
+import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
 import com.helloworld.bartender.FilterableCamera.FCamera;
 import com.helloworld.bartender.FilterableCamera.FCameraCapture;
 import com.helloworld.bartender.FilterableCamera.FCameraPreview;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
+import com.helloworld.bartender.SingleClickListener.OnSingleClickListener;
+import com.helloworld.bartender.SettingConponents.VersionChecker.MarketVersionChecker;
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -48,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
     private int cameraTimerState = 0;
 
     // 카메라 애니메이션 관련
+    private FrameLayout cameraFrame;
     private TextView timerTextView;
     private ImageView captureEffectImg;
     private ImageView openEffectImg;
+    private Animation cameraCaptureInnerAnim;
 
     // 버튼
     private ImageButton cameraSwitchingBtt;
@@ -63,10 +77,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton editBtt;
 
     // CustomViews
-    private FilterListView filterListView;
+    private FilterListView mFilterListView;
+    private horizontal_adapter mHorizontal_adapter;
     private EditView editView;
 
-    // 카메라 센서
     private SensorManager mSensorManager;
     private SensorEventListener mSensorEventListener;
     private Sensor mSensor;
@@ -74,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
     private int direction = 0;
     private int priorDirection = 0;
 
+    private String device_version;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         //rate this app
         RateThisApp.onCreate(this);
         RateThisApp.showRateDialogIfNeeded(this);
-        RateThisApp.Config config = new RateThisApp.Config(1, 2);
+        RateThisApp.Config config = new RateThisApp.Config(1, 3);
         RateThisApp.init(config);
 
         // 카메라 센서
@@ -97,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         fCameraCapture = new FCameraCapture(this);
         fCameraCapture.setSaveDirectory(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                + File.separator + getString(R.string.app_name));
+                        + File.separator + getString(R.string.app_name));
 
         fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
         fCamera.setCallback(new FCamera.Callback() {
@@ -134,9 +151,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 카메라 애니메이션 관련
+        cameraFrame = findViewById(R.id.cameraFrame);
         timerTextView = findViewById(R.id.timerNumberText);
         captureEffectImg = findViewById(R.id.captureEffectImg);
         openEffectImg = findViewById(R.id.openEffectImg);
+        cameraCaptureInnerAnim = AnimationUtils.loadAnimation(this, R.anim.capture_inner_effect);
 
         // 버튼
         cameraSwitchingBtt = findViewById(R.id.cameraSwitchingBtt);
@@ -150,12 +169,46 @@ public class MainActivity extends AppCompatActivity {
 
         // CustomView
         editView = findViewById(R.id.editView);
-        filterListView = findViewById(R.id.filterListView);
+        mFilterListView = findViewById(R.id.filterListView);
+        mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
+
+        fCameraPreview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d("Main", "onTouchEvent: down");
+                        ImageView focusImg = new ImageView(MainActivity.this);
+                        focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
+
+                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(
+                                (int) event.getX() + fCameraPreview.getDifferenceWidth()/2 - focusImg.getDrawable().getIntrinsicWidth()/2,
+                                (int) event.getY() + fCameraPreview.getDifferenceHeight()/2 - focusImg.getDrawable().getIntrinsicHeight()/2,
+                                0,0);
+
+                        cameraFrame.addView(focusImg, params);
+
+                        Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
+                        focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
+                        focusImg.startAnimation(focusAni);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d("Main", "onTouchEvent: up");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d("Main", "onTouchEvent: move");
+                        break;
+                    default:
+                }
+                return false;
+            }
+        });
 
         // 상단 버튼 세팅
-        cameraSwitchingBtt.setOnClickListener(new View.OnClickListener() {
+        cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 fCamera.switchCameraFacing();
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
@@ -171,9 +224,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cameraFlashBtt.setOnClickListener(new View.OnClickListener() {
+        cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
+
+        cameraFlashBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
                         fCamera.setFlashSetting(FCamera.Flash.OFF);
@@ -198,10 +253,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
 
-        cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
+        cameraTimerBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 switch (cameraTimerState) {
                     case 0:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_3);
@@ -222,19 +278,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        cameraTimerBtt.setOnTouchListener(OnTouchEffectListener);
 
-        settingBtt.setOnClickListener(new View.OnClickListener() {
+        settingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingsPrefActivity.class));
             }
         });
-
+        settingBtt.setOnTouchListener(OnTouchEffectListener);
 
         //하단 버튼 세팅
-        galleryBtt.setOnClickListener(new View.OnClickListener() {
+        galleryBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 Intent AlbumIntent = new Intent(Intent.ACTION_VIEW);
 
                 AlbumIntent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
@@ -244,12 +301,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(AlbumIntent);
             }
         });
+        galleryBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraCaptureBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cameraCaptureBtt.setClickable(false);
-
                 new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -263,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onFinish() {
                         timerTextView.setText("");
 
+                        ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+                        cameraCaptureInnerImg.startAnimation(cameraCaptureInnerAnim);
                         fCamera.takePicture();
 
                         cameraCaptureBtt.setClickable(true);
@@ -270,16 +329,21 @@ public class MainActivity extends AppCompatActivity {
                 }.start();
             }
         });
+        cameraCaptureBtt.setOnTouchListener(OnCameraBtnTouchListener);
 
-        editBtt.setOnClickListener(new View.OnClickListener() {
+        editBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 editView.changeState();
             }
         });
+        editBtt.setOnTouchListener(OnTouchEffectListener);
 
         // 초기 필터 세팅
-        setCameraFilter(filterListView.getHorizontalAdapter().getDefaultFilter());
+        setCameraFilter(mHorizontal_adapter.getDefaultFilter());
+
+        //버전 체크
+        checkVersion();
     }
 
     @Override
@@ -307,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
-        
+
         changeCaptureInnerColor(filter);
         editView.setOnSaveListener(new EditView.OnSaveListener() {
             @Override
@@ -322,8 +386,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[]{0.0f, 0.0f, 0.9f};
             cameraCaptureInnerImg.setColorFilter(Color.HSVToColor(200, hsv));
-        }
-        else if (filter instanceof RetroFilter) {
+        } else if (filter instanceof RetroFilter) {
             ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
             float[] hsv = new float[3];
             Color.RGBToHSV(
@@ -337,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public FCameraCapture getFCameraCapture(){
+    public FCameraCapture getFCameraCapture() {
         return fCameraCapture;
     }
 
@@ -421,6 +484,145 @@ public class MainActivity extends AppCompatActivity {
         rotAnim.setInterpolator(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator));
         galleryBtt.startAnimation(rotAnim);
         editBtt.startAnimation(rotAnim);
+    }
+  
+    @Override
+    public void onBackPressed() {
+        if (editView.IsOpen()) {
+            editView.changeState();
+        } else if (mHorizontal_adapter.isPopupMenuOpen()) {
+            mHorizontal_adapter.dismissPopup();
+        } else {
+            //앱 종료를 묻는 팝업
+            SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
+                    .setCancelText("Cancel")
+                    .setConfirmText("Quit")
+                    .setContentText("Do you want to quit?");
+            finishDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    finish();
+                }
+            });
 
+            finishDialog.show();
+
+        }
+    }
+
+    public View.OnTouchListener OnTouchEffectListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageButton imageButton = (ImageButton) v;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    imageButton.setColorFilter(Color.GRAY);
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    imageButton.clearColorFilter();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    imageButton.clearColorFilter();
+
+            }
+            return false;
+        }
+    };
+
+    private class FocusAnimationListener implements Animation.AnimationListener {
+
+        private View mView;
+
+        public FocusAnimationListener(View view) {
+            mView = view;
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+            if (mView != null) {
+                cameraFrame.removeView(mView);
+            }
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    }
+
+    public View.OnTouchListener OnCameraBtnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleX", 1.1f);
+                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleY", 1.1f);
+                    scaleUpX.setDuration(100);
+                    scaleUpY.setDuration(100);
+
+                    AnimatorSet scaleUp = new AnimatorSet();
+                    scaleUp.play(scaleUpX).with(scaleUpY);
+                    scaleUp.start();
+                    return false;
+                case MotionEvent.ACTION_UP:
+
+                case MotionEvent.ACTION_CANCEL:
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleX", 1.0f);
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                            "scaleY", 1.0f);
+                    scaleDownX.setDuration(125);
+                    scaleDownY.setDuration(125);
+
+                    AnimatorSet scaleDown = new AnimatorSet();
+                    scaleDown.play(scaleDownX).with(scaleDownY);
+
+                    scaleDown.start();
+
+
+            }
+            return false;
+        }
+    };
+
+    private void checkVersion() {
+        try {
+            device_version = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String store_version = "2";
+        try {
+            store_version = MarketVersionChecker.getMarketVersion(this.getPackageName());
+        } catch (Exception e) {
+            Log.d("MarketNotExist", e.toString());
+        }
+        if (store_version.compareTo(device_version) > 0) {
+
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("New Update")
+                    .setContentText(getString(R.string.update_message))
+                    .showCancelButton(true)
+                    .setCancelText("Not Now")
+                    .setConfirmText("Update Now")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.dismissWithAnimation();
+                            Intent marketLaunch = new Intent(
+                                    Intent.ACTION_VIEW);
+                            marketLaunch.setData(Uri
+                                    .parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName()));
+                            startActivity(marketLaunch);
+                        }
+                    })
+                    .show();
+        }
     }
 }

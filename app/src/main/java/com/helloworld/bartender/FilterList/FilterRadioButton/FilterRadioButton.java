@@ -199,6 +199,8 @@ public class FilterRadioButton extends RelativeLayout implements RadioCheckable,
         return mFilterImageDrawable;
     }
 
+    public CircleImageView getCircleImageView(){return mFilterImageView; }
+
     public void setFilterImageDrawable(Drawable filterImageDrawable) {
         mFilterImageDrawable = filterImageDrawable;
         mFilterImageView.setImageDrawable(mFilterImageDrawable);

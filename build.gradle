@@ -18,6 +18,7 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'http://guardian.github.com/maven/repo-releases'}
+        maven { url "https://jitpack.io" }
         google()
         jcenter()
     }

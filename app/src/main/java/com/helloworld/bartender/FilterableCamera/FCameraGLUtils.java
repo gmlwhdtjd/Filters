@@ -6,7 +6,10 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,16 +63,16 @@ public class FCameraGLUtils {
 
         switch (cameraOrientation){
             case 0:
-                texCoordData = new float[] { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
+                texCoordData = new float[] { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
                 break;
             case 90:
-                texCoordData = new float[] { 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f };
+                texCoordData = new float[] { 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
                 break;
             case 180:
-                texCoordData = new float[] { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+                texCoordData = new float[] { 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
                 break;
             case 270:
-                texCoordData = new float[] { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+                texCoordData = new float[] { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f };
                 break;
             default:
                 throw new RuntimeException("Invalid value of \"cameraOrientation\"");
@@ -201,6 +204,7 @@ public class FCameraGLUtils {
         return program;
     }
 
+    @NonNull
     private static String getStringFromRawFile(Context context, int id) throws IOException {
         InputStream inputStream = context.getResources().openRawResource(id);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -213,5 +217,31 @@ public class FCameraGLUtils {
         inputStream.close();
 
         return builder.toString();
+    }
+
+    public static void errorChack(FCameraFilter.Target target) {
+        int error = GLES20.glGetError();
+        switch (error) {
+            case GLES20.GL_NO_ERROR :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_ENUM :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_VALUE :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_OPERATION :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_INVALID_FRAMEBUFFER_OPERATION :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            case GLES20.GL_OUT_OF_MEMORY :
+                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
+                break;
+            default:
+                Log.e(target.toString(), "onDraw: Default");
+        }
     }
 }

@@ -26,6 +26,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class CustomPopup {
 
@@ -48,7 +50,7 @@ public class CustomPopup {
     private FCameraFilter mSelectedFilter;
     private int mSelectedPosition;
 
-    public CustomPopup(Context context, int viewResource) {
+    public CustomPopup(final Context context, int viewResource) {
         mContext = context;
         mWindow = new PopupWindow(context);
         mIsPopupMenuOpen = false;
@@ -68,24 +70,42 @@ public class CustomPopup {
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));
         PopupOption option2 = new PopupOption(1, mContext.getString(R.string.duplicate_filter));
-        PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
+ //       PopupOption option3 = new PopupOption(2, mContext.getString(R.string.share_filter));
 
         this.addItem(option1);
         this.addSeperator();
         this.addItem(option2);
-        this.addSeperator();
-        this.addItem(option3);
+//        this.addSeperator();
+//        this.addItem(option3);
 
         this.setOnItemClickListener(new OnPopupItemClickListener() {
             @Override
             public void onItemClick(int itemId) {
-                FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
+                final FilterListView filterListView = ((MainActivity) mContext).findViewById(R.id.filterListView);
                 switch (itemId) {
                     case 0:
-                        dbHelper.deleteFilter(mSelectedFilter.getId(), mSelectedPosition);
-                        if (filterListView.getHorizontalAdapter().removeItem(mSelectedPosition)) {
-                            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
-                        }
+                        final SweetAlertDialog deleteDialog = new SweetAlertDialog(context,SweetAlertDialog.WARNING_TYPE);
+                                deleteDialog.setTitleText("Are you sure?")
+                                .setContentText("Won't be able to recover this filter")
+                                .setConfirmText("Yes, delete it!")
+                                .setCancelText("No, cancel")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        deleteDialog.setTitleText("Deleted!")
+                                                .setContentText("Your filter has been deleted!")
+                                                .setConfirmText("OK")
+                                                .showCancelButton(false)
+                                                .setConfirmClickListener(null)
+                                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
+                                        dbHelper.deleteFilter(mSelectedFilter.getId(), mSelectedPosition);
+                                        if (filterListView.getHorizontalAdapter().removeItem(mSelectedPosition)) {
+                                            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+                                        }
+                                    }
+                                });
+                                deleteDialog.show();
                         break;
                     case 1:
                         FCameraFilter pastedFilter = dbHelper.pasteFilter(mSelectedFilter, mSelectedPosition);
@@ -119,8 +139,8 @@ public class CustomPopup {
 
         anchor.getLocationOnScreen(location);
 
-        Rect anchorRect = new Rect(location[0], location[1], location[0]
-                + anchor.getWidth(), location[1] + anchor.getHeight());
+        //left,top,right,bottom
+        Rect anchorRect = new Rect(location[0], location[1], location[0] + anchor.getWidth(), location[1] + anchor.getHeight());
 
         mView.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -145,13 +165,13 @@ public class CustomPopup {
                 .getLayoutParams();
         int xPos = 0;
 
-        // ETXTREME RIGHT CLIKED
+        // ETXTREME RIGHT CLIKED`
         if (anchorRect.left + rootWidth > screenWidth) {
             xPos = (screenWidth - rootWidth);
         }
         // ETXTREME LEFT CLIKED
-        else if (anchorRect.left - (rootWidth / 2) < 0) {
-            xPos = anchorRect.left;
+        else if (anchorRect.left - (rootWidth/2) < 0) {
+            xPos = 0;
         }
         // INBETWEEN
         else {

@@ -4,13 +4,10 @@ package com.helloworld.bartender;
  * Created by wilybear on 2018-03-23.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,33 +16,37 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
 import android.util.Log;
-import android.content.SharedPreferences;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import com.helloworld.bartender.PreferenceSetting.AppCompatPreferenceActivity;
+import com.helloworld.bartender.SettingConponents.AppCompatPreferenceActivity;
+import com.helloworld.bartender.SettingConponents.VersionChecker.MarketVersionChecker;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
     private static final int REQUEST_DIRECTORY = 0;
+    private static String device_version = "";
+    private static final int OPENLICENSE_CODE = 0;
+    private static final int TERMS_CODE = 1;
+    private static final int PRIVACY_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.title_activity_setting));
         appPackageName = getApplicationContext().getPackageName();
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
     }
 
-    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         @Override
         public void onResume() {
             super.onResume();
@@ -54,7 +55,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
 
         @Override
         public void onPause() {
-           getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
             super.onPause();
         }
 
@@ -64,11 +65,16 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.preference_layout_setting);
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
             Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
+            Preference termsPref = (findPreference(getString(R.string.key_terms)));
+            Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
+            Preference faqPref = (findPreference(getString(R.string.key_faq)));
+            Preference versionPref = (findPreference(getString(R.string.key_app_version)));
 
-            SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
-            String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
-            if(path!=null){
-            galleryPath.setSummary(path);
+
+            SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
+            String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
+            if (path != null) {
+                galleryPath.setSummary(path);
             }
             // gallery EditText change listener
             galleryPath.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -93,17 +99,88 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                 }
             });
 
+            try {
+                device_version = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            versionPref.setSummary(device_version);
+
+            versionPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    String store_version = "1";
+                    try {
+                        store_version = MarketVersionChecker.getMarketVersion(getActivity().getPackageName());
+                    } catch (Exception e) {
+                        Log.d("MarketNotExist", e.toString());
+                    }
+                    if (store_version.compareTo(device_version) > 0) {
+                        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("New Update")
+                                .setContentText(getString(R.string.update_message))
+                                .showCancelButton(true)
+                                .setCancelText("Not Now")
+                                .setConfirmText("Update Now")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+                                        sDialog.dismissWithAnimation();
+                                        Intent marketLaunch = new Intent(
+                                                Intent.ACTION_VIEW);
+                                        marketLaunch.setData(Uri
+                                                .parse("https://play.google.com/store/apps/details?id=" + getActivity().getPackageName()));
+                                        startActivity(marketLaunch);
+                                    }
+                                })
+                                .show();
+                    } else {
+                        new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE)
+                                .setTitleText(getString(R.string.title_new_update))
+                                .setConfirmText("Okay")
+                                .show();
+                    }
+
+                    return true;
+                }
+            });
+
             openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(),0);
+                    startDetailActivity(getActivity(), OPENLICENSE_CODE);
+                    return true;
+                }
+            });
+
+            termsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(), TERMS_CODE);
+                    return true;
+                }
+            });
+
+            privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(), PRIVACY_CODE);
+                    return true;
+                }
+            });
+
+            faqPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(), FaqActivity.class);
+                    startActivity(intent);
                     return true;
                 }
             });
 
             // feedback preference click listener
-            Preference myPref = findPreference(getString(R.string.key_send_feedback));
-            myPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            Preference feedbackPref = findPreference(getString(R.string.key_send_feedback));
+            feedbackPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     sendFeedback(getActivity());
                     return true;
@@ -129,9 +206,9 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                         resultCode));
 
                 if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                    SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.gallery_pref),0);
+                    SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
                     SharedPreferences.Editor editor = pref.edit();
-                    editor.putString(getString(R.string.key_gallery_name),data
+                    editor.putString(getString(R.string.key_gallery_name), data
                             .getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
                     editor.commit();
                     Preference galleryPath = findPreference(getString(R.string.key_gallery_name));
@@ -158,9 +235,9 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static void startDetailActivity(Context context,int pageNum){
-        Intent intent = new Intent(context,OpenLicenseActivity.class);
-        intent.putExtra("pageNum", pageNum);
+    private static void startDetailActivity(Context context, int pageCode) {
+        Intent intent = new Intent(context, DetailSettingActivity.class);
+        intent.putExtra("pageCode", pageCode);
         context.startActivity(intent);
     }
 

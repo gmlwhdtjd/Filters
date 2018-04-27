@@ -1,36 +1,43 @@
 <resources>
+
+    <!--Retro Filter-->
+    <string name="OriginalFilter_Name">원본</string>
+    <string name="OriginalFilter_msg">
+        원본을 선택하셨습니다.\n\n
+        다른 필터를 선택해 주세요. :)
+    </string>
+
+
     <!--Original Filter-->
-    <string name="OriginalFilter_Page_1">색상</string>
-    <string name="OriginalFilter_Page_2">빛</string>
-    <string name="OriginalFilter_Page_3">초점</string>
-    <string name="OriginalFilter_Page_4">빛번짐</string>
-    <string name="OriginalFilter_Page_5">노이즈</string>
+    <string name="RetroFilter_Page_1">색상</string>
+    <string name="RetroFilter_Page_2">빛</string>
+    <string name="RetroFilter_Page_3">초점</string>
+    <string name="RetroFilter_Page_4">레트로</string>
 
-    <string name="OriginalFilter_COLOR_RATIO">강도</string>
-    <string name="OriginalFilter_RGB_R">빨강</string>
-    <string name="OriginalFilter_RGB_G">초록</string>
-    <string name="OriginalFilter_RGB_B">파랑</string>
-    <string name="OriginalFilter_BRIGHTNESS">밝기</string>
-    <string name="OriginalFilter_SATURATION">채도</string>
-    <string name="OriginalFilter_BLUR">강도</string>
-    <string name="OriginalFilter_FOCUS">반경</string>
-    <string name="OriginalFilter_ABERRATION">강도</string>
-    <string name="OriginalFilter_NOISE_SIZE">크기</string>
-    <string name="OriginalFilter_NOISE_INTENSITY">강도</string>
+    <string name="RetroFilter_COLOR_RATIO">강도</string>
+    <string name="RetroFilter_RGB_R">빨강</string>
+    <string name="RetroFilter_RGB_G">초록</string>
+    <string name="RetroFilter_RGB_B">파랑</string>
+    <string name="RetroFilter_BRIGHTNESS">밝기</string>
+    <string name="RetroFilter_SATURATION">채도</string>
+    <string name="RetroFilter_BLUR">강도</string>
+    <string name="RetroFilter_FOCUS">반경</string>
+    <string name="RetroFilter_ABERRATION">빛번짐</string>
+    <string name="RetroFilter_NOISE_INTENSITY">노이즈</string>
 
-    <string name="DefaultFilter_Name">원본</string>
     <string name="delete_filter">삭제</string>
     <string name="duplicate_filter">복제</string>
     <string name="share_filter">공유</string>
-    <string name="title_privacy">개인 정보 정책</string>
-    <string name="title_terms">이용 약관</string>
+    <string name="title_privacy">개인 정보 처리 방침</string>
+    <string name="title_terms">서비스 약관</string>
     <string name="title_share">공유</string>
     <string name="title_review">리뷰 남기기</string>
-    <string name="title_activity_settings">설정</string>
     <string name="title_version">버전</string>
     <string name="title_faq">자주 묻는 질문</string>
     <string name="title_send_feedback">피드백 보내기</string>
     <string name="title_activity_setting">설정</string>
+    <string name="update_message">"새로운 버전의 Bartender를 사용할 수 있습니다. 지금 다운로드 하시겠습니까?"</string>
+
 
 
 </resources>

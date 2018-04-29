@@ -47,6 +47,7 @@ import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 import java.nio.ByteBuffer;
@@ -944,6 +945,8 @@ public class FCamera implements LifecycleObserver {
         }
     }
 
+    private Rect zoom;
+
     /**
      * Capture a still picture. This method should be called when we get a response in
      * {@link #mCaptureCallback} from both {@link #lockFocus()}.
@@ -969,6 +972,8 @@ public class FCamera implements LifecycleObserver {
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
             setAutoFlash(captureBuilder);
+
+            captureBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
 
             CameraCaptureSession.CaptureCallback CaptureCallback
                     = new CameraCaptureSession.CaptureCallback() {
@@ -1102,4 +1107,81 @@ public class FCamera implements LifecycleObserver {
         void onCapture();
         void onClose();
     }
+
+    private float finger_spacing = 0;
+    private int zoom_level = 1;
+
+    public boolean onTouchEvent(MotionEvent event) {
+        try {
+            Activity activity = mActivity;
+            CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(mCameraId);
+            float maxZoom = (characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM))*10;
+
+            Rect m = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+            int action = event.getAction();
+            float current_finger_spacing;
+
+            if (event.getPointerCount() > 1) {
+                // Multi touch logic
+                current_finger_spacing = getFingerSpacing(event);
+
+                if(finger_spacing != 0){
+                    if(current_finger_spacing > finger_spacing && maxZoom > zoom_level){
+                        zoom_level++;
+
+                    }
+                    else if (current_finger_spacing < finger_spacing && zoom_level > 1){
+                        zoom_level--;
+
+                    }
+                    int minW = (int) (m.width() / maxZoom);
+                    int minH = (int) (m.height() / maxZoom);
+                    int difW = m.width() - minW;
+                    int difH = m.height() - minH;
+                    int cropW = difW /100 *(int)zoom_level;
+                    int cropH = difH /100 *(int)zoom_level;
+                    cropW -= cropW & 3;
+                    cropH -= cropH & 3;
+                    Rect zoom = new Rect(cropW, cropH, m.width() - cropW, m.height() - cropH);
+                    mPreviewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
+                    this.zoom = zoom;
+                }
+                finger_spacing = current_finger_spacing;
+            }
+            else{
+                if (action == MotionEvent.ACTION_UP) {
+                    //single touch logic
+                }
+            }
+
+            try {
+                mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback,
+                        null);
+            }
+            catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+            catch (NullPointerException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        catch (CameraAccessException e)
+        {
+            throw new RuntimeException("can not access camera.", e);
+        }
+
+        return true;
+    }
+
+
+    @SuppressWarnings("deprecation")
+    private float getFingerSpacing(MotionEvent event) {
+
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
 }

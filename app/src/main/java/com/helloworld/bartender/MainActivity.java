@@ -142,6 +142,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onTouchToFocus(MotionEvent event) {
+                ImageView focusImg = new ImageView(MainActivity.this);
+                focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
+
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(
+                        (int) event.getX() - focusImg.getDrawable().getIntrinsicWidth() / 2,
+                        (int) event.getY() - focusImg.getDrawable().getIntrinsicHeight() / 2,
+                        0, 0);
+
+                cameraFrame.addView(focusImg, params);
+
+                Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
+                focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
+                focusImg.startAnimation(focusAni);
+            }
+
+            @Override
             public void onCapture() {
                 Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
                 captureEffectImg.startAnimation(captuer);
@@ -180,39 +198,6 @@ public class MainActivity extends AppCompatActivity {
         mFilterListView = findViewById(R.id.filterListView);
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
-        fCameraPreview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d("Main", "onTouchEvent: down");
-                        ImageView focusImg = new ImageView(MainActivity.this);
-                        focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
-
-                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(
-                                (int) event.getX() + fCameraPreview.getDifferenceWidth() / 2 - focusImg.getDrawable().getIntrinsicWidth() / 2,
-                                (int) event.getY() + fCameraPreview.getDifferenceHeight() / 2 - focusImg.getDrawable().getIntrinsicHeight() / 2,
-                                0, 0);
-
-                        cameraFrame.addView(focusImg, params);
-
-                        Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
-                        focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
-                        focusImg.startAnimation(focusAni);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        Log.d("Main", "onTouchEvent: up");
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Log.d("Main", "onTouchEvent: move");
-                        break;
-                    default:
-                }
-                return false;
-            }
-        });
-
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -234,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new OnSingleClickListener() {

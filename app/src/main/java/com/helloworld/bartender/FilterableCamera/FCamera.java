@@ -518,6 +518,15 @@ public class FCamera implements LifecycleObserver {
                         halfTouchHeight * 2,
                         MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
+                    if (mCallback != null){
+                        Handler mainHandler = new Handler(mActivity.getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCallback.onTouchToFocus(event);
+                            }
+                        });
+                    }
             }
         }
     }
@@ -1110,6 +1119,7 @@ public class FCamera implements LifecycleObserver {
     public interface Callback {
         void onOpened();
         void onStartPreview();
+        void onTouchToFocus(MotionEvent event);
         void onCapture();
         void onCaptured();
         void onClose();

@@ -214,6 +214,7 @@ public class EditView extends CoordinatorLayout {
             if (filterListViewWasOpen) {
                 FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
                 filterListView.changeState();
+                filterListViewWasOpen = false;
             }
         }
     }

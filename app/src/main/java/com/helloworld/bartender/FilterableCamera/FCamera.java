@@ -476,7 +476,7 @@ public class FCamera implements LifecycleObserver {
      * Modified by Hui-Jong Lee
      * @param event
      */
-    void touchToFocus(MotionEvent event) {
+    void touchToFocus(final MotionEvent event) {
         if (mCharacteristics != null) {
             final Rect sensorArraySize = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 

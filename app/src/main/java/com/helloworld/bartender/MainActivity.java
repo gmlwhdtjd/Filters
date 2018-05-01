@@ -492,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (editView.IsOpen()) {
-            editView.changeState();
+            editView.close();
         } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
         } else {
@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        String store_version = "2";
+        String store_version = "1";
         try {
             store_version = MarketVersionChecker.getMarketVersion(this.getPackageName());
         } catch (Exception e) {

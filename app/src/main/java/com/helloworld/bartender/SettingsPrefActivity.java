@@ -34,7 +34,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static String device_version = "";
     private static final int OPENLICENSE_CODE = 0;
     private static final int TERMS_CODE = 1;
-    private static final int PRIVACY_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
             Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
-            Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
 
@@ -161,14 +159,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(), PRIVACY_CODE);
-                    return true;
-                }
-            });
-
             faqPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -240,37 +230,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         intent.putExtra("pageCode", pageCode);
         context.startActivity(intent);
     }
-
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
-    }
-
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String stringValue = newValue.toString();
-
-            if (preference instanceof ListPreference) {
-
-            } else if (preference instanceof EditTextPreference) {
-                if (preference.getKey().equals("key_gallery_name")) {
-                    preference.setSummary(stringValue);
-                }
-            } else {
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
 
     /**
      * Email client intent to send support mail

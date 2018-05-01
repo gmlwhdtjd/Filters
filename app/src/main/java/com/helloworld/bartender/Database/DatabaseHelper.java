@@ -170,7 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public FCameraFilter pasteFilter(FCameraFilter receivedFilter, int position) {
         SQLiteDatabase db = this.getWritableDatabase();
-        FCameraFilter newFilter = null;
+        FCameraFilter newFilter;
         FCameraFilter pastedFilter = null;
         int pastedFilterId;
 

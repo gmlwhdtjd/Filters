@@ -5,10 +5,6 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItem;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -44,14 +40,6 @@ public class CustomViewPagerItemAdapter extends PagerAdapter
         mContainer = container;
         holder.put(position, new WeakReference<View>(view));
         return view;
-    }
-
-    public void removeAllItems(){
-        pages.clear();
-        holder.clear();
-        if(mContainer!=null) {
-            mContainer.removeAllViews();
-        }
     }
 
     @Override

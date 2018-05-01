@@ -2,13 +2,11 @@ package com.helloworld.bartender.Edit;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.helloworld.bartender.R;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
@@ -87,7 +85,6 @@ public class NamedSeekBar extends LinearLayout {
 
         mSeekBar = new DiscreteSeekBar(getContext());
         mSeekBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-//        mSeekBar.setIndicatorPopupEnabled(false);
         setColor(getResources().getColor(R.color.main_back));
         this.addView(mSeekBar);
 

@@ -117,9 +117,13 @@ public class EditView extends CoordinatorLayout {
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mFilter.setName(input.getText().toString());
-                                editNameView.setText(mFilter.getName());
-                                sweetAlertDialog.dismissWithAnimation();
+                                if(input.getText().toString().replace(" ","").equals("")){
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }else {
+                                    mFilter.setName(input.getText().toString());
+                                    editNameView.setText(mFilter.getName());
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
                             }
                         });
                 dialog.show();

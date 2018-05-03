@@ -522,12 +522,32 @@ public class MainActivity extends AppCompatActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         imageButton.setColorFilter(Color.GRAY);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(imageButton,
+                                "scaleX", 0.8f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(imageButton,
+                                "scaleY", 0.8f);
+                        scaleUpX.setDuration(70);
+                        scaleUpY.setDuration(70);
+
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
                         return false;
                     case MotionEvent.ACTION_UP:
-                        imageButton.clearColorFilter();
-                        break;
+
                     case MotionEvent.ACTION_CANCEL:
                         imageButton.clearColorFilter();
+                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(imageButton,
+                                "scaleX", 1.0f);
+                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(imageButton,
+                                "scaleY", 1.0f);
+                        scaleDownX.setDuration(70);
+                        scaleDownY.setDuration(70);
+
+                        AnimatorSet scaleDown = new AnimatorSet();
+                        scaleDown.play(scaleDownX).with(scaleDownY);
+
+                        scaleDown.start();
 
                 }
             }

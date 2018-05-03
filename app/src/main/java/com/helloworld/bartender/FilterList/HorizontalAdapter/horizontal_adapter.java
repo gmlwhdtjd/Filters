@@ -204,7 +204,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     @Override
                     public boolean onLongClick(View v) {
                         vibe.vibrate(50);
-
                         mCustomPopup.show(v, filter, holder.getAdapterPosition());
                         return true;
                     }

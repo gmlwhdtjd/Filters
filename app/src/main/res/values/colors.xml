@@ -10,10 +10,10 @@
     <color name="seekbar_green">#21E82A</color>
     <color name="seekbar_blue">#2F4CCC</color>
 
-    <color name="bg_screen1">#f64c73</color>
-    <color name="bg_screen2">#20d2bb</color>
-    <color name="bg_screen3">#3395ff</color>
-    <color name="bg_screen4">#c873f4</color>
+    <color name="bg_screen1">#E87566</color>
+    <color name="bg_screen2">#F7D047</color>
+    <color name="bg_screen3">#BED152</color>
+    <color name="bg_screen4">#96CDD3</color>
 
     <!-- Filter RadioButton colors -->
     <color name="filterIcon_border_color">#ffffff</color>

@@ -405,35 +405,40 @@ public class MainActivity extends AppCompatActivity {
 
             double x = event.values[0];
             double y = event.values[1];
-
+            double z = event.values[2];
             Animation rotAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_effect);
 
 
             angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
-            if (angleXY >= -30 && angleXY <= 30) {
-                direction = 0;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+            if(z < 8.0 && z > -8.0) {
+                if(angleXY >= -30 && angleXY <= 30) {
+                    direction = 0;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= 60 && angleXY <= 120) {
-                direction = 3;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= 60 && angleXY <= 120) {
+                    direction = 3;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= -120 && angleXY <= -60) {
-                direction = 1;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= -120 && angleXY <= -60) {
+                    direction = 1;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= 150 || angleXY <= -150) {
-                direction = 2;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= 150 || angleXY <= -150) {
+                    direction = 2;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
             }
         }
@@ -587,7 +592,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        String store_version = "2";
+        String store_version = "1";
         try {
             store_version = MarketVersionChecker.getMarketVersion(this.getPackageName());
         } catch (Exception e) {

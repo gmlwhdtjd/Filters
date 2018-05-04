@@ -201,6 +201,8 @@ public class EditView extends CoordinatorLayout {
                 filterListView.changeState();
                 filterListViewWasOpen = true;
             }
+            else
+                filterListViewWasOpen = false;
 
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {

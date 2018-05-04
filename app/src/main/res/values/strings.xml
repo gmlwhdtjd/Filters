@@ -64,7 +64,7 @@
     <string name="title_share">Share</string>
     <string name="summary_share">Share this app with your friends!</string>
     <string name="key_terms">key_terms</string>
-    <string name="title_terms">Terms and Services</string>
+    <string name="title_terms">Terms of Services</string>
     <string name="key_open_license">key_open_license</string>
     <string name="title_open_license">Open License</string>
     <string name="key_privacy">key_privacy</string>
@@ -74,7 +74,7 @@
     <string name="url_open_license"> open_license://policy</string>
     <string name="url_terms">term url</string>
 
-    <string name="apache_license">
+    <string name="open_license_text">
         Copyright [2018] [Team inha]  \n
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -86,7 +86,198 @@
         distributed under the License is distributed on an "AS IS" BASIS,
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
-        limitations under the License.\n
+        limitations under the License.\n\n
+
+        \n #DiscreteSeekBar\n\n
+        https://github.com/AnderWeb/discreteSeekBar\n
+        Copyright 2014 Gustavo Claramunt (Ander Webbs)\n
+        \n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+\n\n
+       http://www.apache.org/licenses/LICENSE-2.0
+\n\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n #CircleImageView\n\n
+        https://github.com/hdodenhof/CircleImageView\n
+        Copyright 2014 - 2018 Henning Dodenhof\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+
+        \n#Android-RateThisApp\n\n
+        https://github.com/kobakei/Android-RateThisApp\n
+Copyright 2013-2017 Keisuke Kobayashi\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Android DirectoryChooser\n\n
+        https://github.com/passy/Android-DirectoryChooser/\n
+        Copyright 2013-2016 Pascal Hartig\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+
+        \n#TedPermission\n\n
+        https://github.com/ParkSangGwon/TedPermission\n
+        Copyright 2017 Ted Park\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#RecyclerViewSnap\n\n
+        https://github.com/rubensousa/RecyclerViewSnap\n
+        Copyright 2016 The Android Open Source Project\n
+Copyright 2016 Rúben Sousa\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Sweet Alert Dialog\n\n
+        https://github.com/pedant/sweet-alert-dialog\n
+
+        The MIT License (MIT)\n
+\n
+Copyright © 2014 Pedant(http://pedant.cn)\n
+\n
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:\n
+\n
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.\n
+        \n
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.\n\n
+        \n#SmartTabLayout\n\n
+        https://github.com/ogaclejapan/SmartTabLayout\n
+        Copyright © 2015 ogaclejapan\n
+Copyright © 2013 The Android Open Source Project\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Toasty\n\n
+        https://github.com/GrenderG/Toasty\n\n
+        \n#Expandable Layout\n\n
+        https://github.com/AAkira/ExpandableLayout\n
+        Copyright © 2015 A.Akira\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n
+    </string>
+    <string name="terms_service_text">
+         Thank you for choosing App of Team Bartender3\n
+        These Terms of Service is an agreement between you and Team Bartender3, regarding your use of 3Bartender\'s services. By using our services, you agree to the following terms
+        \n\n
+        1.Applicable law\n\n
+        Team Bartender3 is a South Korean (Republic of Korea) Team, and you agree to be bounded by the laws of South Korea.
+        \n\n
+        2.User Content\n\n
+        Team Bartender3 provides services that allow creation of content through the taking of photos or making filters. You understand that you are responsible for all data charges you incur by using these services. You are solely responsible for the content that you share through our services.
+        \n\n
+        3.Feedback\n\n
+        You agree that any feedback, suggestions, idea, or other information that you may provide to Team Bartender3, via email, reviews on Google PlayStore, are non-confidential and sole properties of Team Bartender3. We are entitled to the unrestricted use or such feedback for any purpose, including commercial, without acknowledging or compensating the sender. By providing such feedback, you waive all rights, including copyright, you may have to the content of your feedback. We welcome all feedback, but do not share any content that you expect to be compensated or given credit for in any way.\n
+       \n
+        4.Team Bartender3 Content\n\n
+        Team Bartender3s\' services and all material within them are owned by Team Bartender3 and protected by copyright, trademark, patent, and/or other intellectual property laws. The items protected by these laws include, but are not limited to, APK, text, images, code, illustrations, design, icons, photos and videos. Any unauthorized use of such content is a violation of the laws listed above and this Terms of Service. By using Team Bartender3s’ services and software, you agree that you will not copy, reproduce, republish, modify, reverse-engineer, lease, distribute, license, sell or participate in selling, in whole or in part Team Bartender3s’ services or content. Through this Terms of Service, Team Bartender3 grants a limited use and access to Team Bartender3s’ services and software.
+        \n\n
+        5.Prohibited Activities\n\n
+        In addition to the other restrictions outlined in these Terms, you also agree to refrain from the following:
+\n
+    \n    * Use the services for any purposes that are illegal, not within their intended use, or in violation of this Terms of Services.
+    \n    * Use the services in any manner that disrupts or negatively affects how others use and enjoy our services, or that could impair or damage the services or the security of the services.
+    \n    * Use robots, spiders, crawlers, scrapers or other automated means or interface to access the services or extract data.
+    \n    * Reverse-engineer any aspects of the services, or attempt to access the source code or bypass or circumvent measures employed to prevent or limit access to any area, content, or code of the services.
+    \n    * Attempt to circumvent content filtering techniques or access aspects of the services that you are not authorized to access.
+    \n    * Falsely indicate in any way that you have business affiliations with Team Bartender3 or that you or any services have been endorsed by us.
+    \n    * Violation of the privacy of others by taking photos or videos of another individual(s) without their knowledge or permission.
+    \n    * Infringement any patent, trademark or other intellectual or propriety rights.
+    \n    * Unauthorized sale, lease, or distribution in exchange for compensation, of your log-in information or access to your account.
+    \n    * Develop any third-party application that interact with our services, without our prior written consent.
+    \n    * Use the services for any illegal or unauthorized use, or encourage or promote others to do so.
+
+        \nYou also agree to abide by any third party terms that apply to any platforms you may use to write reviews for Team Bartender3 services, including Google PlayStore Terms of Service .
+    \n
+        \n
+        6.Team Bartender3 Rights\n\n
+        All right, title and interest in and to our services are exclusive property of Team Bartender3. The services are protected by patent, trademark, and copyright. This Terms of Service does not give you the right to use the Team Bartender3 service name, trademark, logo, domain name, or distinctive brand features. All feedback or suggestions that you provide to Team Bartender3 are voluntary and we have the right to use such feedback without any obligations to the sender.\n
+        \n
+        7.Copyright Policy\n\n
+Team Bartender3 respects others’ intellectual property rights, and hopes that our users will respect our intellectual property as well. We act as necessary in response to allegations of infringement of such rights, and if you feel that we have used your content in a way that violates copyright, please let us know by contacting us at TeamBartender3@gmail.com. Furthermore, if you witness a third party entity infringing on our copyright, please let us know by contacting us at TeamBartender3@gmail.com. Please provide links or screenshots if possible.
     </string>
 
     <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>

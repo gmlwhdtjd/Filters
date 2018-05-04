@@ -1,12 +1,10 @@
 package com.helloworld.bartender.Edit;
 
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ogaclejapan.smarttablayout.utils.PagerItem;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItem;
 
 /**
  * Created by wilybear on 2018-04-12.

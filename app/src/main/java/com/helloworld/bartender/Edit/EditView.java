@@ -27,6 +27,7 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -38,9 +39,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class EditView extends CoordinatorLayout {
 
     private boolean isOpen;
-    private BottomSheetBehavior bottomSheetBehavior;
-    private FCameraFilter mFilter;
-    private DatabaseHelper dbHelper;
+
+    private List<NamedSeekBar> namedSeekBars;
+    BottomSheetBehavior bottomSheetBehavior;
+    FCameraFilter mFilter;
+    DatabaseHelper dbHelper;
 
     private TextView editNameView;
 
@@ -116,9 +119,13 @@ public class EditView extends CoordinatorLayout {
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mFilter.setName(input.getText().toString());
-                                editNameView.setText(mFilter.getName());
-                                sweetAlertDialog.dismissWithAnimation();
+                                if(input.getText().toString().replace(" ","").equals("")){
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }else {
+                                    mFilter.setName(input.getText().toString());
+                                    editNameView.setText(mFilter.getName());
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
                             }
                         });
                 dialog.show();
@@ -126,48 +133,13 @@ public class EditView extends CoordinatorLayout {
                 linearLayout.setPadding((int) (24 * dp), (int) (24 * dp), (int) (24 * dp), (int) (24 * dp));
                 int index = linearLayout.indexOfChild(linearLayout.findViewById(R.id.content_text));
                 linearLayout.addView(input, index + 1);
-
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                builder.setTitle("Change Filter Name");
-//
-//                float dp = getResources().getDisplayMetrics().density;
-//
-//                FrameLayout changeView = new FrameLayout(getContext());
-//                changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//                changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
-//
-//                final EditText input = new EditText(getContext());
-//                InputFilter[] FilterArray = new InputFilter[1];
-//                FilterArray[0] = new InputFilter.LengthFilter(9);
-//                input.setFilters(FilterArray);
-//                input.setInputType(InputType.TYPE_CLASS_TEXT);
-//                changeView.addView(input);
-//
-//                builder.setView(changeView);
-//
-//                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mFilter.setName(input.getText().toString());
-//                        editNameView.setText(mFilter.getName());
-//                    }
-//                });
-//                builder.setNegativeButton("Cancel", null);
-//
-//                builder.show();
             }
         });
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeState();
-
-                if (mFilter instanceof RetroFilter) {
-                    for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
-                        mFilter.setValueWithType(valueType, backupValues.poll());
-                    }
-                }
+                close();
             }
         });
 
@@ -232,6 +204,7 @@ public class EditView extends CoordinatorLayout {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
+        namedSeekBars = new LinkedList<>();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
         CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
@@ -299,10 +272,11 @@ public class EditView extends CoordinatorLayout {
                     }
                 });
 
+
+                namedSeekBars.add(curSeekBar);
                 tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
-
 
         CustomViewPagerItemAdapter adapter = new CustomViewPagerItemAdapter(tabItems);
         viewPager.setAdapter(adapter);
@@ -332,6 +306,18 @@ public class EditView extends CoordinatorLayout {
 
     public boolean IsOpen() {
         return isOpen;
+    }
+
+    public void close() {
+        changeState();
+        int i = 0;
+        if (mFilter instanceof RetroFilter) {
+            for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
+                mFilter.setValueWithType(valueType, backupValues.poll());
+                namedSeekBars.get(i).setValue(mFilter.getValueWithType(valueType));
+                i++;
+            }
+        }
     }
 
 }

@@ -30,6 +30,10 @@ import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
@@ -90,9 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     private String device_version;
 
+    private int counter=0;
+    private ShowcaseView showcaseView;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -339,7 +347,40 @@ public class MainActivity extends AppCompatActivity {
 
         //버전 체크
         checkVersion();
+
+
+        //onboarding showcase
+//        showcaseView = new ShowcaseView.Builder(this)
+//                .withNewStyleShowcase()
+//                .setTarget(new ViewTarget(R.id.filterListBtt,this))
+//                .setContentText("Sample Highight")
+//                .setOnClickListener(showcaseClickListener)
+//                .build();
+
     }
+
+    View.OnClickListener showcaseClickListener =new OnSingleClickListener() {
+        @Override
+        public void onSingleClick(View v) {
+            switch (counter){
+                case 0:
+                    mFilterListView.changeState();
+           //         showcaseView.setShowcase(new ViewTarget(R.id.endBtt,this),true);
+                    break;
+
+                case 1:
+                    break;
+
+                case 2:
+                    break;
+
+                case 3:
+                    break;
+            }
+
+            counter++;
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -481,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (editView.IsOpen()) {
-            editView.changeState();
+            editView.close();
         } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
         } else {
@@ -510,12 +551,32 @@ public class MainActivity extends AppCompatActivity {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         imageButton.setColorFilter(Color.GRAY);
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(imageButton,
+                                "scaleX", 0.8f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(imageButton,
+                                "scaleY", 0.8f);
+                        scaleUpX.setDuration(70);
+                        scaleUpY.setDuration(70);
+
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
                         return false;
                     case MotionEvent.ACTION_UP:
-                        imageButton.clearColorFilter();
-                        break;
+
                     case MotionEvent.ACTION_CANCEL:
                         imageButton.clearColorFilter();
+                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(imageButton,
+                                "scaleX", 1.0f);
+                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(imageButton,
+                                "scaleY", 1.0f);
+                        scaleDownX.setDuration(70);
+                        scaleDownY.setDuration(70);
+
+                        AnimatorSet scaleDown = new AnimatorSet();
+                        scaleDown.play(scaleDownX).with(scaleDownY);
+
+                        scaleDown.start();
 
                 }
             }

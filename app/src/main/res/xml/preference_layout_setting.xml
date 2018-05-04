@@ -37,11 +37,6 @@
             android:key="@string/key_open_license"
             android:title="@string/title_open_license" />
 
-        <Preference
-            android:key="@string/key_privacy"
-            android:title="@string/title_privacy">
-        </Preference>
-
     </PreferenceCategory>
 
 </PreferenceScreen>

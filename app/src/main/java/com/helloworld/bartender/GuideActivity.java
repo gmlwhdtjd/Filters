@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -17,7 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +45,7 @@ public class GuideActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
+    private ImageView guide1;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -79,7 +85,6 @@ public class GuideActivity extends AppCompatActivity {
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
-
 
         // layouts of all welcome sliders
         // add few more layouts if you want
@@ -160,7 +165,9 @@ public class GuideActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);
-
+            if(position==0) {
+                startAnimation(position);
+            }
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
                 // last page. make button text to GOT IT
@@ -183,6 +190,15 @@ public class GuideActivity extends AppCompatActivity {
 
         }
     };
+
+    private void startAnimation(int position){
+        View view = viewPager.findViewWithTag(position);
+        guide1 = view.findViewById(R.id.guide1);
+        Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
+        guide1.startAnimation(guide1_anim);
+
+    }
+
 
     /**
      * Making notification bar transparent
@@ -210,7 +226,7 @@ public class GuideActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
-
+            view.setTag(position);
             return view;
         }
 

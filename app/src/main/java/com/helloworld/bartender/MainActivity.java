@@ -150,6 +150,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onTouchToFocus(MotionEvent event) {
+                ImageView focusImg = new ImageView(MainActivity.this);
+                focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
+
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(
+                        (int) event.getX() - focusImg.getDrawable().getIntrinsicWidth() / 2,
+                        (int) event.getY() - focusImg.getDrawable().getIntrinsicHeight() / 2,
+                        0, 0);
+
+                cameraFrame.addView(focusImg, params);
+
+                Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
+                focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
+                focusImg.startAnimation(focusAni);
+            }
+
+            @Override
             public void onCapture() {
                 Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
                 captureEffectImg.startAnimation(captuer);
@@ -188,39 +206,6 @@ public class MainActivity extends AppCompatActivity {
         mFilterListView = findViewById(R.id.filterListView);
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
-        fCameraPreview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d("Main", "onTouchEvent: down");
-                        ImageView focusImg = new ImageView(MainActivity.this);
-                        focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
-
-                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(
-                                (int) event.getX() + fCameraPreview.getDifferenceWidth() / 2 - focusImg.getDrawable().getIntrinsicWidth() / 2,
-                                (int) event.getY() + fCameraPreview.getDifferenceHeight() / 2 - focusImg.getDrawable().getIntrinsicHeight() / 2,
-                                0, 0);
-
-                        cameraFrame.addView(focusImg, params);
-
-                        Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
-                        focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
-                        focusImg.startAnimation(focusAni);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        Log.d("Main", "onTouchEvent: up");
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Log.d("Main", "onTouchEvent: move");
-                        break;
-                    default:
-                }
-                return false;
-            }
-        });
-
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -242,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new OnSingleClickListener() {
@@ -250,13 +234,13 @@ public class MainActivity extends AppCompatActivity {
             public void onSingleClick(View v) {
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
-                        fCamera.setFlashSetting(FCamera.Flash.OFF);
-                        break;
-                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.ON);
                         break;
-                    case ON:
+                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.AUTO);
+                        break;
+                    case ON:
+                        fCamera.setFlashSetting(FCamera.Flash.OFF);
                         break;
                 }
                 switch (fCamera.getFlashSetting()) {
@@ -462,35 +446,40 @@ public class MainActivity extends AppCompatActivity {
 
             double x = event.values[0];
             double y = event.values[1];
-
+            double z = event.values[2];
             Animation rotAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_effect);
 
 
             angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
-            if (angleXY >= -30 && angleXY <= 30) {
-                direction = 0;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+            if(z < 8.0 && z > -8.0) {
+                if(angleXY >= -30 && angleXY <= 30) {
+                    direction = 0;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= 60 && angleXY <= 120) {
-                direction = 3;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= 60 && angleXY <= 120) {
+                    direction = 3;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= -120 && angleXY <= -60) {
-                direction = 1;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= -120 && angleXY <= -60) {
+                    direction = 1;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
-            } else if (angleXY >= 150 || angleXY <= -150) {
-                direction = 2;
-                if (priorDirection != direction) {
-                    changeDirection(priorDirection, direction);
-                    priorDirection = direction;
+                else if(angleXY >= 150 || angleXY <= -150) {
+                    direction = 2;
+                    if(priorDirection != direction) {
+                        changeDirection(priorDirection, direction);
+                        priorDirection = direction;
+                    }
                 }
             }
         }

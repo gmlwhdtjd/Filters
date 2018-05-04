@@ -1,7 +1,6 @@
 precision mediump float;
 uniform vec3 iResolution;
-uniform vec3 noiseLevel;
-uniform float iGlobalTime;
+uniform vec3 randxy;
 uniform sampler2D sTexture;
 uniform sampler2D sNoiseTexture;
 varying vec2 texCoord;
@@ -97,9 +96,6 @@ void main ()
                         texture2D(sTexture, texCoord).g,
                         texture2D(sTexture, texCoord+(dis/res).xy*variables.aberration).b);
 
-    vec3 saturation = RGBtoHSV(target);
-    saturation.y *= 2.0*variables.saturation;
-    target = HSVtoRGB(saturation);
     vec3 brightness = vec3(0.0, 0.0, variables.brightness);
     target += HSLtoRGB(brightness);
     target = vec3(target.x>1.0?1.0:target.x, target.y>1.0?1.0:target.y, target.z>1.0?1.0:target.z);
@@ -107,8 +103,14 @@ void main ()
     vec3 RGBfilter = vec3(variables.rgb.r, variables.rgb.g, variables.rgb.b);
     target = (1.0-variables.colorRatio)*target + variables.colorRatio*RGBfilter;
 
-    vec4 noisetexture = texture2D(sNoiseTexture, fract(texCoord * iGlobalTime));
+
+    vec4 noisexy = texture2D(sNoiseTexture, fract(texCoord*2.0)+vec2(randxy.x, randxy.y));
+    vec4 noisetexture = texture2D(sNoiseTexture, noisexy.xy);
     target += vec3(noisetexture.r*2.0-1.0, noisetexture.g*2.0-1.0, noisetexture.b*2.0-1.0)*variables.noiseIntensity;
+
+    vec3 saturation = RGBtoHSV(target);
+    saturation.y *= 2.0*variables.saturation;
+    target = HSVtoRGB(saturation);
 
     gl_FragColor = vec4(target, 1.0);
 

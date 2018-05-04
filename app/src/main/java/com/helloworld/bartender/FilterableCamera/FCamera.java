@@ -441,17 +441,16 @@ public class FCamera implements LifecycleObserver {
         if (mFlashSupported) {
             mFlashSetting = flash;
             try {
-                mPreviewRequestBuilder
-                        = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                //first stop the existing repeating request
+                mCaptureSession.stopRepeating();
+
+                mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                 mPreviewRequestBuilder.addTarget(mPreviewSurface);
 
-                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                 setAutoFlash(mPreviewRequestBuilder);
-
                 mPreviewRequest = mPreviewRequestBuilder.build();
-                mCaptureSession.setRepeatingRequest(mPreviewRequest,
-                        mCaptureCallback, mBackgroundHandler);
+
+                mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -475,41 +474,58 @@ public class FCamera implements LifecycleObserver {
      * Modified by Hui-Jong Lee
      * @param event
      */
-    void touchToFocus(MotionEvent event) {
+    void touchToFocus(final MotionEvent event) {
         if (mCharacteristics != null) {
             final Rect sensorArraySize = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
-            if (sensorArraySize != null && !mManualFocusEngaged) {
+            if (sensorArraySize != null && !mManualFocusEngaged && mFlashSetting == Flash.OFF) {
                 Log.d(TAG, "touchToFocus: " + event.getX() + ", " + event.getY());
+                Log.d(TAG, "touchToFocus: " + mFCameraPreview.getWidth() + ", " + mFCameraPreview.getHeight());
                 Log.d(TAG, "touchToFocus: " + sensorArraySize.width() + ", " + sensorArraySize.height());
 
                 int x, y;
+                int orientation = mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
-                // TODO : 전면카메라에 대해서 좌우 반전 필요
-                switch (mCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)) {
+                switch (orientation) {
                     case 0:
-                        x = (int) ((event.getX() / (float) mPreviewSize.getWidth() * (float) sensorArraySize.width()));
-                        y = (int) ((event.getY() / (float) mPreviewSize.getHeight() * (float) sensorArraySize.height()));
+                        x = (int) ((event.getX() / (float) mFCameraPreview.getWidth() * (float) sensorArraySize.width()));
+                        y = (int) ((event.getY() / (float) mFCameraPreview.getHeight() * (float) sensorArraySize.height()));
                         break;
                     case 90:
-                        x = (int) (((event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.width());
-                        y = (int) ((1 - (event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.height());
+                        x = (int) ((event.getY() / (float) mFCameraPreview.getHeight()) * (float) sensorArraySize.width());
+                        y = (int) ((1.0f - (event.getX() / (float) mFCameraPreview.getWidth())) * (float) sensorArraySize.height());
                         break;
                     case 180:
-                        x = (int) ((1 - (event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.width());
-                        y = (int) ((1 - (event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.height());
+                        x = (int) ((1.0f - (event.getX() / (float) mFCameraPreview.getWidth())) * (float) sensorArraySize.width());
+                        y = (int) ((1.0f - (event.getY() / (float) mFCameraPreview.getHeight())) * (float) sensorArraySize.height());
                         break;
                     case 270:
-                        x = (int) ((1 - (event.getY() / (float) mPreviewSize.getHeight())) * (float) sensorArraySize.width());
-                        y = (int) (((event.getX() / (float) mPreviewSize.getWidth())) * (float) sensorArraySize.height());
+                        x = (int) ((event.getY() / (float) mFCameraPreview.getHeight()) * (float) sensorArraySize.width());
+                        y = (int) ((event.getX() / (float) mFCameraPreview.getWidth()) * (float) sensorArraySize.height());
                         break;
                     default:
                         x = (int) (0.5 * (float) sensorArraySize.width());
                         y = (int) (0.5 * (float) sensorArraySize.height());
                 }
 
-                final int halfTouchWidth = (int) event.getTouchMajor();
-                final int halfTouchHeight = (int) event.getTouchMinor();
+                if (!mCameraFacing) {   // front camera
+                    switch (orientation) {
+                        case 0:
+                        case 180:
+                            x = sensorArraySize.width() - x;
+                            break;
+                        case 90:
+                        case 270:
+                            y = sensorArraySize.height() - y;
+                            break;
+                    }
+                }
+
+                Log.d(TAG, "touchToFocus: " + orientation);
+                Log.d(TAG, "touchToFocus: " + x + ", " + y);
+
+                final int halfTouchWidth = 150;
+                final int halfTouchHeight = 150;
                 MeteringRectangle focusAreaTouch = new MeteringRectangle(
                         Math.max(x - halfTouchWidth, 0),
                         Math.max(y - halfTouchHeight, 0),
@@ -517,6 +533,79 @@ public class FCamera implements LifecycleObserver {
                         halfTouchHeight * 2,
                         MeteringRectangle.METERING_WEIGHT_MAX - 1);
 
+                try {
+
+                    CameraCaptureSession.CaptureCallback captureCallbackHandler = new CameraCaptureSession.CaptureCallback() {
+                        @Override
+                        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                            super.onCaptureCompleted(session, request, result);
+
+                            if (request.getTag() == "FOCUS_TAG") {
+                                mManualFocusEngaged = false;
+
+                                try {
+                                    //the focus trigger is complete -
+                                    //resume repeating (preview surface will get frames), clear AF trigger
+                                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
+                                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+                                    mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                                } catch (CameraAccessException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
+                            super.onCaptureFailed(session, request, failure);
+                            Log.e(TAG, "Manual AF failure: " + failure);
+                            mManualFocusEngaged = false;
+                        }
+                    };
+
+                    //first stop the existing repeating request
+                    mCaptureSession.stopRepeating();
+
+                    //cancel any existing AF trigger (repeated touches, etc.)
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+                    mCaptureSession.capture(mPreviewRequestBuilder.build(), captureCallbackHandler, mBackgroundHandler);
+
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+
+                    //Now add a new AF trigger with focus region
+                    if ( mCharacteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1){
+                        mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, new MeteringRectangle[]{focusAreaTouch});
+                    }
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+
+                    //Now add a new AF trigger with focus region
+                    if ( mCharacteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) >= 1){
+                        mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[]{focusAreaTouch});
+                    }
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+                    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+
+                    mPreviewRequestBuilder.setTag("FOCUS_TAG"); //we'll capture this later for resuming the preview
+
+                    //then we ask for a single request (not repeating!)
+                    mCaptureSession.capture(mPreviewRequestBuilder.build(), captureCallbackHandler, mBackgroundHandler);
+
+                    if (mCallback != null){
+                        Handler mainHandler = new Handler(mActivity.getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCallback.onTouchToFocus(event);
+                            }
+                        });
+                    }
+
+                    mManualFocusEngaged = true;
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -699,10 +788,7 @@ public class FCamera implements LifecycleObserver {
                 // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
-                if (mFlashSupported)
-                    mFlashSetting = Flash.AUTO;
-                else
-                    mFlashSetting = Flash.OFF;
+                mFlashSetting = Flash.OFF;
 
                 mCameraId = cameraId;
                 mCharacteristics = characteristics;
@@ -1016,8 +1102,14 @@ public class FCamera implements LifecycleObserver {
                     mBackgroundHandler);
             // After this, the camera will go back to the normal state of preview.
             mState = STATE_PREVIEW;
-            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
-                    mBackgroundHandler);
+
+            //reset normal setting
+            mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mPreviewRequestBuilder.addTarget(mPreviewSurface);
+
+            setAutoFlash(mPreviewRequestBuilder);
+
+            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
 
             if (mCallback != null){
                 Handler mainHandler = new Handler(mActivity.getMainLooper());
@@ -1109,6 +1201,7 @@ public class FCamera implements LifecycleObserver {
     public interface Callback {
         void onOpened();
         void onStartPreview();
+        void onTouchToFocus(MotionEvent event);
         void onCapture();
         void onCaptured();
         void onClose();

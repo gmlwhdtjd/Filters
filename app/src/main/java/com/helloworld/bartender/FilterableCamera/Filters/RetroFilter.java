@@ -9,6 +9,7 @@ import com.helloworld.bartender.FilterableCamera.FCameraRenderBuffer;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import static java.lang.Math.exp;
 
@@ -404,12 +405,13 @@ public class RetroFilter extends FCameraFilter {
         int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
         GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
 
-        int noiseLevelLocation = GLES20.glGetUniformLocation(program, "noiseLevel");
-        GLES20.glUniform3fv(noiseLevelLocation, 1, FloatBuffer.wrap(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()}));
-
-        float time = ((float) (System.currentTimeMillis() - START_TIME)) / 1000.0f;
-        int iGlobalTimeLocation = GLES20.glGetUniformLocation(program, "iGlobalTime");
-        GLES20.glUniform1f(iGlobalTimeLocation, time);
+        Random x = new Random();
+        Random y = new Random();
+        float randx = x.nextFloat() * (1.0f);
+        float randy = y.nextFloat() * (1.0f);
+        float a = (float)Math.floor((float)viewSize.getWidth()/480.0f)*3.0f;
+        int randxyLocation = GLES20.glGetUniformLocation(program, "randxy");
+        GLES20.glUniform3fv(randxyLocation, 1, FloatBuffer.wrap(new float[]{randx, randy, a}));
 
         int rgbLocation = GLES20.glGetUniformLocation(program, "variables.rgb");
         GLES20.glUniform3fv(rgbLocation, 1, FloatBuffer.wrap(rgb));

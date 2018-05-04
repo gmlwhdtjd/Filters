@@ -130,6 +130,10 @@ public class FilterListView extends CoordinatorLayout {
         recyclerView.scheduleLayoutAnimation();
     }
 
+    public int getState() {
+       return filterListBehavior.getState();
+    }
+
     public void changeState() {
         if (filterListBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

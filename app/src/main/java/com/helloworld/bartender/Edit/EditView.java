@@ -39,16 +39,18 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class EditView extends CoordinatorLayout {
 
     private boolean isOpen;
-    private List<NamedSeekBar> namedSeekBars;
 
+    private List<NamedSeekBar> namedSeekBars;
     BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
     DatabaseHelper dbHelper;
 
-    TextView editNameView;
+    private TextView editNameView;
 
-    OnSaveListener mOnSaveListener;
-    Queue<Integer> backupValues;
+    private OnSaveListener mOnSaveListener;
+    private Queue<Integer> backupValues;
+
+    private boolean filterListViewWasOpen = false;
 
     public EditView(Context context) {
         super(context);
@@ -166,6 +168,14 @@ public class EditView extends CoordinatorLayout {
             isOpen = true;
             backupValues = new LinkedList<>();
 
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            if (filterListView.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                filterListView.changeState();
+                filterListViewWasOpen = true;
+            }
+            else
+                filterListViewWasOpen = false;
+
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
@@ -174,6 +184,12 @@ public class EditView extends CoordinatorLayout {
         } else {
             isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            if (filterListViewWasOpen) {
+                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                filterListView.changeState();
+                filterListViewWasOpen = false;
+            }
         }
     }
 

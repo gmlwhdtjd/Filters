@@ -56,9 +56,6 @@ public class FCameraPreview extends GLSurfaceView {
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
 
-    private int mDiffWidth = 0;
-    private int mDiffHeight = 0;
-
     private previewRenderer mRenderer;
     private Callback mCallback;
 
@@ -77,14 +74,6 @@ public class FCameraPreview extends GLSurfaceView {
 
     void setFCamera(FCamera fCamera){
         mFCamera = fCamera;
-    }
-
-    public int getDifferenceHeight() {
-        return mDiffHeight;
-    }
-
-    public int getDifferenceWidth() {
-        return mDiffWidth;
     }
 
     @Override
@@ -162,12 +151,8 @@ public class FCameraPreview extends GLSurfaceView {
         } else {
             if (width > height * mRatioWidth / mRatioHeight) {
                 setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
-                mDiffWidth = 0;
-                mDiffHeight = height - width * mRatioHeight / mRatioWidth;
             } else {
                 setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
-                mDiffWidth = width - height * mRatioWidth / mRatioHeight;
-                mDiffHeight = 0;
             }
         }
     }

@@ -1,8 +1,6 @@
 package com.helloworld.bartender.Edit;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -14,11 +12,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
@@ -29,11 +24,6 @@ import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -48,14 +38,16 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class EditView extends CoordinatorLayout {
 
     private boolean isOpen;
-    BottomSheetBehavior bottomSheetBehavior;
-    FCameraFilter mFilter;
-    DatabaseHelper dbHelper;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private FCameraFilter mFilter;
+    private DatabaseHelper dbHelper;
 
-    TextView editNameView;
+    private TextView editNameView;
 
-    OnSaveListener mOnSaveListener;
-    Queue<Integer> backupValues;
+    private OnSaveListener mOnSaveListener;
+    private Queue<Integer> backupValues;
+
+    private boolean filterListViewWasOpen = false;
 
     public EditView(Context context) {
         super(context);
@@ -204,6 +196,14 @@ public class EditView extends CoordinatorLayout {
             isOpen = true;
             backupValues = new LinkedList<>();
 
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            if (filterListView.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                filterListView.changeState();
+                filterListViewWasOpen = true;
+            }
+            else
+                filterListViewWasOpen = false;
+
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
@@ -212,6 +212,12 @@ public class EditView extends CoordinatorLayout {
         } else {
             isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            if (filterListViewWasOpen) {
+                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                filterListView.changeState();
+                filterListViewWasOpen = false;
+            }
         }
     }
 

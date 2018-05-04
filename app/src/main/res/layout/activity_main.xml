@@ -1,167 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.helloworld.bartender.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/cameraFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottomLinear">
 
-        <FrameLayout
-            android:id="@+id/cameraFrame"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/bottomLinear">
-
-            <com.helloworld.bartender.FilterableCamera.FCameraPreview
-                android:id="@+id/cameraView"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/captureEffectImg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:visibility="invisible"
-                app:srcCompat="@drawable/flash_square" />
-
-            <TextView
-                android:id="@+id/timerNumberText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:shadowColor="@color/shadow"
-                android:shadowDx="0.0"
-                android:shadowDy="0.0"
-                android:shadowRadius="50.0"
-                android:textColor="@color/main_white"
-                android:textSize="200sp" />
-
-            <ImageView
-                android:id="@+id/openEffectImg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:visibility="invisible"
-                app:srcCompat="@drawable/open_square" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:id="@+id/topLinear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/cameraSwitchingBtt"
-                android:layout_width="@android:dimen/app_icon_size"
-                android:layout_height="@android:dimen/app_icon_size"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_camera_switching" />
-
-            <ImageButton
-                android:id="@+id/cameraFlashBtt"
-                android:layout_width="@android:dimen/app_icon_size"
-                android:layout_height="@android:dimen/app_icon_size"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_camera_flash_auto" />
-
-            <ImageButton
-                android:id="@+id/cameraTimerBtt"
-                android:layout_width="@android:dimen/app_icon_size"
-                android:layout_height="@android:dimen/app_icon_size"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_camera_timer_off" />
-
-            <ImageButton
-                android:id="@+id/settingBtt"
-                android:layout_width="@android:dimen/app_icon_size"
-                android:layout_height="@android:dimen/app_icon_size"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_setting" />
-
-        </LinearLayout>
-
-        <com.helloworld.bartender.FilterList.FilterListView
-            android:id="@+id/filterListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@id/cameraFrame"/>
-
-        <LinearLayout
-            android:id="@id/bottomLinear"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:background="@color/main_white"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/galleryBtt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_album" />
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp">
-
-                <ImageButton
-                    android:id="@+id/cameraCaptureBtt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:scaleType="center"
-                    android:scaleX="1"
-                    android:scaleY="1"
-                    app:srcCompat="@drawable/button_capture" />
-
-                <ImageView
-                    android:id="@+id/cameraCaptureInnerImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:scaleType="center"
-                    app:srcCompat="@drawable/button_capture_inner" />
-
-            </FrameLayout>
-
-            <ImageButton
-                android:id="@+id/editBtt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_edit" />
-        </LinearLayout>
-
-        <com.helloworld.bartender.Edit.EditView
-            android:id="@+id/editView"
+        <com.helloworld.bartender.FilterableCamera.FCameraPreview
+            android:id="@+id/cameraView"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/captureEffectImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/flash_square" />
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/timerNumberText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:shadowColor="@color/shadow"
+            android:shadowDx="0.0"
+            android:shadowDy="0.0"
+            android:shadowRadius="50.0"
+            android:textColor="@color/main_white"
+            android:textSize="200sp" />
+
+        <ImageView
+            android:id="@+id/openEffectImg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/open_square" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/topLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/cameraSwitchingBtt"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_camera_switching" />
+
+        <ImageButton
+            android:id="@+id/cameraFlashBtt"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_camera_flash_auto" />
+
+        <ImageButton
+            android:id="@+id/cameraTimerBtt"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_camera_timer_off" />
+
+        <ImageButton
+            android:id="@+id/settingBtt"
+            android:layout_width="@android:dimen/app_icon_size"
+            android:layout_height="@android:dimen/app_icon_size"
+            android:layout_weight="1"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_setting" />
+
+    </LinearLayout>
+
+    <com.helloworld.bartender.FilterList.FilterListView
+        android:id="@+id/filterListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/cameraFrame"/>
+
+    <LinearLayout
+        android:id="@id/bottomLinear"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/main_white"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/galleryBtt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_album" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <ImageButton
+                android:id="@+id/cameraCaptureBtt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:scaleType="center"
+                android:scaleX="1"
+                android:scaleY="1"
+                app:srcCompat="@drawable/button_capture" />
+
+            <ImageView
+                android:id="@+id/cameraCaptureInnerImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:scaleType="center"
+                app:srcCompat="@drawable/button_capture_inner" />
+
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/editBtt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_edit" />
+    </LinearLayout>
+
+    <com.helloworld.bartender.Edit.EditView
+        android:id="@+id/editView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>
+
+
 

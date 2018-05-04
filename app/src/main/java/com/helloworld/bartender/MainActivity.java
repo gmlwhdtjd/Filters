@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
@@ -45,6 +44,7 @@ import com.helloworld.bartender.SettingConponents.VersionChecker.MarketVersionCh
 import com.kobakei.ratethisapp.RateThisApp;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -137,12 +137,38 @@ public class MainActivity extends AppCompatActivity {
             public void onStartPreview() {
                 Animation open = AnimationUtils.loadAnimation(MainActivity.this, R.anim.open_effect);
                 openEffectImg.startAnimation(open);
+                setButtonLock(false);
+                mButtonLock.set(false);
+            }
+
+            @Override
+            public void onTouchToFocus(MotionEvent event) {
+                ImageView focusImg = new ImageView(MainActivity.this);
+                focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
+
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(
+                        (int) event.getX() - focusImg.getDrawable().getIntrinsicWidth() / 2,
+                        (int) event.getY() - focusImg.getDrawable().getIntrinsicHeight() / 2,
+                        0, 0);
+
+                cameraFrame.addView(focusImg, params);
+
+                Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
+                focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
+                focusImg.startAnimation(focusAni);
             }
 
             @Override
             public void onCapture() {
                 Animation captuer = AnimationUtils.loadAnimation(MainActivity.this, R.anim.capture_effect);
                 captureEffectImg.startAnimation(captuer);
+            }
+
+            @Override
+            public void onCaptured() {
+                setButtonLock(false);
+                mButtonLock.set(false);
             }
 
             @Override
@@ -172,58 +198,27 @@ public class MainActivity extends AppCompatActivity {
         mFilterListView = findViewById(R.id.filterListView);
         mHorizontal_adapter = mFilterListView.getHorizontalAdapter();
 
-        fCameraPreview.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d("Main", "onTouchEvent: down");
-                        ImageView focusImg = new ImageView(MainActivity.this);
-                        focusImg.setImageDrawable(getDrawable(R.drawable.focue_ring));
-
-                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(
-                                (int) event.getX() + fCameraPreview.getDifferenceWidth()/2 - focusImg.getDrawable().getIntrinsicWidth()/2,
-                                (int) event.getY() + fCameraPreview.getDifferenceHeight()/2 - focusImg.getDrawable().getIntrinsicHeight()/2,
-                                0,0);
-
-                        cameraFrame.addView(focusImg, params);
-
-                        Animation focusAni = AnimationUtils.loadAnimation(MainActivity.this, R.anim.focus_effect);
-                        focusAni.setAnimationListener(new FocusAnimationListener(focusImg));
-                        focusImg.startAnimation(focusAni);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        Log.d("Main", "onTouchEvent: up");
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Log.d("Main", "onTouchEvent: move");
-                        break;
-                    default:
-                }
-                return false;
-            }
-        });
-
         // 상단 버튼 세팅
         cameraSwitchingBtt.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                fCamera.switchCameraFacing();
-                switch (fCamera.getFlashSetting()) {
-                    case AUTO:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
-                        break;
-                    case OFF:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
-                        break;
-                    case ON:
-                        cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
-                        break;
+                if (!mButtonLock.getAndSet(true)) {
+                    setButtonLock(true);
+                    fCamera.switchCameraFacing();
+                    switch (fCamera.getFlashSetting()) {
+                        case AUTO:
+                            cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_auto);
+                            break;
+                        case OFF:
+                            cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_off);
+                            break;
+                        case ON:
+                            cameraFlashBtt.setImageResource(R.drawable.ic_camera_flash_on);
+                            break;
+                    }
                 }
             }
         });
-
         cameraSwitchingBtt.setOnTouchListener(OnTouchEffectListener);
 
         cameraFlashBtt.setOnClickListener(new OnSingleClickListener() {
@@ -231,13 +226,13 @@ public class MainActivity extends AppCompatActivity {
             public void onSingleClick(View v) {
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
-                        fCamera.setFlashSetting(FCamera.Flash.OFF);
-                        break;
-                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.ON);
                         break;
-                    case ON:
+                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.AUTO);
+                        break;
+                    case ON:
+                        fCamera.setFlashSetting(FCamera.Flash.OFF);
                         break;
                 }
                 switch (fCamera.getFlashSetting()) {
@@ -306,27 +301,27 @@ public class MainActivity extends AppCompatActivity {
         cameraCaptureBtt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cameraCaptureBtt.setClickable(false);
-                new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        timerTextView.setText(String.valueOf((millisUntilFinished / 1000) + 1));
+                if (!mButtonLock.getAndSet(true)) {
+                    setButtonLock(true);
+                    new CountDownTimer(cameraTimerState * 1000 - 1, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            timerTextView.setText(String.valueOf((millisUntilFinished / 1000) + 1));
 
-                        Animation countDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.count_down_effect);
-                        timerTextView.startAnimation(countDown);
-                    }
+                            Animation countDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.count_down_effect);
+                            timerTextView.startAnimation(countDown);
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        timerTextView.setText("");
+                        @Override
+                        public void onFinish() {
+                            timerTextView.setText("");
 
-                        ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
-                        cameraCaptureInnerImg.startAnimation(cameraCaptureInnerAnim);
-                        fCamera.takePicture();
-
-                        cameraCaptureBtt.setClickable(true);
-                    }
-                }.start();
+                            ImageView cameraCaptureInnerImg = findViewById(R.id.cameraCaptureInnerImg);
+                            cameraCaptureInnerImg.startAnimation(cameraCaptureInnerAnim);
+                            fCamera.takePicture();
+                        }
+                    }.start();
+                }
             }
         });
         cameraCaptureBtt.setOnTouchListener(OnCameraBtnTouchListener);
@@ -350,8 +345,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_UI);
-        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref),0);
-        String path = sp.getString(getString(R.string.key_gallery_name),"Picture");
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
+        String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
         fCameraCapture.setSaveDirectory(path);
     }
 
@@ -367,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         mSensorManager.unregisterListener(mSensorEventListener);
     }
 
-    public void setCameraFilter(final FCameraFilter filter){
+    public void setCameraFilter(final FCameraFilter filter) {
         fCameraPreview.setFilter(filter);
         fCameraCapture.setFilter(filter);
         editView.setFilter(filter);
@@ -414,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
             Animation rotAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_effect);
 
 
-            angleXY = Math.atan2(x, y) * 180/Math.PI;
+            angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
             if(z < 8.0 && z > -8.0) {
                 if(angleXY >= -30 && angleXY <= 30) {
@@ -461,11 +456,11 @@ public class MainActivity extends AppCompatActivity {
         float from = prior * (-90);
         float to = 0;
         float dmp = direction - prior;
-        if(dmp == 1 || dmp == -3)
+        if (dmp == 1 || dmp == -3)
             to = from - 90;
-        else if(dmp == -1 || dmp == 3)
+        else if (dmp == -1 || dmp == 3)
             to = from + 90;
-        else if(dmp == 2 || dmp == -2)
+        else if (dmp == 2 || dmp == -2)
             to = from + 180;
         RotateAnimation rotAnim = new RotateAnimation(from, to, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         rotAnim.setDuration(500);
@@ -482,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.startAnimation(rotAnim);
         editBtt.startAnimation(rotAnim);
     }
-  
+
     @Override
     public void onBackPressed() {
         if (editView.IsOpen()) {
@@ -510,17 +505,19 @@ public class MainActivity extends AppCompatActivity {
     public View.OnTouchListener OnTouchEffectListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            ImageButton imageButton = (ImageButton) v;
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    imageButton.setColorFilter(Color.GRAY);
-                    return false;
-                case MotionEvent.ACTION_UP:
-                    imageButton.clearColorFilter();
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    imageButton.clearColorFilter();
+            if (!mButtonLock.get()) {
+                ImageButton imageButton = (ImageButton) v;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        imageButton.setColorFilter(Color.GRAY);
+                        return false;
+                    case MotionEvent.ACTION_UP:
+                        imageButton.clearColorFilter();
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        imageButton.clearColorFilter();
 
+                }
             }
             return false;
         }
@@ -552,37 +549,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public View.OnTouchListener OnCameraBtnTouchListener = new View.OnTouchListener() {
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(cameraCaptureBtt,
-                            "scaleX", 1.1f);
-                    ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(cameraCaptureBtt,
-                            "scaleY", 1.1f);
-                    scaleUpX.setDuration(100);
-                    scaleUpY.setDuration(100);
+            if (!mButtonLock.get()) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                                "scaleX", 1.1f);
+                        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                                "scaleY", 1.1f);
+                        scaleUpX.setDuration(100);
+                        scaleUpY.setDuration(100);
 
-                    AnimatorSet scaleUp = new AnimatorSet();
-                    scaleUp.play(scaleUpX).with(scaleUpY);
-                    scaleUp.start();
-                    return false;
-                case MotionEvent.ACTION_UP:
+                        AnimatorSet scaleUp = new AnimatorSet();
+                        scaleUp.play(scaleUpX).with(scaleUpY);
+                        scaleUp.start();
+                        return false;
+                    case MotionEvent.ACTION_UP:
 
-                case MotionEvent.ACTION_CANCEL:
-                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(cameraCaptureBtt,
-                            "scaleX", 1.0f);
-                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(cameraCaptureBtt,
-                            "scaleY", 1.0f);
-                    scaleDownX.setDuration(125);
-                    scaleDownY.setDuration(125);
+                    case MotionEvent.ACTION_CANCEL:
+                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                                "scaleX", 1.0f);
+                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(cameraCaptureBtt,
+                                "scaleY", 1.0f);
+                        scaleDownX.setDuration(125);
+                        scaleDownY.setDuration(125);
 
-                    AnimatorSet scaleDown = new AnimatorSet();
-                    scaleDown.play(scaleDownX).with(scaleDownY);
+                        AnimatorSet scaleDown = new AnimatorSet();
+                        scaleDown.play(scaleDownX).with(scaleDownY);
 
-                    scaleDown.start();
-
-
+                        scaleDown.start();
+                }
             }
             return false;
         }
@@ -621,5 +619,18 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .show();
         }
+    }
+
+    private AtomicBoolean mButtonLock = new AtomicBoolean(false);
+
+    private void setButtonLock(boolean lock) {
+        cameraSwitchingBtt.setClickable(!lock);
+        cameraFlashBtt.setClickable(!lock);
+        cameraTimerBtt.setClickable(!lock);
+        settingBtt.setClickable(!lock);
+
+        galleryBtt.setClickable(!lock);
+        cameraCaptureBtt.setClickable(!lock);
+        editBtt.setClickable(!lock);
     }
 }

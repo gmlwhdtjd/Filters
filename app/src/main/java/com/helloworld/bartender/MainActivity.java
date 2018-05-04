@@ -226,13 +226,13 @@ public class MainActivity extends AppCompatActivity {
             public void onSingleClick(View v) {
                 switch (fCamera.getFlashSetting()) {
                     case AUTO:
-                        fCamera.setFlashSetting(FCamera.Flash.OFF);
-                        break;
-                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.ON);
                         break;
-                    case ON:
+                    case OFF:
                         fCamera.setFlashSetting(FCamera.Flash.AUTO);
+                        break;
+                    case ON:
+                        fCamera.setFlashSetting(FCamera.Flash.OFF);
                         break;
                 }
                 switch (fCamera.getFlashSetting()) {

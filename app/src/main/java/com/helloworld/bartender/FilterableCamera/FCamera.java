@@ -445,8 +445,13 @@ public class FCamera implements LifecycleObserver {
                 //first stop the existing repeating request
                 mCaptureSession.stopRepeating();
 
+                mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                mPreviewRequestBuilder.addTarget(mPreviewSurface);
+
                 setAutoFlash(mPreviewRequestBuilder);
-                mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                mPreviewRequest = mPreviewRequestBuilder.build();
+
+                mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -474,7 +479,7 @@ public class FCamera implements LifecycleObserver {
         if (mCharacteristics != null) {
             final Rect sensorArraySize = mCharacteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
 
-            if (sensorArraySize != null && !mManualFocusEngaged) {
+            if (sensorArraySize != null && !mManualFocusEngaged && mFlashSetting == Flash.OFF) {
                 Log.d(TAG, "touchToFocus: " + event.getX() + ", " + event.getY());
                 Log.d(TAG, "touchToFocus: " + mFCameraPreview.getWidth() + ", " + mFCameraPreview.getHeight());
                 Log.d(TAG, "touchToFocus: " + sensorArraySize.width() + ", " + sensorArraySize.height());
@@ -544,7 +549,6 @@ public class FCamera implements LifecycleObserver {
                                     //resume repeating (preview surface will get frames), clear AF trigger
                                     mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE);
                                     mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-                                    setAutoFlash(mPreviewRequestBuilder);
                                     mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
                                 } catch (CameraAccessException e) {
                                     e.printStackTrace();
@@ -785,10 +789,7 @@ public class FCamera implements LifecycleObserver {
                 // Check if the flash is supported.
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 mFlashSupported = available == null ? false : available;
-                if (mFlashSupported)
-                    mFlashSetting = Flash.AUTO;
-                else
-                    mFlashSetting = Flash.OFF;
+                mFlashSetting = Flash.OFF;
 
                 mCameraId = cameraId;
                 mCharacteristics = characteristics;
@@ -1102,8 +1103,14 @@ public class FCamera implements LifecycleObserver {
                     mBackgroundHandler);
             // After this, the camera will go back to the normal state of preview.
             mState = STATE_PREVIEW;
-            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback,
-                    mBackgroundHandler);
+
+            //reset normal setting
+            mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mPreviewRequestBuilder.addTarget(mPreviewSurface);
+
+            setAutoFlash(mPreviewRequestBuilder);
+
+            mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
 
             if (mCallback != null){
                 Handler mainHandler = new Handler(mActivity.getMainLooper());

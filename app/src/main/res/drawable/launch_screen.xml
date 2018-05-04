@@ -7,8 +7,10 @@
     <!--144dp color version of app icon -->
     <item>
         <bitmap
-            android:src="@drawable/filter_icon_image"
+            android:src="@drawable/product_icon"
             android:gravity="center"/>
+
     </item>
+
 
 </layer-list>

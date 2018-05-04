@@ -30,6 +30,10 @@ import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
@@ -89,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
     private int priorDirection = 0;
 
     private String device_version;
+
+    private int counter=0;
+    private ShowcaseView showcaseView;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -356,7 +363,40 @@ public class MainActivity extends AppCompatActivity {
 
         //버전 체크
         checkVersion();
+
+
+        //onboarding showcase
+//        showcaseView = new ShowcaseView.Builder(this)
+//                .withNewStyleShowcase()
+//                .setTarget(new ViewTarget(R.id.filterListBtt,this))
+//                .setContentText("Sample Highight")
+//                .setOnClickListener(showcaseClickListener)
+//                .build();
+
     }
+
+    View.OnClickListener showcaseClickListener =new OnSingleClickListener() {
+        @Override
+        public void onSingleClick(View v) {
+            switch (counter){
+                case 0:
+                    mFilterListView.changeState();
+           //         showcaseView.setShowcase(new ViewTarget(R.id.endBtt,this),true);
+                    break;
+
+                case 1:
+                    break;
+
+                case 2:
+                    break;
+
+                case 3:
+                    break;
+            }
+
+            counter++;
+        }
+    };
 
     @Override
     protected void onResume() {

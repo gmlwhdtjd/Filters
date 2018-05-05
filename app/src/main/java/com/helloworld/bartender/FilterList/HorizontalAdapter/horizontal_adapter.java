@@ -176,11 +176,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
                     /*
                     * 만약 필터 종류를 업데이트 한다면 이곳에서 필터 종류를 분류 시켜줘야 합니다.
                     * */
-                    FCameraFilter newFilter = new RetroFilter(mContext, null);
-                    lastSelectedPosition = -1;
-                    ((MainActivity) mContext).setCameraFilter(newFilter);
-                    mEditView = ((MainActivity) mContext).findViewById(R.id.editView);
-                    mEditView.changeState();
+                  openEditViewForAdd();
                 }
             });
             holder.mEndBtn.setOnTouchListener(((MainActivity) mContext).OnTouchEffectListener);
@@ -271,5 +267,13 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     public void dismissPopup(){
         mCustomPopup.dismiss();
+    }
+
+    public void openEditViewForAdd(){
+        FCameraFilter newFilter = new RetroFilter(mContext, null);
+        lastSelectedPosition = -1;
+        ((MainActivity) mContext).setCameraFilter(newFilter);
+        mEditView = ((MainActivity) mContext).findViewById(R.id.editView);
+        mEditView.changeState();
     }
 }

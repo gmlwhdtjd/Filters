@@ -163,4 +163,12 @@ public class FilterListView extends CoordinatorLayout {
         return adapter;
     }
 
+    public View getFilterListBtt(){
+        return filterListBtt;
+    }
+
+    public RecyclerView getFilterList(){
+        return filterList;
+    }
+
 }

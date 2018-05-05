@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -51,6 +52,12 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.prefs.PreferencesManager;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.shape.ShapeType;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 
 //TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
@@ -94,8 +101,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String device_version;
 
-    private int counter=0;
-    private ShowcaseView showcaseView;
+    private static final String FIRST_INTRO = "intro1";
+    private static final String SECOND_INTRO = "intro2";
+    private static final String THIRD_INTRO = "intro3";
+    private static final String FORTH_INTRO = "intro4";
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -357,30 +367,13 @@ public class MainActivity extends AppCompatActivity {
 //                .setOnClickListener(showcaseClickListener)
 //                .build();
 
+        //디버그 용
+        new PreferencesManager(this.getApplicationContext()).resetAll();
+
+        showIntro(mFilterListView.getFilterListBtt(), FIRST_INTRO, "Touch arrow to open filter-list", Focus.ALL);
+
     }
 
-    View.OnClickListener showcaseClickListener =new OnSingleClickListener() {
-        @Override
-        public void onSingleClick(View v) {
-            switch (counter){
-                case 0:
-                    mFilterListView.changeState();
-           //         showcaseView.setShowcase(new ViewTarget(R.id.endBtt,this),true);
-                    break;
-
-                case 1:
-                    break;
-
-                case 2:
-                    break;
-
-                case 3:
-                    break;
-            }
-
-            counter++;
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -452,31 +445,28 @@ public class MainActivity extends AppCompatActivity {
 
             angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
-            if(z < 8.0 && z > -8.0) {
-                if(angleXY >= -30 && angleXY <= 30) {
+            if (z < 8.0 && z > -8.0) {
+                if (angleXY >= -30 && angleXY <= 30) {
                     direction = 0;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= 60 && angleXY <= 120) {
+                } else if (angleXY >= 60 && angleXY <= 120) {
                     direction = 3;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= -120 && angleXY <= -60) {
+                } else if (angleXY >= -120 && angleXY <= -60) {
                     direction = 1;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= 150 || angleXY <= -150) {
+                } else if (angleXY >= 150 || angleXY <= -150) {
                     direction = 2;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
@@ -694,4 +684,50 @@ public class MainActivity extends AppCompatActivity {
         cameraCaptureBtt.setClickable(!lock);
         editBtt.setClickable(!lock);
     }
+
+    private void showIntro(View view, String id, String text, Focus focusType) {
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(true)
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(focusType)
+                .setDelayMillis(0)
+                .setIdempotent(true)
+                .enableFadeAnimation(true)
+                .performClick(true)
+                .setInfoText(text)
+                .setTarget(view)
+                .setListener(materialIntroListener)
+                .setUsageId(id)
+                .show();
+    }
+
+    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+        @Override
+        public void onUserClicked(String id) {
+            switch (id) {
+                case FIRST_INTRO:
+                    mFilterListView.getFilterList().smoothScrollToPosition(mFilterListView.getHorizontalAdapter().getItemCount());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showIntro(mFilterListView.getFilterList().getChildAt(mFilterListView.getFilterList().getChildCount() - 1), SECOND_INTRO, "You can make your own filter by clicking plus button.", Focus.NORMAL);
+                        }
+                    }, 800);
+                    break;
+                case SECOND_INTRO:
+                    mFilterListView.getHorizontalAdapter().openEditViewForAdd();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showIntro(editView, THIRD_INTRO, "You can use multiple properties to make filter. If you click filter's name, you can change filter's name. Don't forget to save filter", Focus.NORMAL);
+                        }
+                    }, 800);
+                    break;
+                case THIRD_INTRO:
+                    break;
+                case FORTH_INTRO:
+                    break;
+            }
+        }
+    };
 }

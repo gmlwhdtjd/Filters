@@ -41,6 +41,7 @@ dependencies {
     compile group: 'org.jsoup', name: 'jsoup', version: '1.9.2'
     compile 'cn.pedant.sweetalert:library:1.3'
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 
+    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
+    compile 'com.github.badoualy:MaterialIntroView:e713b6c28a'
 }

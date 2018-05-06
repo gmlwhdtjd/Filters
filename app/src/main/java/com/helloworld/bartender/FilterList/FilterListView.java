@@ -3,17 +3,14 @@ package com.helloworld.bartender.FilterList;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +20,16 @@ import android.widget.ImageButton;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.ItemTouchHelperCallback;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
+
+import android.os.Handler;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.shape.ShapeType;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 
 /**
  * Created by huijonglee on 2018. 3. 5..
@@ -42,6 +46,8 @@ public class FilterListView extends CoordinatorLayout {
     private ImageButton filterListBtt;
     private horizontal_adapter adapter;
     private SnapHelper snapHelper;
+
+    private static final String FILTERLIST_FIRST_INTRO = "filterlist_first_intro";
 
     public FilterListView(Context context) {
         super(context);
@@ -105,7 +111,13 @@ public class FilterListView extends CoordinatorLayout {
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
                     ((Animatable) filterListBtt.getDrawable()).start();
-                    //     runLayoutAnimation(filterList);
+                    filterList.smoothScrollToPosition(adapter.getItemCount());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((MainActivity)getContext()).showIntro(filterList.getChildAt(filterList.getChildCount() - 1), FILTERLIST_FIRST_INTRO, "You can make your own filter by clicking plus button.", Focus.NORMAL,null, ShapeType.CIRCLE);
+                       }
+                    }, 300);
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     filterListBtt.setImageResource(R.drawable.ic_down_to_up);
                     filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
@@ -120,15 +132,6 @@ public class FilterListView extends CoordinatorLayout {
         });
     }
 
-    private void runLayoutAnimation(final RecyclerView recyclerView) {
-        final Context context = recyclerView.getContext();
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_filter_list_slide);
-
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
-    }
 
     public int getState() {
        return filterListBehavior.getState();
@@ -165,10 +168,6 @@ public class FilterListView extends CoordinatorLayout {
 
     public View getFilterListBtt(){
         return filterListBtt;
-    }
-
-    public RecyclerView getFilterList(){
-        return filterList;
     }
 
 }

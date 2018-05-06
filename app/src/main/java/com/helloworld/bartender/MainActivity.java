@@ -31,10 +31,6 @@ import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
@@ -52,6 +48,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import co.mobiwise.materialintro.MaterialIntroConfiguration;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
 import co.mobiwise.materialintro.prefs.PreferencesManager;
 import co.mobiwise.materialintro.shape.Focus;
@@ -101,10 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String device_version;
 
-    private static final String FIRST_INTRO = "intro1";
-    private static final String SECOND_INTRO = "intro2";
-    private static final String THIRD_INTRO = "intro3";
-    private static final String FORTH_INTRO = "intro4";
+    private static final String MAIN_FIRST_INTRO = "main_intro1";
+    private static final String MAIN_SECOND_INTRO = "main_intro2";
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -370,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
         //디버그 용
         new PreferencesManager(this.getApplicationContext()).resetAll();
 
-        showIntro(mFilterListView.getFilterListBtt(), FIRST_INTRO, "Touch arrow to open filter-list", Focus.ALL);
+        showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, "Touch arrow to open filter-list", Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 
     }
 
@@ -685,49 +680,36 @@ public class MainActivity extends AppCompatActivity {
         editBtt.setClickable(!lock);
     }
 
-    private void showIntro(View view, String id, String text, Focus focusType) {
-        new MaterialIntroView.Builder(this)
-                .enableDotAnimation(true)
+    //이곳에 리스너 파라미터 추가
+    public void showIntro(View view, final String id, String text, Focus focusType, final MaterialIntroListener materialIntroListener, ShapeType shape) {
+
+       MaterialIntroView materialIntroView = new MaterialIntroView.Builder(this)
+                .enableDotAnimation(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(focusType)
                 .setDelayMillis(0)
                 .setIdempotent(true)
                 .enableFadeAnimation(true)
-                .performClick(true)
+                .enableIcon(true)
+                .performClick(false)
                 .setInfoText(text)
                 .setTarget(view)
                 .setListener(materialIntroListener)
                 .setUsageId(id)
+                .setShape(shape)
                 .show();
+     
     }
 
     MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
         @Override
         public void onUserClicked(String id) {
-            switch (id) {
-                case FIRST_INTRO:
-                    mFilterListView.getFilterList().smoothScrollToPosition(mFilterListView.getHorizontalAdapter().getItemCount());
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showIntro(mFilterListView.getFilterList().getChildAt(mFilterListView.getFilterList().getChildCount() - 1), SECOND_INTRO, "You can make your own filter by clicking plus button.", Focus.NORMAL);
-                        }
-                    }, 800);
-                    break;
-                case SECOND_INTRO:
-                    mFilterListView.getHorizontalAdapter().openEditViewForAdd();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showIntro(editView, THIRD_INTRO, "You can use multiple properties to make filter. If you click filter's name, you can change filter's name. Don't forget to save filter", Focus.NORMAL);
-                        }
-                    }, 800);
-                    break;
-                case THIRD_INTRO:
-                    break;
-                case FORTH_INTRO:
-                    break;
+
+            if(id.equals(MAIN_FIRST_INTRO)) {
+                showIntro(editBtt, MAIN_SECOND_INTRO, "You can edit selected filter by clicking this button", Focus.NORMAL, this,ShapeType.CIRCLE);
             }
+
         }
+
     };
 }

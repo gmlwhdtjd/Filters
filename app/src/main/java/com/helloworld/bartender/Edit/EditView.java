@@ -29,8 +29,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.logging.Handler;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.ShapeType;
 
 /**
  * Created by huijonglee on 2018. 2. 27..
@@ -46,11 +50,20 @@ public class EditView extends CoordinatorLayout {
     DatabaseHelper dbHelper;
 
     private TextView editNameView;
+    private ViewPager viewPager;
+    private SmartTabLayout viewPagerTab;
 
     private OnSaveListener mOnSaveListener;
     private Queue<Integer> backupValues;
 
+
     private boolean filterListViewWasOpen = false;
+
+    private final static String EDIT_FIRST_INTRO ="firstIntro";
+    private final static String EDIT_SECOND_INTRO ="secondIntro";
+    private final static String EDIT_THIRD_INTRO ="thirdIntro";
+    private final static String EDIT_FORTH_INTRO ="forthIntro";
+
 
     public EditView(Context context) {
         super(context);
@@ -180,7 +193,16 @@ public class EditView extends CoordinatorLayout {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
                 }
+
+                //intro
+                new android.os.Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        ((MainActivity)getContext()).showIntro(editNameView,EDIT_FIRST_INTRO,"You can change filter's name by clicking this area", Focus.NORMAL,materialIntroListener, ShapeType.CIRCLE);
+                    }
+                },400);
             }
+
         } else {
             isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -201,8 +223,8 @@ public class EditView extends CoordinatorLayout {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
         namedSeekBars = new LinkedList<>();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
@@ -319,5 +341,23 @@ public class EditView extends CoordinatorLayout {
             }
         }
     }
+
+    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+        @Override
+        public void onUserClicked(String id) {
+            switch (id){
+                case EDIT_FIRST_INTRO:
+                    ((MainActivity)getContext()).showIntro(viewPager,EDIT_SECOND_INTRO,"You can change filter's attribute and make various filter", Focus.NORMAL,this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_SECOND_INTRO:
+                    ((MainActivity)getContext()).showIntro(viewPagerTab,EDIT_THIRD_INTRO,"You can see more properties for beautiful camera filter", Focus.NORMAL,this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_THIRD_INTRO:
+                    ((MainActivity)getContext()).showIntro(findViewById(R.id.editSaveBtt),EDIT_FORTH_INTRO,"Don't forget to save your beautiful filter", Focus.NORMAL,this, ShapeType.CIRCLE);
+                    break;
+
+            }
+        }
+    };
 
 }

@@ -13,10 +13,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItem;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItemAdapter;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItems;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
@@ -167,15 +171,17 @@ public class EditView extends CoordinatorLayout {
                 changeState();
 
                 //update
-                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
-                int Id = dbHelper.saveFilter(mFilter);
-                if (mFilter.getId() == null) {
-                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
-                } else {
-                    filterListView.getHorizontalAdapter().updateItem(mFilter);
+                if (!(mFilter instanceof OriginalFilter)) {
+                    FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                    int Id = dbHelper.saveFilter(mFilter);
+                    if (mFilter.getId() == null) {
+                        filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
+                    } else {
+                        filterListView.getHorizontalAdapter().updateItem(mFilter);
+                    }
+                    if (mOnSaveListener != null)
+                        mOnSaveListener.onSaved();
                 }
-                if (mOnSaveListener != null)
-                    mOnSaveListener.onSaved();
             }
         });
     }
@@ -230,13 +236,14 @@ public class EditView extends CoordinatorLayout {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
+        backupName = mFilter.getName();
+
         namedSeekBars = new LinkedList<>();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
         CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
             editNameView.setClickable(false);
-            backupName = mFilter.getName();
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -344,6 +351,12 @@ public class EditView extends CoordinatorLayout {
                 mFilter.setName(backupName);
                 i++;
             }
+        }
+
+        //id가 null인 필터는 임시 필터
+        if(mFilter.getId()==null){
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
         }
     }
 

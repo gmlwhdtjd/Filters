@@ -25,11 +25,11 @@ import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.logging.Handler;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
@@ -55,14 +55,15 @@ public class EditView extends CoordinatorLayout {
 
     private OnSaveListener mOnSaveListener;
     private Queue<Integer> backupValues;
+    private String backupName;
 
 
     private boolean filterListViewWasOpen = false;
 
-    private final static String EDIT_FIRST_INTRO ="firstIntro";
-    private final static String EDIT_SECOND_INTRO ="secondIntro";
-    private final static String EDIT_THIRD_INTRO ="thirdIntro";
-    private final static String EDIT_FORTH_INTRO ="forthIntro";
+    private final static String EDIT_FIRST_INTRO = "firstIntro";
+    private final static String EDIT_SECOND_INTRO = "secondIntro";
+    private final static String EDIT_THIRD_INTRO = "thirdIntro";
+    private final static String EDIT_FORTH_INTRO = "forthIntro";
 
 
     public EditView(Context context) {
@@ -86,7 +87,11 @@ public class EditView extends CoordinatorLayout {
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
-        dbHelper = new DatabaseHelper(getContext());
+        try {
+            dbHelper = new DatabaseHelper(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         isOpen = false;
 
         // TODO : 변수 세팅
@@ -126,15 +131,15 @@ public class EditView extends CoordinatorLayout {
 
                 float dp = getResources().getDisplayMetrics().density;
                 SweetAlertDialog dialog = new SweetAlertDialog(getContext(), SweetAlertDialog.NORMAL_TYPE)
-                        .setTitleText("Change Filter Name")
-                        .setConfirmText("Confirm")
-                        .setCancelText("Cancel")
+                        .setTitleText(getContext().getString(R.string.edit_name_popup_title))
+                        .setConfirmText(getContext().getString(R.string.edit_name_popup_confirm))
+                        .setCancelText(getContext().getString(R.string.edit_name_popup_cancel))
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                if(input.getText().toString().replace(" ","").equals("")){
+                                if (input.getText().toString().replace(" ", "").equals("")) {
                                     sweetAlertDialog.dismissWithAnimation();
-                                }else {
+                                } else {
                                     mFilter.setName(input.getText().toString());
                                     editNameView.setText(mFilter.getName());
                                     sweetAlertDialog.dismissWithAnimation();
@@ -185,8 +190,7 @@ public class EditView extends CoordinatorLayout {
             if (filterListView.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 filterListView.changeState();
                 filterListViewWasOpen = true;
-            }
-            else
+            } else
                 filterListViewWasOpen = false;
 
             if (mFilter instanceof RetroFilter) {
@@ -195,12 +199,12 @@ public class EditView extends CoordinatorLayout {
                 }
 
                 //intro
-                new android.os.Handler().postDelayed(new Runnable(){
+                new android.os.Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ((MainActivity)getContext()).showIntro(editNameView,EDIT_FIRST_INTRO,"You can change filter's name by clicking this area", Focus.NORMAL,materialIntroListener, ShapeType.CIRCLE);
+                        ((MainActivity) getContext()).showIntro(editNameView, EDIT_FIRST_INTRO, getContext().getString(R.string.edit_first), Focus.NORMAL, materialIntroListener, ShapeType.CIRCLE);
                     }
-                },400);
+                }, 400);
             }
 
         } else {
@@ -232,7 +236,7 @@ public class EditView extends CoordinatorLayout {
 
         if (mFilter instanceof OriginalFilter) {
             editNameView.setClickable(false);
-
+            backupName = mFilter.getName();
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -337,6 +341,7 @@ public class EditView extends CoordinatorLayout {
             for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                 mFilter.setValueWithType(valueType, backupValues.poll());
                 namedSeekBars.get(i).setValue(mFilter.getValueWithType(valueType));
+                mFilter.setName(backupName);
                 i++;
             }
         }
@@ -345,15 +350,15 @@ public class EditView extends CoordinatorLayout {
     MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
         @Override
         public void onUserClicked(String id) {
-            switch (id){
+            switch (id) {
                 case EDIT_FIRST_INTRO:
-                    ((MainActivity)getContext()).showIntro(viewPager,EDIT_SECOND_INTRO,"You can change filter's attribute and make various filter", Focus.NORMAL,this, ShapeType.RECTANGLE);
+                    ((MainActivity) getContext()).showIntro(viewPager, EDIT_SECOND_INTRO, getContext().getString(R.string.edit_second), Focus.NORMAL, this, ShapeType.RECTANGLE);
                     break;
                 case EDIT_SECOND_INTRO:
-                    ((MainActivity)getContext()).showIntro(viewPagerTab,EDIT_THIRD_INTRO,"You can see more properties for beautiful camera filter", Focus.NORMAL,this, ShapeType.RECTANGLE);
+                    ((MainActivity) getContext()).showIntro(viewPagerTab, EDIT_THIRD_INTRO, getContext().getString(R.string.edit_third), Focus.NORMAL, this, ShapeType.RECTANGLE);
                     break;
                 case EDIT_THIRD_INTRO:
-                    ((MainActivity)getContext()).showIntro(findViewById(R.id.editSaveBtt),EDIT_FORTH_INTRO,"Don't forget to save your beautiful filter", Focus.NORMAL,this, ShapeType.CIRCLE);
+                    ((MainActivity) getContext()).showIntro(findViewById(R.id.editSaveBtt), EDIT_FORTH_INTRO, getContext().getString(R.string.edit_forth), Focus.NORMAL, this, ShapeType.CIRCLE);
                     break;
 
             }

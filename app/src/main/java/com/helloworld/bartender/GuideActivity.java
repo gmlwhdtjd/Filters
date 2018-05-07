@@ -13,6 +13,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.PreferenceSetting.PrefManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
@@ -46,6 +48,8 @@ public class GuideActivity extends AppCompatActivity {
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
     private ImageView guide1;
+
+    private int count =0;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -70,8 +74,6 @@ public class GuideActivity extends AppCompatActivity {
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             checkPermission();
-        }else {
-            setDefaultSetting(this);
         }
 
         // Making notification bar transparent
@@ -129,6 +131,13 @@ public class GuideActivity extends AppCompatActivity {
                 }
             }
         });
+//
+//        //기본 세팅이 안되어 있다면
+//        if(!prefManager.isDefaultFilterSet()){
+//            setDefaultSetting(this);
+//            prefManager.setDefaultFilterSet(true);
+//        }
+
     }
 
     private void addBottomDots(int currentPage) {
@@ -249,13 +258,13 @@ public class GuideActivity extends AppCompatActivity {
     }
 
     private void setDefaultSetting(Context context){
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        DatabaseHelper dbHelper = null;
+        try {
+            dbHelper = new DatabaseHelper(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.OriginalFilter_Name)),0);
-//        dbHelper.saveFilter(new RetroFilter(context,null,"sample2",255, 255, 255, 0, 0, 0, 50,50,50,50,50),1);
-//        dbHelper.saveFilter(new RetroFilter(context,null,"sample3",255, 255, 255, 0, 0, 0, 50,50,50,50,50),2);
-//        dbHelper.saveFilter(new RetroFilter(context,null,"sample4",255, 255, 255, 0, 0, 0, 50,50,50,50,50),3);
-//        dbHelper.saveFilter(new RetroFilter(context,null,"sample5",255, 255, 255, 0, 0, 0, 50,50,50,50,50),4);
-
     }
 
 

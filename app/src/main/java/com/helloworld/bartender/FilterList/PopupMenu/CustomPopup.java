@@ -26,6 +26,8 @@ import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
+import java.io.IOException;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
@@ -66,7 +68,11 @@ public class CustomPopup {
         mDownImageView = (ImageView) mView.findViewById(R.id.arrow_down);
         mPopupSlots = (LinearLayout) mView.findViewById(R.id.popup_slots);
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        dbHelper = new DatabaseHelper(mContext);
+        try {
+            dbHelper = new DatabaseHelper(mContext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         PopupOption option1 = new PopupOption(0, mContext.getString(R.string.delete_filter));
         PopupOption option2 = new PopupOption(1, mContext.getString(R.string.duplicate_filter));
@@ -85,16 +91,16 @@ public class CustomPopup {
                 switch (itemId) {
                     case 0:
                         final SweetAlertDialog deleteDialog = new SweetAlertDialog(context,SweetAlertDialog.WARNING_TYPE);
-                                deleteDialog.setTitleText("Are you sure?")
-                                .setContentText("Won't be able to recover this filter")
-                                .setConfirmText("Yes, delete it!")
-                                .setCancelText("No, cancel")
+                                deleteDialog.setTitleText(context.getString(R.string.delete_popup_title))
+                                .setContentText(context.getString(R.string.delete_popup_content))
+                                .setConfirmText(context.getString(R.string.delete_popup_confirm))
+                                .setCancelText(context.getString(R.string.delete_popup_cancel))
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        deleteDialog.setTitleText("Deleted!")
-                                                .setContentText("Your filter has been deleted!")
-                                                .setConfirmText("OK")
+                                        deleteDialog.setTitleText(context.getString(R.string.deleted_popup_title))
+                                                .setContentText(context.getString(R.string.deleted_popup_content,mSelectedFilter.getName()))
+                                                .setConfirmText(context.getString(R.string.deleted_popup_confirm))
                                                 .showCancelButton(false)
                                                 .setConfirmClickListener(null)
                                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);

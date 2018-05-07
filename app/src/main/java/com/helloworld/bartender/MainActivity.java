@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -48,15 +47,12 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import co.mobiwise.materialintro.MaterialIntroConfiguration;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
 import co.mobiwise.materialintro.prefs.PreferencesManager;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.shape.ShapeType;
 import co.mobiwise.materialintro.view.MaterialIntroView;
-
-//TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
 
 public class MainActivity extends AppCompatActivity {
 
@@ -365,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
         //디버그 용
         new PreferencesManager(this.getApplicationContext()).resetAll();
 
-        showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, "Touch arrow to open filter-list", Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
+        showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, getString(R.string.main_first), Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 
     }
 
@@ -513,9 +509,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //앱 종료를 묻는 팝업
             SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
-                    .setCancelText("Cancel")
-                    .setConfirmText("Quit")
-                    .setContentText("Do you want to quit?");
+                    .setCancelText(getString(R.string.exit_popup_cancel))
+                    .setConfirmText(getString(R.string.exit_popup_quit))
+                    .setContentText(getString(R.string.exit_popup_content));
             finishDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                 @Override
                 public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -647,11 +643,11 @@ public class MainActivity extends AppCompatActivity {
         if (store_version.compareTo(device_version) > 0) {
 
             new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("New Update")
+                    .setTitleText(getString(R.string.update_popup_title_new))
                     .setContentText(getString(R.string.update_message))
                     .showCancelButton(true)
-                    .setCancelText("Not Now")
-                    .setConfirmText("Update Now")
+                    .setCancelText(getString(R.string.update_popup_cancel))
+                    .setConfirmText(getString(R.string.update_popup_confirm))
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sDialog) {
@@ -682,20 +678,20 @@ public class MainActivity extends AppCompatActivity {
 
     //이곳에 리스너 파라미터 추가
     public void showIntro(View view, final String id, String text, Focus focusType, final MaterialIntroListener materialIntroListener, ShapeType shape) {
-
-       MaterialIntroView materialIntroView = new MaterialIntroView.Builder(this)
+        new MaterialIntroView.Builder(this)
                 .enableDotAnimation(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(focusType)
                 .setDelayMillis(0)
                 .setIdempotent(true)
-                .enableFadeAnimation(true)
+                .enableFadeAnimation(false)
                 .enableIcon(true)
                 .performClick(false)
                 .setInfoText(text)
                 .setTarget(view)
                 .setListener(materialIntroListener)
                 .setUsageId(id)
+                .dismissOnTouch(true)
                 .setShape(shape)
                 .show();
      
@@ -706,7 +702,7 @@ public class MainActivity extends AppCompatActivity {
         public void onUserClicked(String id) {
 
             if(id.equals(MAIN_FIRST_INTRO)) {
-                showIntro(editBtt, MAIN_SECOND_INTRO, "You can edit selected filter by clicking this button", Focus.NORMAL, this,ShapeType.CIRCLE);
+                showIntro(editBtt, MAIN_SECOND_INTRO, getString(R.string.main_second), Focus.NORMAL, this,ShapeType.CIRCLE);
             }
 
         }

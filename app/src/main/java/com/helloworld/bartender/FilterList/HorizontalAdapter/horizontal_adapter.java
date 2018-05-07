@@ -25,6 +25,7 @@ import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.helloworld.bartender.FilterList.FilterRadioButton.FilterRadioButton;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +81,12 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     @Override
     public boolean onItemMoveFinished(int fromPosition, int toPosition) {
-        DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+        DatabaseHelper dbHelper = null;
+        try {
+            dbHelper = new DatabaseHelper(mContext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (fromPosition < mFilterList.size() && toPosition < mFilterList.size() && toPosition != 0 && fromPosition != 0) {
             dbHelper.changePositionByDrag(fromPosition, toPosition);
         } else {
@@ -168,7 +174,12 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
 
     public void onBindViewHolder(final horizontalViewHolder holder, int position) {
-        final DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+        DatabaseHelper dbHelper = null;
+        try {
+            dbHelper = new DatabaseHelper(mContext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (holder.getAdapterPosition() == mFilterList.size()) {
             holder.mEndBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">Bartender</string>
+    <string name="app_name" translatable="false">Bartender</string>
 
-    <string name="picture">Picture</string>
-    <string name="description_info">Info</string>
-    <string name="request_permission">This sample needs camera permission.</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="picture" translatable="false">Picture</string>
+    <string name="description_info" translatable="false">Info</string>
+    <string name="request_permission" translatable="false">This sample needs camera permission.</string>
+    <string name="camera_error" translatable="false">This device doesn\'t support Camera2 API.</string>
 
-    <string name="tedpermission_setting">Setting</string>
-    <string name="tedpermission_close">Close</string>
-    <string name="tedpermission_confirm">Confirm</string>
-    <string name="permission_denied">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
+    <string name="tedpermission_setting" >Setting</string>
+    <string name="tedpermission_close" >Close</string>
+    <string name="tedpermission_confirm" >Confirm</string>
+    <string name="permission_denied" translatable="false">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
 
-    <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
+    <string name="lockable_bottom_sheet_behavior" translatable="false">com.helloworld.bartender.LockableBottomSheetBehavior</string>
 
     <!--Original Filter-->
     <string name="OriginalFilter_Name">Original</string>
@@ -38,43 +38,37 @@
     <string name="RetroFilter_NOISE_INTENSITY">Noise</string>
 
     <!-- Strings related to Settings -->
+    <string name="summary_support">Give us some feedback about our app.</string>
     <string name="title_activity_setting">Settings</string>
-    <string name="pref_header_about">About</string>
-    <string name="summary_about">About Summary</string>
-    <string name="app_version">1.0</string>
-    <string name="key_app_version">key_app_version</string>
-    <string name="summary_support">support summary</string>
+    <string name="pref_header_about" translatable="false">About</string>
+    <string name="app_version" translatable="false">1.0</string>
+    <string name="key_app_version" translatable="false">key_app_version</string>
     <string name="title_send_feedback">Send Feedback</string>
     <string name="title_faq">FAQ</string>
     <string name="summary_faq">question frequently asked</string>
     <string name="title_version">Version</string>
-    <string name="title_vibrate">Vibrate</string>
-    <string name="choose_email_client">Choose email client</string>
-    <string name="summary_vibrate">Vibrate on long press</string>
-    <string name="key_vibrate">key_vibrate</string>
-    <string name="key_send_feedback">key_send_feedback</string>
-    <string name="key_review">key_review</string>
+    <string name="title_vibrate" translatable="false">Vibrate</string>
+    <string name="choose_email_client" translatable="false">Choose email client</string>
+    <string name="summary_vibrate" translatable="false">Vibrate on long press</string>
+    <string name="key_send_feedback" translatable="false">key_send_feedback</string>
+    <string name="key_review" translatable="false">key_review</string>
     <string name="title_review">Review</string>
     <string name="summary_review">Write a review and rate</string>
-    <string name="default_gallery_storage">My Videos</string>
-    <string name="key_gallery_name">key_gallery_name</string>
-    <string name="title_gallery_storage">Default Storage</string>
-    <string name="key_faq">key_faq</string>
-    <string name="key_share">key_share</string>
+    <string name="default_gallery_storage" translatable="false">My Videos</string>
+    <string name="key_gallery_name" translatable="false">key_gallery_name</string>
+    <string name="title_gallery_storage">Storage Path</string>
+    <string name="key_faq" translatable="false">key_faq</string>
+    <string name="key_share" translatable="false">key_share</string>
     <string name="title_share">Share</string>
     <string name="summary_share">Share this app with your friends!</string>
-    <string name="key_terms">key_terms</string>
+    <string name="key_terms" translatable="false">key_terms</string>
     <string name="title_terms">Terms of Services</string>
-    <string name="key_open_license">key_open_license</string>
+    <string name="key_open_license" translatable="false">key_open_license</string>
     <string name="title_open_license">Open License</string>
-    <string name="key_privacy">key_privacy</string>
+    <string name="key_privacy" translatable="false">key_privacy</string>
     <string name="title_privacy">Privacy Policy</string>
-    <string name="url_faq">url</string>
-    <string name="url_privacy">url</string>
-    <string name="url_open_license"> open_license://policy</string>
-    <string name="url_terms">term url</string>
 
-    <string name="open_license_text">
+    <string name="open_license_text" translatable="false">
         Copyright [2018] [Team inha]  \n
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -239,7 +233,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.\n
     </string>
-    <string name="terms_service_text">
+    <string name="terms_service_text" translatable="false">
          Thank you for choosing App of Team Bartender3\n
         These Terms of Service is an agreement between you and Team Bartender3, regarding your use of 3Bartender\'s services. By using our services, you agree to the following terms
         \n\n
@@ -280,16 +274,42 @@ limitations under the License.\n
 Team Bartender3 respects others’ intellectual property rights, and hopes that our users will respect our intellectual property as well. We act as necessary in response to allegations of infringement of such rights, and if you feel that we have used your content in a way that violates copyright, please let us know by contacting us at TeamBartender3@gmail.com. Furthermore, if you witness a third party entity infringing on our copyright, please let us know by contacting us at TeamBartender3@gmail.com. Please provide links or screenshots if possible.
     </string>
 
-    <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>
-    <string name="title_new_update">This is Newest Version</string>
-
     <!-- Strings related to Popup -->
     <string name="delete_filter">Delete</string>
     <string name="duplicate_filter">Duplicate</string>
     <string name="share_filter">Share</string>
-    <string name="gallery_pref">gallery_shared_pref</string>
+    <string name="gallery_pref" translatable="false">gallery_shared_pref</string>
     <string name="permission_page_title">Required Permissions</string>
     <string name="camera_permission_summary">Permissions for taking photos</string>
     <string name="storage_permission_summary">Permissions required for saving and managing photos</string>
 
+    <!--Strings related to Alert Popup-->
+    <string name="exit_popup_cancel">Cancel</string>
+    <string name="exit_popup_quit">Quit</string>
+    <string name="exit_popup_content">Do you want to quit?</string>
+    <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>
+    <string name="update_popup_title">This is Newest Version</string>
+    <string name="update_popup_title_new">New Update</string>
+    <string name="update_popup_cancel">Not Now</string>
+    <string name="update_popup_confirm">Update Now</string>
+    <string name="delete_popup_title">Are you sure?</string>
+    <string name="delete_popup_confirm">Yes, delete it!</string>
+    <string name="delete_popup_content">Won\'t be able to recover this filter</string>
+    <string name="delete_popup_cancel">No, cancel</string>
+    <string name="deleted_popup_title">Deleted!</string>
+    <string name="deleted_popup_confirm">OK</string>
+    <string name="deleted_popup_content">Your filter %1$s has been deleted!</string>
+    <string name="edit_name_popup_title">Change Filter\'s Name</string>
+    <string name="edit_name_popup_confirm">Confirm</string>
+    <string name="edit_name_popup_cancel">Cancel</string>
+    
+    
+    <!-- Strings related to Material Intro-->
+    <string name="main_first">Touch arrow to open filter-list</string>
+    <string name="main_second">You can edit selected filter by clicking this button</string>
+    <string name="filterList_first">You can make your own filter by clicking plus button</string>
+    <string name="edit_first">You can change filter\'s name by clicking this area</string>
+    <string name="edit_second">You can change filter\'s attribute and make various filter</string>
+    <string name="edit_third">You can see more properties for beautiful camera filter</string>
+    <string name="edit_forth">Don\'t forget to save your beautiful filter!</string>
 </resources>

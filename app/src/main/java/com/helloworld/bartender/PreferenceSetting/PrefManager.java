@@ -22,7 +22,6 @@ public class PrefManager {
 
     private static final String IS_FIRST_IN_FILTERLIST ="isFirstInFilterList";
 
-    private static final String IS_DEFAULT_FILTER_SET = "IsDefaultFilterSet";
 
 
     public PrefManager(Context context) {
@@ -38,16 +37,6 @@ public class PrefManager {
 
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
-    }
-
-
-    public void setDefaultFilterSet(boolean isSet){
-        editor.putBoolean(IS_DEFAULT_FILTER_SET,isSet);
-        editor.commit();
-    }
-
-    public boolean isDefaultFilterSet(){
-        return pref.getBoolean(IS_DEFAULT_FILTER_SET,false);
     }
 
     public void setIsFirstInFilterlist(boolean isFirst){

@@ -357,6 +357,7 @@ public class EditView extends CoordinatorLayout {
         if(mFilter.getId()==null){
             FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
             filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+            filterListView.getFilterList().smoothScrollToPosition(0);
         }
     }
 

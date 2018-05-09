@@ -257,16 +257,15 @@ public class GuideActivity extends AppCompatActivity {
         }
     }
 
-    private void setDefaultSetting(Context context){
-        DatabaseHelper dbHelper = null;
-        try {
-            dbHelper = new DatabaseHelper(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.OriginalFilter_Name)),0);
-    }
-
+//    private void setDefaultSetting(Context context){
+//        DatabaseHelper dbHelper = null;
+//        try {
+//            dbHelper = new DatabaseHelper(this);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.OriginalFilter_Name)),0);
+//    }
 
     private void checkPermission(){
         //Permission Check

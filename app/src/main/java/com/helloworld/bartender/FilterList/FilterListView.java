@@ -122,8 +122,8 @@ public class FilterListView extends CoordinatorLayout {
                     filterListBtt.setImageResource(R.drawable.ic_up_to_down);
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
                     ((Animatable) filterListBtt.getDrawable()).start();
-//
-//                    if(prefManager.getIsFirstInFilterlist()) {
+
+                    if(prefManager.getIsFirstInFilterlist()) {
                         filterList.smoothScrollToPosition(adapter.getItemCount());
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -131,7 +131,8 @@ public class FilterListView extends CoordinatorLayout {
                                 ((MainActivity) getContext()).showIntro(filterList.getChildAt(filterList.getChildCount() - 1), FILTERLIST_FIRST_INTRO, getContext().getString(R.string.filterList_first), Focus.NORMAL, null, ShapeType.CIRCLE);
                             }
                         }, 500);
-//                    }
+                        prefManager.setIsFirstInFilterlist(false);
+                    }
                 } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     filterListBtt.setImageResource(R.drawable.ic_down_to_up);
                     filterListBtt.setBackgroundResource(R.drawable.ic_up_shadow);
@@ -178,6 +179,7 @@ public class FilterListView extends CoordinatorLayout {
         return filterListBtt;
     }
 
+    public RecyclerView getFilterList(){return filterList;}
 
     public class SpeedyLinearLayoutManager extends LinearLayoutManager {
 

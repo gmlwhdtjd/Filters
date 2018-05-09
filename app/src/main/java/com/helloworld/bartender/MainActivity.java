@@ -682,16 +682,16 @@ public class MainActivity extends AppCompatActivity {
                 .enableDotAnimation(false)
                 .setFocusGravity(FocusGravity.CENTER)
                 .setFocusType(focusType)
-                .setDelayMillis(0)
+                .setDelayMillis(100)
                 .setIdempotent(true)
-                .enableFadeAnimation(false)
+                .enableFadeAnimation(true)
                 .enableIcon(true)
                 .performClick(false)
                 .setInfoText(text)
                 .setTarget(view)
+                .enableDotAnimation(true)
                 .setListener(materialIntroListener)
                 .setUsageId(id)
-                .dismissOnTouch(true)
                 .setShape(shape)
                 .show();
      
@@ -702,7 +702,7 @@ public class MainActivity extends AppCompatActivity {
         public void onUserClicked(String id) {
 
             if(id.equals(MAIN_FIRST_INTRO)) {
-                showIntro(editBtt, MAIN_SECOND_INTRO, getString(R.string.main_second), Focus.NORMAL, this,ShapeType.CIRCLE);
+                showIntro(editBtt, MAIN_SECOND_INTRO, getString(R.string.main_second), Focus.NORMAL, this, ShapeType.CIRCLE);
             }
 
         }

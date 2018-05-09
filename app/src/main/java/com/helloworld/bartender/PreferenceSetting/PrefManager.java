@@ -45,7 +45,7 @@ public class PrefManager {
     }
 
     public boolean getIsFirstInFilterlist(){
-        return pref.getBoolean(IS_FIRST_TIME_LAUNCH,true);
+        return pref.getBoolean(IS_FIRST_IN_FILTERLIST,true);
     }
 
 }

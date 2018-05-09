@@ -123,6 +123,7 @@ public class FilterListView extends CoordinatorLayout {
                     filterListBtt.setBackgroundResource(R.drawable.ic_down_shadow);
                     ((Animatable) filterListBtt.getDrawable()).start();
 
+                    prefManager = new PrefManager(getContext());
                     if(prefManager.getIsFirstInFilterlist()) {
                         filterList.smoothScrollToPosition(adapter.getItemCount());
                         new Handler().postDelayed(new Runnable() {

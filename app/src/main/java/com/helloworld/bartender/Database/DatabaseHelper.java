@@ -77,7 +77,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } catch (IOException e) {
                 throw new Error("Error copying database");
             }
+
+            localizeFilterName();
         }
+    }
+
+    private void localizeFilterName(){
+        String[] filterNames =  mContext.getResources().getStringArray(R.array.default_filter_name_array);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        for(int id=0; id<filterNames.length;id++){
+            String query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_NAME + "='"+filterNames[id] +"' WHERE " + COLUMN_ID + "=" + String.valueOf(id);
+            db.execSQL(query);
+        }
+        db.close();
+
     }
 
     private boolean checkDataBase() {
@@ -301,7 +315,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int i = 0;
             do {
                 String type = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_TYPE));
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
@@ -324,10 +337,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     default:
                         break;
                 }
-                i++;
             } while (cursor.moveToNext());
-            Log.d("x", String.valueOf(i) + "repeated this");
-
         }
         db.close();
         return filterLinkedList;

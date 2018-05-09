@@ -50,7 +50,7 @@ public class AnimationFactory {
 
             }
         });
-        if(!isAnimationPlaying) {
+        if (!isAnimationPlaying) {
             objectAnimator.start();
         }
     }
@@ -90,7 +90,7 @@ public class AnimationFactory {
 
             }
         });
-        if(!isAnimationPlaying) {
+        if (!isAnimationPlaying) {
             objectAnimator.start();
         }
     }
@@ -99,17 +99,22 @@ public class AnimationFactory {
 
         AnimatorSet animatorSet = new AnimatorSet();
 
-        ValueAnimator scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0.6f);
+        ValueAnimator scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0.9f);
         scaleX.setRepeatCount(ValueAnimator.INFINITE);
         scaleX.setRepeatMode(ValueAnimator.REVERSE);
-        scaleX.setDuration(1000);
+        scaleX.setDuration(800);
 
-        ValueAnimator scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.6f);
+        ValueAnimator scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.9f);
         scaleY.setRepeatCount(ValueAnimator.INFINITE);
         scaleY.setRepeatMode(ValueAnimator.REVERSE);
-        scaleY.setDuration(1000);
+        scaleY.setDuration(800);
 
-        animatorSet.playTogether(scaleX, scaleY);
+        ValueAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.8f);
+        alpha.setDuration(800);
+        alpha.setRepeatCount(ValueAnimator.INFINITE);
+        alpha.setRepeatMode(ValueAnimator.REVERSE);
+
+        animatorSet.playTogether(scaleX, scaleY, alpha);
         animatorSet.start();
     }
 

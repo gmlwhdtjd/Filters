@@ -20,6 +20,17 @@
         Please, Select a different filter. :)
     </string>
 
+    <string-array name="default_filter_name_array">
+        <item>Original</item>
+        <item>Cherry</item>
+        <item>Forest</item>
+        <item>Yellow</item>
+        <item>GrayScale</item>
+        <item>Long ago</item>
+        <item>Food</item>
+        <item>Dreamy</item>
+    </string-array>
+
     <!--Retro Filter-->
     <string name="RetroFilter_Page_1">Color</string>
     <string name="RetroFilter_Page_2">Light</string>

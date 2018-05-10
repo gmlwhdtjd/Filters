@@ -27,6 +27,10 @@ public class MaterialIntroConfiguration {
 
     private boolean isImageViewEnabled;
 
+
+
+    private boolean dismissOnBackPress;
+
     public MaterialIntroConfiguration() {
         maskColor = Constants.DEFAULT_MASK_COLOR;
         delayMillis = Constants.DEFAULT_DELAY_MILLIS;
@@ -38,6 +42,15 @@ public class MaterialIntroConfiguration {
         dismissOnTouch = false;
         isDotViewEnabled = false;
         isImageViewEnabled = true;
+        dismissOnBackPress =false;
+    }
+
+    public boolean isDismissOnBackPress() {
+        return dismissOnBackPress;
+    }
+
+    public void setDismissOnBackPress(boolean dismissOnBackPress) {
+        this.dismissOnBackPress = dismissOnBackPress;
     }
 
     public int getMaskColor() {

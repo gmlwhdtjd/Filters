@@ -693,6 +693,7 @@ public class MainActivity extends AppCompatActivity {
                 .setListener(materialIntroListener)
                 .setUsageId(id)
                 .setShape(shape)
+                .dismissOnBackPress(true)
                 .show();
      
     }

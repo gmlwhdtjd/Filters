@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +23,8 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.security.Key;
 
 import co.mobiwise.materialintro.MaterialIntroConfiguration;
 import co.mobiwise.materialintro.R;
@@ -220,6 +223,8 @@ public class MaterialIntroView extends RelativeLayout {
      */
     private boolean usesCustomShape = false;
 
+    private boolean dismissOnBackPress;
+
     public MaterialIntroView(Context context) {
         super(context);
         init(context);
@@ -265,6 +270,7 @@ public class MaterialIntroView extends RelativeLayout {
         isPerformClick = false;
         isImageViewEnabled = true;
         isIdempotent = false;
+        dismissOnBackPress =false;
 
         /**
          * initialize objects
@@ -419,6 +425,9 @@ public class MaterialIntroView extends RelativeLayout {
                     });
                 else
                     setVisibility(VISIBLE);
+                if(dismissOnBackPress){
+                    requestFocus();
+                }
             }
         }, delayMillis);
 
@@ -573,6 +582,10 @@ public class MaterialIntroView extends RelativeLayout {
         this.dismissOnTouch = dismissOnTouch;
     }
 
+    private void setDismissOnBackPress(boolean dismissOnBackPress){
+        this.dismissOnBackPress = dismissOnBackPress;
+    }
+
     private void setFocusGravity(FocusGravity focusGravity) {
         this.focusGravity = focusGravity;
     }
@@ -606,6 +619,11 @@ public class MaterialIntroView extends RelativeLayout {
         this.isDotViewEnabled = isDotViewEnabled;
     }
 
+    private void enableDismissOnBackPress(){
+        setFocusableInTouchMode(true);
+        setFocusable(true);
+    }
+
     public void setConfiguration(MaterialIntroConfiguration configuration) {
 
         if (configuration != null) {
@@ -618,6 +636,7 @@ public class MaterialIntroView extends RelativeLayout {
             this.colorTextViewInfo = configuration.getColorTextViewInfo();
             this.focusType = configuration.getFocusType();
             this.focusGravity = configuration.getFocusGravity();
+            this.dismissOnBackPress = configuration.isDismissOnBackPress();
         }
     }
 
@@ -710,6 +729,11 @@ public class MaterialIntroView extends RelativeLayout {
             return this;
         }
 
+        public Builder dismissOnBackPress(boolean dismissOnBackPress){
+            materialIntroView.setDismissOnBackPress(dismissOnBackPress);
+            return this;
+        }
+
         public Builder setUsageId(String materialIntroViewId) {
             materialIntroView.setUsageId(materialIntroViewId);
             return this;
@@ -774,6 +798,10 @@ public class MaterialIntroView extends RelativeLayout {
             }
 
             materialIntroView.setShape(shape);
+
+            if(materialIntroView.dismissOnBackPress){
+                materialIntroView.enableDismissOnBackPress();
+            }
             return materialIntroView;
         }
 
@@ -784,4 +812,15 @@ public class MaterialIntroView extends RelativeLayout {
 
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if(dismissOnBackPress && event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+            if(event.getAction() == KeyEvent.ACTION_UP){
+                dismiss();
+            }
+
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
 }

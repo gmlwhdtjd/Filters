@@ -45,7 +45,7 @@
     <string name="title_review">리뷰 남기기</string>
     <string name="title_version">버전</string>
     <string name="title_faq">자주 묻는 질문</string>
-    <string name="title_send_feedback">피드백 보내기</string>
+    <string name="title_send_feedback">문의 하기</string>
     <string name="title_activity_setting">설정</string>
     <string name="update_message">"새로운 버전의 Bartender를 사용할 수 있습니다. 지금 다운로드 하시겠습니까?"</string>
     <string name="edit_forth">필터를 만든 뒤에 저장하는 것을 잊지 마세요!</string>
@@ -79,11 +79,24 @@
     <string name="summary_share">앱을 친구들과 공유해보세요!</string>
     <string name="title_gallery_storage">저장 경로</string>
     <string name="summary_review">리뷰와 별점을 작성해주세요!</string>
-    <string name="summary_faq">자주 묻는 질문들</string>
+    <string name="summary_faq">자주 묻는 질문들을 모았습니다.</string>
     <string name="summary_support">개선사항 및 불편하신 점을 피드백해주세요.</string>
     <string name="tedpermission_close">닫기</string>
     <string name="tedpermission_confirm">확인</string>
     <string name="tedpermission_setting">설정</string>
+
+    <!--<string-array name="Questions">-->
+        <!--<item>원본 필터는 무엇인가요?</item>-->
+        <!--<item>카메라가 심하게 렉이 걸립니다.</item>-->
+        <!--<item>필터 이름 길이의 제한이 있나요?</item>-->
+        <!--<item>예상치 못한 에러를 발생하였습니다.</item>-->
+        <!--<item>선택 포커스가 작동하지 않습니다.</item>-->
+        <!--<item>사진은 어디에 저장되나요?</item>-->
+        <!--<item>삭제한 필터를 복구 하고 싶어요!</item>-->
+        <!--<item>카메라가 확대가 되지 않습니다.</item>-->
+        <!--<item>제가 만든 필터를 공유하고 싶습니다.</item>-->
+        <!--<item>위 질문들 중에 원하는 답변이 없습니다.</item>-->
+    <!--</string-array>-->
 
 
 </resources>

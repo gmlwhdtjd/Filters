@@ -49,14 +49,14 @@
     <string name="RetroFilter_NOISE_INTENSITY">Noise</string>
 
     <!-- Strings related to Settings -->
-    <string name="summary_support">Give us some feedback about our app.</string>
+    <string name="summary_support">Please feedback the improvements and inconvenience.</string>
     <string name="title_activity_setting">Settings</string>
     <string name="pref_header_about" translatable="false">About</string>
     <string name="app_version" translatable="false">1.0</string>
     <string name="key_app_version" translatable="false">key_app_version</string>
     <string name="title_send_feedback">Send Feedback</string>
     <string name="title_faq">FAQ</string>
-    <string name="summary_faq">question frequently asked</string>
+    <string name="summary_faq">questions frequently asked</string>
     <string name="title_version">Version</string>
     <string name="title_vibrate" translatable="false">Vibrate</string>
     <string name="choose_email_client" translatable="false">Choose email client</string>
@@ -298,7 +298,7 @@ Team Bartender3 respects others’ intellectual property rights, and hopes that 
     <string name="exit_popup_cancel">Cancel</string>
     <string name="exit_popup_quit">Quit</string>
     <string name="exit_popup_content">Do you want to quit?</string>
-    <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>
+    <string name="update_message">A new version of Bartender is available. Do you want to update now?</string>
     <string name="update_popup_title">This is Newest Version</string>
     <string name="update_popup_title_new">New Update</string>
     <string name="update_popup_cancel">Not Now</string>
@@ -316,11 +316,11 @@ Team Bartender3 respects others’ intellectual property rights, and hopes that 
     
     
     <!-- Strings related to Material Intro-->
-    <string name="main_first">Touch arrow to open filter-list</string>
-    <string name="main_second">You can edit selected filter by clicking this button</string>
-    <string name="filterList_first">You can make your own filter by clicking plus button</string>
-    <string name="edit_first">You can change filter\'s name by clicking this area</string>
-    <string name="edit_second">You can change filter\'s attribute and make various filter</string>
-    <string name="edit_third">You can see more properties for beautiful camera filter</string>
-    <string name="edit_forth">Don\'t forget to save your beautiful filter!</string>
+    <string name="main_first">Press the arrow to view the filter list.</string>
+    <string name="main_second">Click here to modify the value of the currently selected filter.</string>
+    <string name="filterList_first">Press the Plus button to make your own filter!</string>
+    <string name="edit_first">Click here to rename the filter.</string>
+    <string name="edit_second">Make a beautiful filter by changing the property values here!</string>
+    <string name="edit_third">Here you can choose different properties for creating filters.</string>
+    <string name="edit_forth">Don\'t forget to save the filter after you create it!</string>
 </resources>

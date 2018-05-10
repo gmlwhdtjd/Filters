@@ -349,17 +349,8 @@ public class MainActivity extends AppCompatActivity {
         //버전 체크
         checkVersion();
 
-
-        //onboarding showcase
-//        showcaseView = new ShowcaseView.Builder(this)
-//                .withNewStyleShowcase()
-//                .setTarget(new ViewTarget(R.id.filterListBtt,this))
-//                .setContentText("Sample Highight")
-//                .setOnClickListener(showcaseClickListener)
-//                .build();
-
-        //디버그 용
-        new PreferencesManager(this.getApplicationContext()).resetAll();
+//        //디버그 용
+//        new PreferencesManager(this.getApplicationContext()).resetAll();
 
         showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, getString(R.string.main_first), Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 

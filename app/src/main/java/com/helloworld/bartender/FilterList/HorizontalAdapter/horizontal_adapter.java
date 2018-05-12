@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
 import com.helloworld.bartender.Edit.EditView;
@@ -51,7 +49,6 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     private Set<horizontalViewHolder> mBoundViewHolders = new HashSet<>();
     private LinearLayoutManager mLinearLayoutManager;
 
-
     public int getItemViewType(int position) {
         return (position == mFilterList.size()) ? R.layout.layout_filter_list_end_btt : R.layout.layout_filter_list_icon;
     }
@@ -63,7 +60,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
             mCustomPopup.dismiss();
         }
 
-        if (fromPosition < mFilterList.size() && toPosition < mFilterList.size() && toPosition != 0 && fromPosition != 0) {
+         if (fromPosition < mFilterList.size() && toPosition < mFilterList.size() && toPosition != 0 && fromPosition != 0) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(mFilterList, i, i + 1);
@@ -106,12 +103,49 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         public View layout;
         private ImageButton mEndBtn;
 
-        private horizontalViewHolder(final View itemView, int viewType) {
+        private horizontalViewHolder(View itemView, int viewType) {
             super(itemView);
             layout = itemView;
             mFilterRadioBtn = (FilterRadioButton) itemView.findViewById(R.id.filterIcon);
             mEndBtn = (ImageButton) itemView.findViewById(R.id.endBtt);
             mCustomPopup = new CustomPopup(mContext);
+
+            if (viewType == R.layout.layout_filter_list_icon) {
+                mBoundViewHolders.add((horizontalViewHolder) this);
+                mFilterRadioBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                            lastSelectedPosition = getAdapterPosition();
+                            //외부 클래스에서 뷰 아이템 참조
+                            ((MainActivity) mContext).setCameraFilter(mFilterList.get(getAdapterPosition()));
+                            notifyDataSetChanged();
+                        }
+                    }
+                });
+                mFilterRadioBtn.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if (getAdapterPosition() == 0 || getAdapterPosition() == RecyclerView.NO_POSITION) {
+                            return true;
+                        }
+                        vibe.vibrate(50);
+                        mCustomPopup.show(v, mFilterList.get(getAdapterPosition()), getAdapterPosition());
+                        return true;
+                    }
+                });
+            } else {
+                mEndBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /*
+                        * 만약 필터 종류를 업데이트 한다면 이곳에서 필터 종류를 분류 시켜줘야 합니다.
+                        * */
+                        openEditViewForAdd();
+                    }
+                });
+                mEndBtn.setOnTouchListener(((MainActivity) mContext).OnTouchEffectListener);
+            }
         }
 
         @Override
@@ -127,9 +161,11 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
 
     public boolean removeItem(int position) {
         try {
+            mBoundViewHolders.remove((horizontalViewHolder) mRecyclerV.findViewHolderForAdapterPosition(position));
             mFilterList.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mFilterList.size());
+            //        notifyDataSetChanged();
         } catch (IndexOutOfBoundsException ex) {
             ex.printStackTrace();
         }
@@ -157,12 +193,13 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         mRecyclerV = recyclerView;
         vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         anim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
-        mLinearLayoutManager =linearLayoutManager;
+        mLinearLayoutManager = linearLayoutManager;
     }
 
     public horizontal_adapter.horizontalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //뷰 생성
         View view;
+
         if (viewType == R.layout.layout_filter_list_icon) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_filter_list_icon, parent, false);
         } else {
@@ -173,51 +210,26 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
 
-    public void onBindViewHolder(final horizontalViewHolder holder, int position) {
+    public void onBindViewHolder(horizontalViewHolder holder, int position) {
         DatabaseHelper dbHelper = null;
         try {
             dbHelper = new DatabaseHelper(mContext);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (holder.getAdapterPosition() == mFilterList.size()) {
-            holder.mEndBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*
-                    * 만약 필터 종류를 업데이트 한다면 이곳에서 필터 종류를 분류 시켜줘야 합니다.
-                    * */
-                  openEditViewForAdd();
-                }
-            });
-            holder.mEndBtn.setOnTouchListener(((MainActivity) mContext).OnTouchEffectListener);
-        } else {
-            final FCameraFilter filter = mFilterList.get(holder.getAdapterPosition());
+        if (holder.getAdapterPosition() != mFilterList.size()) {
+
+            FCameraFilter filter = mFilterList.get(holder.getAdapterPosition());
             holder.mFilterRadioBtn.setFilterImageDrawable(dbHelper.getFilterIconImage(filter.getId()));
             holder.mFilterRadioBtn.setFilterName(filter.getName());
             holder.mFilterRadioBtn.setChecked(lastSelectedPosition == holder.getAdapterPosition());
-            holder.mFilterRadioBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lastSelectedPosition = holder.getAdapterPosition();
-                    //외부 클래스에서 뷰 아이템 참조
-                    ((MainActivity) mContext).setCameraFilter(filter);
-                    notifyDataSetChanged();
-                }
-            });
-            if (holder.getAdapterPosition() != 0) {
+            if (holder.getAdapterPosition() != 0 && holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
                 mBoundViewHolders.add((horizontalViewHolder) holder);
-                holder.mFilterRadioBtn.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        vibe.vibrate(50);
-                        mCustomPopup.show(v, filter, holder.getAdapterPosition());
-                        return true;
-                    }
-                });
             }
+
         }
     }
+
 
     private void startAnimationsOnItems(int position) {
         for (horizontalViewHolder holder : mBoundViewHolders) {
@@ -258,8 +270,7 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
     }
 
     public void setLastSelectedPosition(int position) {
-        final FCameraFilter filter = mFilterList.get(position);
-        ((MainActivity) mContext).setCameraFilter(filter);
+        ((MainActivity) mContext).setCameraFilter(mFilterList.get(position));
         lastSelectedPosition = position;
         notifyDataSetChanged();
     }
@@ -268,23 +279,24 @@ public class horizontal_adapter extends RecyclerView.Adapter<horizontal_adapter.
         return mFilterList.size() + 1;
     }
 
-    public FCameraFilter getDefaultFilter(){
+    public FCameraFilter getDefaultFilter() {
         return mFilterList.get(0);
     }
 
-    public boolean isPopupMenuOpen(){
+    public boolean isPopupMenuOpen() {
         return mCustomPopup.isPopupMenuOpen();
     }
 
-    public void dismissPopup(){
+    public void dismissPopup() {
         mCustomPopup.dismiss();
     }
 
-    public void openEditViewForAdd(){
+    public void openEditViewForAdd() {
         FCameraFilter newFilter = new RetroFilter(mContext, null);
         lastSelectedPosition = -1;
         ((MainActivity) mContext).setCameraFilter(newFilter);
         mEditView = ((MainActivity) mContext).findViewById(R.id.editView);
         mEditView.changeState();
     }
+
 }

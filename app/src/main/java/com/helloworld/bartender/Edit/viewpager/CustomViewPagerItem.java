@@ -1,4 +1,4 @@
-package com.helloworld.bartender.Edit;
+package com.helloworld.bartender.Edit.viewpager;
 
 import android.view.LayoutInflater;
 import android.view.View;

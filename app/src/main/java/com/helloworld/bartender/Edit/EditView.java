@@ -13,10 +13,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItem;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItemAdapter;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItems;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
@@ -25,12 +29,16 @@ import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.ShapeType;
 
 /**
  * Created by huijonglee on 2018. 2. 27..
@@ -46,11 +54,21 @@ public class EditView extends CoordinatorLayout {
     DatabaseHelper dbHelper;
 
     private TextView editNameView;
+    private ViewPager viewPager;
+    private SmartTabLayout viewPagerTab;
 
     private OnSaveListener mOnSaveListener;
     private Queue<Integer> backupValues;
+    private String backupName;
+
 
     private boolean filterListViewWasOpen = false;
+
+    private final static String EDIT_FIRST_INTRO = "firstIntro";
+    private final static String EDIT_SECOND_INTRO = "secondIntro";
+    private final static String EDIT_THIRD_INTRO = "thirdIntro";
+    private final static String EDIT_FORTH_INTRO = "forthIntro";
+
 
     public EditView(Context context) {
         super(context);
@@ -73,7 +91,11 @@ public class EditView extends CoordinatorLayout {
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
-        dbHelper = new DatabaseHelper(getContext());
+        try {
+            dbHelper = new DatabaseHelper(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         isOpen = false;
 
         // TODO : 변수 세팅
@@ -113,15 +135,15 @@ public class EditView extends CoordinatorLayout {
 
                 float dp = getResources().getDisplayMetrics().density;
                 SweetAlertDialog dialog = new SweetAlertDialog(getContext(), SweetAlertDialog.NORMAL_TYPE)
-                        .setTitleText("Change Filter Name")
-                        .setConfirmText("Confirm")
-                        .setCancelText("Cancel")
+                        .setTitleText(getContext().getString(R.string.edit_name_popup_title))
+                        .setConfirmText(getContext().getString(R.string.edit_name_popup_confirm))
+                        .setCancelText(getContext().getString(R.string.edit_name_popup_cancel))
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                if(input.getText().toString().replace(" ","").equals("")){
+                                if (input.getText().toString().replace(" ", "").equals("")) {
                                     sweetAlertDialog.dismissWithAnimation();
-                                }else {
+                                } else {
                                     mFilter.setName(input.getText().toString());
                                     editNameView.setText(mFilter.getName());
                                     sweetAlertDialog.dismissWithAnimation();
@@ -149,15 +171,17 @@ public class EditView extends CoordinatorLayout {
                 changeState();
 
                 //update
-                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
-                int Id = dbHelper.saveFilter(mFilter);
-                if (mFilter.getId() == null) {
-                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
-                } else {
-                    filterListView.getHorizontalAdapter().updateItem(mFilter);
+                if (!(mFilter instanceof OriginalFilter)) {
+                    FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                    int Id = dbHelper.saveFilter(mFilter);
+                    if (mFilter.getId() == null) {
+                        filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
+                    } else {
+                        filterListView.getHorizontalAdapter().updateItem(mFilter);
+                    }
+                    if (mOnSaveListener != null)
+                        mOnSaveListener.onSaved();
                 }
-                if (mOnSaveListener != null)
-                    mOnSaveListener.onSaved();
             }
         });
     }
@@ -172,15 +196,23 @@ public class EditView extends CoordinatorLayout {
             if (filterListView.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 filterListView.changeState();
                 filterListViewWasOpen = true;
-            }
-            else
+            } else
                 filterListViewWasOpen = false;
 
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
                 }
+
+                //intro
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainActivity) getContext()).showIntro(editNameView, EDIT_FIRST_INTRO, getContext().getString(R.string.edit_first), Focus.NORMAL, materialIntroListener, ShapeType.CIRCLE);
+                    }
+                }, 400);
             }
+
         } else {
             isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -201,8 +233,10 @@ public class EditView extends CoordinatorLayout {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+
+        backupName = mFilter.getName();
 
         namedSeekBars = new LinkedList<>();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
@@ -210,7 +244,6 @@ public class EditView extends CoordinatorLayout {
 
         if (mFilter instanceof OriginalFilter) {
             editNameView.setClickable(false);
-
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -315,9 +348,35 @@ public class EditView extends CoordinatorLayout {
             for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                 mFilter.setValueWithType(valueType, backupValues.poll());
                 namedSeekBars.get(i).setValue(mFilter.getValueWithType(valueType));
+                mFilter.setName(backupName);
                 i++;
             }
         }
+
+        //id가 null인 필터는 임시 필터
+        if(mFilter.getId()==null){
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+            filterListView.getFilterList().smoothScrollToPosition(0);
+        }
     }
+
+    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+        @Override
+        public void onUserClicked(String id) {
+            switch (id) {
+                case EDIT_FIRST_INTRO:
+                    ((MainActivity) getContext()).showIntro(viewPager, EDIT_SECOND_INTRO, getContext().getString(R.string.edit_second), Focus.NORMAL, this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_SECOND_INTRO:
+                    ((MainActivity) getContext()).showIntro(viewPagerTab, EDIT_THIRD_INTRO, getContext().getString(R.string.edit_third), Focus.NORMAL, this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_THIRD_INTRO:
+                    ((MainActivity) getContext()).showIntro(findViewById(R.id.editSaveBtt), EDIT_FORTH_INTRO, getContext().getString(R.string.edit_forth), Focus.NORMAL, this, ShapeType.CIRCLE);
+                    break;
+
+            }
+        }
+    };
 
 }

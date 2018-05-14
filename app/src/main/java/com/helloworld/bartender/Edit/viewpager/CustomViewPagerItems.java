@@ -1,4 +1,4 @@
-package com.helloworld.bartender.Edit;
+package com.helloworld.bartender.Edit.viewpager;
 
 import android.content.Context;
 import android.support.annotation.StringRes;

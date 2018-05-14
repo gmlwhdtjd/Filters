@@ -30,10 +30,6 @@ import android.hardware.SensorEvent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.helloworld.bartender.Edit.EditView;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterList.HorizontalAdapter.horizontal_adapter;
@@ -51,8 +47,12 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-//TODO: back 키 이벤트 처리하기, 필터값 수정,삭제,저장,적용, 필터 아이콘 클릭시 체크 유지
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.prefs.PreferencesManager;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.FocusGravity;
+import co.mobiwise.materialintro.shape.ShapeType;
+import co.mobiwise.materialintro.view.MaterialIntroView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String device_version;
 
-    private int counter=0;
-    private ShowcaseView showcaseView;
+    private static final String MAIN_FIRST_INTRO = "main_intro1";
+    private static final String MAIN_SECOND_INTRO = "main_intro2";
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -348,39 +349,13 @@ public class MainActivity extends AppCompatActivity {
         //버전 체크
         checkVersion();
 
+//        //디버그 용
+//        new PreferencesManager(this.getApplicationContext()).resetAll();
 
-        //onboarding showcase
-//        showcaseView = new ShowcaseView.Builder(this)
-//                .withNewStyleShowcase()
-//                .setTarget(new ViewTarget(R.id.filterListBtt,this))
-//                .setContentText("Sample Highight")
-//                .setOnClickListener(showcaseClickListener)
-//                .build();
+        showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, getString(R.string.main_first), Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 
     }
 
-    View.OnClickListener showcaseClickListener =new OnSingleClickListener() {
-        @Override
-        public void onSingleClick(View v) {
-            switch (counter){
-                case 0:
-                    mFilterListView.changeState();
-           //         showcaseView.setShowcase(new ViewTarget(R.id.endBtt,this),true);
-                    break;
-
-                case 1:
-                    break;
-
-                case 2:
-                    break;
-
-                case 3:
-                    break;
-            }
-
-            counter++;
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -452,31 +427,28 @@ public class MainActivity extends AppCompatActivity {
 
             angleXY = Math.atan2(x, y) * 180 / Math.PI;
 
-            if(z < 8.0 && z > -8.0) {
-                if(angleXY >= -30 && angleXY <= 30) {
+            if (z < 8.0 && z > -8.0) {
+                if (angleXY >= -30 && angleXY <= 30) {
                     direction = 0;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= 60 && angleXY <= 120) {
+                } else if (angleXY >= 60 && angleXY <= 120) {
                     direction = 3;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= -120 && angleXY <= -60) {
+                } else if (angleXY >= -120 && angleXY <= -60) {
                     direction = 1;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
-                }
-                else if(angleXY >= 150 || angleXY <= -150) {
+                } else if (angleXY >= 150 || angleXY <= -150) {
                     direction = 2;
-                    if(priorDirection != direction) {
+                    if (priorDirection != direction) {
                         changeDirection(priorDirection, direction);
                         priorDirection = direction;
                     }
@@ -528,9 +500,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //앱 종료를 묻는 팝업
             SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
-                    .setCancelText("Cancel")
-                    .setConfirmText("Quit")
-                    .setContentText("Do you want to quit?");
+                    .setCancelText(getString(R.string.exit_popup_cancel))
+                    .setConfirmText(getString(R.string.exit_popup_quit))
+                    .setContentText(getString(R.string.exit_popup_content));
             finishDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                 @Override
                 public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -662,11 +634,11 @@ public class MainActivity extends AppCompatActivity {
         if (store_version.compareTo(device_version) > 0) {
 
             new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("New Update")
+                    .setTitleText(getString(R.string.update_popup_title_new))
                     .setContentText(getString(R.string.update_message))
                     .showCancelButton(true)
-                    .setCancelText("Not Now")
-                    .setConfirmText("Update Now")
+                    .setCancelText(getString(R.string.update_popup_cancel))
+                    .setConfirmText(getString(R.string.update_popup_confirm))
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sDialog) {
@@ -694,4 +666,38 @@ public class MainActivity extends AppCompatActivity {
         cameraCaptureBtt.setClickable(!lock);
         editBtt.setClickable(!lock);
     }
+
+    //이곳에 리스너 파라미터 추가
+    public void showIntro(View view, final String id, String text, Focus focusType, final MaterialIntroListener materialIntroListener, ShapeType shape) {
+        new MaterialIntroView.Builder(this)
+                .enableDotAnimation(false)
+                .setFocusGravity(FocusGravity.CENTER)
+                .setFocusType(focusType)
+                .setDelayMillis(100)
+                .setIdempotent(true)
+                .enableFadeAnimation(true)
+                .enableIcon(true)
+                .performClick(false)
+                .setInfoText(text)
+                .setTarget(view)
+                .enableDotAnimation(true)
+                .setListener(materialIntroListener)
+                .setUsageId(id)
+                .setShape(shape)
+                .dismissOnBackPress(true)
+                .show();
+     
+    }
+
+    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+        @Override
+        public void onUserClicked(String id) {
+
+            if(id.equals(MAIN_FIRST_INTRO)) {
+                showIntro(editBtt, MAIN_SECOND_INTRO, getString(R.string.main_second), Focus.NORMAL, this, ShapeType.CIRCLE);
+            }
+
+        }
+
+    };
 }

@@ -1,4 +1,4 @@
-package com.helloworld.bartender.Edit;
+package com.helloworld.bartender.Edit.viewpager;
 
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v4.view.PagerAdapter;

@@ -3,10 +3,8 @@ package com.helloworld.bartender;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DetailSettingActivity extends AppCompatActivity {
 

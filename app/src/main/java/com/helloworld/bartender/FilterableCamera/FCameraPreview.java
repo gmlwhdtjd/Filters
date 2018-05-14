@@ -26,18 +26,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Size;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
-import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 import java.nio.FloatBuffer;

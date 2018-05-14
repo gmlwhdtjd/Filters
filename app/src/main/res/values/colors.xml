@@ -10,10 +10,7 @@
     <color name="seekbar_green">#21E82A</color>
     <color name="seekbar_blue">#2F4CCC</color>
 
-    <color name="bg_screen1">#E87566</color>
-    <color name="bg_screen2">#F7D047</color>
-    <color name="bg_screen3">#BED152</color>
-    <color name="bg_screen4">#96CDD3</color>
+    <color name="bg_screen">#ffffff</color>
 
     <!-- Filter RadioButton colors -->
     <color name="filterIcon_border_color">#ffffff</color>
@@ -21,29 +18,25 @@
     <color name="filterIcon_image_filter_checked">#b6ffffff</color>
 
     <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#d1395c</color>
-    <color name="dot_dark_screen2">#14a895</color>
-    <color name="dot_dark_screen3">#2278d4</color>
-    <color name="dot_dark_screen4">#a854d4</color>
+    <color name="dot_dark_screen">#777777</color>
+
 
     <!-- dots active colors -->
-    <color name="dot_light_screen1">#f98da5</color>
-    <color name="dot_light_screen2">#8cf9eb</color>
-    <color name="dot_light_screen3">#93c6fd</color>
-    <color name="dot_light_screen4">#e4b5fc</color>
+    <color name="dot_light_screen">#b5b5b5</color>
+
 
     <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-        <item>@color/dot_light_screen4</item>
+        <item>@color/dot_light_screen</item>
+        <item>@color/dot_light_screen</item>
+        <item>@color/dot_light_screen</item>
+        <item>@color/dot_light_screen</item>
     </array>
 
     <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen3</item>
-        <item>@color/dot_dark_screen4</item>
+        <item>@color/dot_dark_screen</item>
+        <item>@color/dot_dark_screen</item>
+        <item>@color/dot_dark_screen</item>
+        <item>@color/dot_dark_screen</item>
     </array>
 
     <!--<color name="blue_btn_bg_color">#a8ff99</color>-->

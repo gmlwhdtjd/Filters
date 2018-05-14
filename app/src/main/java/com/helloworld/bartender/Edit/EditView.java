@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -288,6 +287,9 @@ public class EditView extends CoordinatorLayout {
                         curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
                         curSeekBar.setMax(255);
                         break;
+                    case BRIGHTNESS:
+                        curSeekBar.setMax(50);
+                        curSeekBar.setMin(-50);
                     case SATURATION:
                         curSeekBar.setMax(50);
                         curSeekBar.setMin(-50);

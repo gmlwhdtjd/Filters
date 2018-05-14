@@ -61,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createDataBase();
     }
 
-    public void createDataBase() throws IOException {
+    private void createDataBase() throws IOException {
         boolean dbExist = checkDataBase();
         if (dbExist) {
             // do nothing - database already exist

@@ -1,41 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
-    android:background="@color/bg_screen1">
+    android:background="@color/bg_screen">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:text="Take photos using\n great filters"
-        android:textAlignment="center"
-        android:textColor="@android:color/white"
-        android:textSize="28dp"
-        android:textStyle="bold"
-        android:id="@+id/guide_text"
-        />
-
-    <ImageView
+    <LinearLayout
         android:id="@+id/guide1"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="248dp"
-        android:layout_height="447dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/guide_text"
-        android:background="@drawable/android_phone_case"
-        android:src="@drawable/sample"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/product_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello?"
+            android:textColor="@color/main_back"
+            android:textSize="40dp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
 </RelativeLayout>

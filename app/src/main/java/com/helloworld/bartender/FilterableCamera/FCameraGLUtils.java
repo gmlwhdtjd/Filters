@@ -218,30 +218,4 @@ public class FCameraGLUtils {
 
         return builder.toString();
     }
-
-    public static void errorChack(FCameraFilter.Target target) {
-        int error = GLES20.glGetError();
-        switch (error) {
-            case GLES20.GL_NO_ERROR :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            case GLES20.GL_INVALID_ENUM :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            case GLES20.GL_INVALID_VALUE :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            case GLES20.GL_INVALID_OPERATION :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            case GLES20.GL_INVALID_FRAMEBUFFER_OPERATION :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            case GLES20.GL_OUT_OF_MEMORY :
-                Log.e(target.toString(), "onDraw: GL_NO_ERROR");
-                break;
-            default:
-                Log.e(target.toString(), "onDraw: Default");
-        }
-    }
 }

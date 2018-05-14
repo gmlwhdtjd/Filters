@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,7 +43,6 @@ public class GuideActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
-    private ImageView guide1;
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
@@ -165,9 +162,8 @@ public class GuideActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);
-            if(position==0) {
-                startAnimation(position);
-            }
+            startAnimation(position);
+
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
                 // last page. make button text to GOT IT
@@ -193,9 +189,43 @@ public class GuideActivity extends AppCompatActivity {
 
     private void startAnimation(int position){
         View view = viewPager.findViewWithTag(position);
-        guide1 = view.findViewById(R.id.guide1);
-        Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
-        guide1.startAnimation(guide1_anim);
+        switch (position) {
+            case 0:
+                LinearLayout guide1 = view.findViewById(R.id.guide1);
+                Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
+                guide1.startAnimation(guide1_anim);
+                break;
+            case 1:
+                ImageView guide2_0 = view.findViewById(R.id.guide2_0);
+                ImageView guide2_1 = view.findViewById(R.id.guide2_1);
+                ImageView guide2_2 = view.findViewById(R.id.guide2_2);
+
+                Animation guide2_0_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_0_anim);
+                Animation guide2_1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_1_anim);
+                Animation guide2_2_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_2_anim);
+
+                guide2_0.startAnimation(guide2_0_anim);
+                guide2_1.startAnimation(guide2_1_anim);
+                guide2_2.startAnimation(guide2_2_anim);
+                break;
+            case 2:
+                ImageView guide3_0 = view.findViewById(R.id.guide3_0);
+                ImageView guide3_1 = view.findViewById(R.id.guide3_1);
+
+                Animation guide3_0_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide3_0_anim);
+                Animation guide3_1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide3_1_anim);
+
+                guide3_0.startAnimation(guide3_0_anim);
+                guide3_1.startAnimation(guide3_1_anim);
+                break;
+            case 3:
+                break;
+            default:
+        }
+
+//        guide1 = view.findViewById(R.id.guide1);
+//        Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
+//        guide1.startAnimation(guide1_anim);
 
     }
 

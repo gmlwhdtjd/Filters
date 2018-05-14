@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_screen4">
+    android:background="@color/bg_screen">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,15 +12,15 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/button_capture" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/product_icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/permission_page_title"
-            android:textColor="@android:color/white"
+            android:textColor="@color/main_back"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -31,18 +31,18 @@
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
             android:text="Camera"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:textSize="18dp" />
+            android:textColor="@color/main_back"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
-            android:textSize="14dp"
             android:text="@string/camera_permission_summary"
-            />
+            android:textColor="@color/main_back"
+            android:textSize="14dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -51,19 +51,18 @@
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
             android:text="Storage"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="18dp" />
+            android:textColor="@color/main_back"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
-            android:textSize="14dp"
             android:text="@string/storage_permission_summary"
-            />
+            android:textColor="@color/main_back"
+            android:textSize="14dp" />
 
 
 

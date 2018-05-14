@@ -9,8 +9,6 @@ import android.opengl.GLUtils;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

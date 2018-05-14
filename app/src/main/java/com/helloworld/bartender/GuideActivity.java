@@ -49,8 +49,6 @@ public class GuideActivity extends AppCompatActivity {
     private PrefManager prefManager;
     private ImageView guide1;
 
-    private int count =0;
-
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override
         public void onPermissionGranted() {

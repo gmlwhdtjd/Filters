@@ -1,11 +1,13 @@
 package com.helloworld.bartender;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -493,11 +495,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (editView.IsOpen()) {
+        if(mButtonLock.get()){
+            //If buttons are locked, passes back press event.
+        }
+        else if (editView.IsOpen()) {
             editView.close();
         } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
-        } else {
+        }else if(mFilterListView.isOpen()){
+            mFilterListView.changeState();
+        }
+        else {
             //앱 종료를 묻는 팝업
             SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
                     .setCancelText(getString(R.string.exit_popup_cancel))
@@ -689,7 +697,7 @@ public class MainActivity extends AppCompatActivity {
      
     }
 
-    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+    private MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
         @Override
         public void onUserClicked(String id) {
 

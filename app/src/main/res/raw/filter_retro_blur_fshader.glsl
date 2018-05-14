@@ -1,26 +1,23 @@
 #extension GL_OES_EGL_image_external : require
 precision mediump float;
 uniform sampler2D sTexture;
+uniform vec2 iResolution;
 varying vec2 texCoord;
 uniform float mask[25];
 uniform float focus;
-uniform vec3 iResolution;
 
 void main ()
 {
     vec3 target = vec3(0.0, 0.0, 0.0);
 
     float radius = 0.0;
-    vec2 innerR = gl_FragCoord.xy/iResolution.x;
-    innerR -= vec2(0.5, (iResolution.y/iResolution.x)/2.0);
-    float x = innerR.x>0.0?innerR.x:-1.0*innerR.x;
-    float y = innerR.y>0.0?innerR.y:-1.0*innerR.y;
-    y = y>1.0?1.0:y;
-    radius = x*x+y*y;
-    radius = radius>focus?1.0:radius/focus;
+    vec2 point = gl_FragCoord.xy/iResolution.x;
+    point -= vec2(0.5, iResolution.y);
+    radius = point.x*point.x+point.y*point.y;
+    radius = min(1.0, radius/focus);
 
-    vec2 stp0 = vec2(1.0/400.0, 0.0)*radius;    //  x
-    vec2 st0p = vec2(0.0, 1.0/400.0)*radius;    //  y
+    vec2 stp0 = vec2(0.0025, 0.0)*radius;    //  x
+    vec2 st0p = vec2(0.0, 0.0025)*radius;    //  y
 
     for(int i=0; i<5; i++) {
         for(int j=0; j<5; j++) {
@@ -29,5 +26,4 @@ void main ()
     }
 
     gl_FragColor = vec4(target, 1.0);
-
 }

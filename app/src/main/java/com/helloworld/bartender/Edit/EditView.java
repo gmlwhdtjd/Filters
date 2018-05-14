@@ -288,6 +288,9 @@ public class EditView extends CoordinatorLayout {
                         curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
                         curSeekBar.setMax(255);
                         break;
+                    case BRIGHTNESS:
+                        curSeekBar.setMax(50);
+                        curSeekBar.setMin(-50);
                     case SATURATION:
                         curSeekBar.setMax(50);
                         curSeekBar.setMin(-50);

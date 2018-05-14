@@ -193,6 +193,7 @@ public class RetroFilter extends FCameraFilter {
     private float[] rgb = {0.0f, 0.0f, 0.0f};
     private float colorRatio;
     private float brightness;
+    private float brightnessFS;
     private float saturation;
     private float blur;
     private float aberration;
@@ -212,6 +213,7 @@ public class RetroFilter extends FCameraFilter {
                 result += mask[(i * 5) + j];
             }
         }
+
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 mask[(i * 5) + j] /= result;
@@ -314,7 +316,7 @@ public class RetroFilter extends FCameraFilter {
                     focus = (float) value / 100;
                     break;
                 case ABERRATION:
-                    aberration = (float) value / 100;
+                    aberration = (float) value / 100 * -0.025f;
                     break;
                 case NOISE_INTENSITY:
                     noiseIntensity = (float) value / 100;
@@ -346,7 +348,7 @@ public class RetroFilter extends FCameraFilter {
                 case FOCUS:
                     return (int) (focus * 100);
                 case ABERRATION:
-                    return (int) (aberration * 100);
+                    return (int) ((aberration*-40) * 100);
                 case NOISE_INTENSITY:
                     return (int) (noiseIntensity * 100);
                 default:
@@ -356,8 +358,10 @@ public class RetroFilter extends FCameraFilter {
             throw new IllegalArgumentException("type is not RetroFilter.ValueType");
     }
 
+    /*
     private float[] nl = {(float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0f};
     private final long START_TIME = System.currentTimeMillis();
+*/
 
     public RetroFilter(Context context, Integer id) {
         this(context, id,
@@ -402,16 +406,12 @@ public class RetroFilter extends FCameraFilter {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, getNoiseTexture(target));
         GLES20.glUniform1i(GLES20.glGetUniformLocation(program, "sNoiseTexture"), 1);
 
-        int iResolutionLocation = GLES20.glGetUniformLocation(program, "iResolution");
-        GLES20.glUniform3fv(iResolutionLocation, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
-
         Random x = new Random();
         Random y = new Random();
         float randx = x.nextFloat() * (1.0f);
         float randy = y.nextFloat() * (1.0f);
-        float a = (float)Math.floor((float)viewSize.getWidth()/480.0f)*3.0f;
         int randxyLocation = GLES20.glGetUniformLocation(program, "randxy");
-        GLES20.glUniform3fv(randxyLocation, 1, FloatBuffer.wrap(new float[]{randx, randy, a}));
+        GLES20.glUniform2fv(randxyLocation, 1, FloatBuffer.wrap(new float[]{randx, randy}));
 
         int rgbLocation = GLES20.glGetUniformLocation(program, "variables.rgb");
         GLES20.glUniform3fv(rgbLocation, 1, FloatBuffer.wrap(rgb));
@@ -425,14 +425,12 @@ public class RetroFilter extends FCameraFilter {
         int saturationLocation = GLES20.glGetUniformLocation(program, "variables.saturation");
         GLES20.glUniform1f(saturationLocation, saturation);
 
-        int blurLocation = GLES20.glGetUniformLocation(program, "variables.blur");
-        GLES20.glUniform1f(blurLocation, blur);
-
         int abeLocation = GLES20.glGetUniformLocation(program, "variables.aberration");
         GLES20.glUniform1f(abeLocation, aberration);
 
         int niLocation = GLES20.glGetUniformLocation(program, "variables.noiseIntensity");
         GLES20.glUniform1f(niLocation, noiseIntensity);
+
 
         FCameraRenderBuffer CAMERA_RENDER_BUF = getCameraRenderBuf(target);
         if (CAMERA_RENDER_BUF != null) {
@@ -464,6 +462,7 @@ public class RetroFilter extends FCameraFilter {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, CAMERA_RENDER_BUF.getTexId());
             GLES20.glUniform1i(GLES20.glGetUniformLocation(program2, "sTexture"), 0);
 
+
             int maskLocation = GLES20.glGetUniformLocation(program2, "mask");
             GLES20.glUniform1fv(maskLocation, 25, FloatBuffer.wrap(mask));
 
@@ -471,7 +470,8 @@ public class RetroFilter extends FCameraFilter {
             GLES20.glUniform1f(focusLocation, focus);
 
             int iResolutionLocation2 = GLES20.glGetUniformLocation(program2, "iResolution");
-            GLES20.glUniform3fv(iResolutionLocation2, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) viewSize.getHeight(), 1.0f}));
+            GLES20.glUniform2fv(iResolutionLocation2, 1, FloatBuffer.wrap(new float[]{(float) viewSize.getWidth(), (float) (viewSize.getHeight()/viewSize.getWidth())/2.0f}));
+
         }
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);

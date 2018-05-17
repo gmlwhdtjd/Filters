@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -672,6 +673,14 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.setClickable(!lock);
         cameraCaptureBtt.setClickable(!lock);
         editBtt.setClickable(!lock);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mButtonLock.set(false);
+                setButtonLock(false);
+            }
+        }, 500);
     }
 
     //이곳에 리스너 파라미터 추가

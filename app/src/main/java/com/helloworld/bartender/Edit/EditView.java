@@ -1,8 +1,6 @@
 package com.helloworld.bartender.Edit;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -14,14 +12,14 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.helloworld.bartender.Database.DatabaseHelper;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItem;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItemAdapter;
+import com.helloworld.bartender.Edit.viewpager.CustomViewPagerItems;
 import com.helloworld.bartender.FilterList.FilterListView;
 import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.FilterableCamera.Filters.FCameraFilter;
@@ -29,17 +27,17 @@ import com.helloworld.bartender.FilterableCamera.Filters.RetroFilter;
 import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.ViewPagerItems;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItem;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
-import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.shape.Focus;
+import co.mobiwise.materialintro.shape.ShapeType;
 
 /**
  * Created by huijonglee on 2018. 2. 27..
@@ -48,14 +46,28 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class EditView extends CoordinatorLayout {
 
     private boolean isOpen;
+
+    private List<NamedSeekBar> namedSeekBars;
     BottomSheetBehavior bottomSheetBehavior;
     FCameraFilter mFilter;
     DatabaseHelper dbHelper;
 
-    TextView editNameView;
+    private TextView editNameView;
+    private ViewPager viewPager;
+    private SmartTabLayout viewPagerTab;
 
-    OnSaveListener mOnSaveListener;
-    Queue<Integer> backupValues;
+    private OnSaveListener mOnSaveListener;
+    private Queue<Integer> backupValues;
+    private String backupName;
+
+
+    private boolean filterListViewWasOpen = false;
+
+    private final static String EDIT_FIRST_INTRO = "firstIntro";
+    private final static String EDIT_SECOND_INTRO = "secondIntro";
+    private final static String EDIT_THIRD_INTRO = "thirdIntro";
+    private final static String EDIT_FORTH_INTRO = "forthIntro";
+
 
     public EditView(Context context) {
         super(context);
@@ -78,7 +90,11 @@ public class EditView extends CoordinatorLayout {
 
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.NamedSeekBar, defStyle, 0);
 
-        dbHelper = new DatabaseHelper(getContext());
+        try {
+            dbHelper = new DatabaseHelper(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         isOpen = false;
 
         // TODO : 변수 세팅
@@ -118,15 +134,19 @@ public class EditView extends CoordinatorLayout {
 
                 float dp = getResources().getDisplayMetrics().density;
                 SweetAlertDialog dialog = new SweetAlertDialog(getContext(), SweetAlertDialog.NORMAL_TYPE)
-                        .setTitleText("Change Filter Name")
-                        .setConfirmText("Confirm")
-                        .setCancelText("Cancel")
+                        .setTitleText(getContext().getString(R.string.edit_name_popup_title))
+                        .setConfirmText(getContext().getString(R.string.edit_name_popup_confirm))
+                        .setCancelText(getContext().getString(R.string.edit_name_popup_cancel))
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mFilter.setName(input.getText().toString());
-                                editNameView.setText(mFilter.getName());
-                                sweetAlertDialog.dismissWithAnimation();
+                                if (input.getText().toString().replace(" ", "").equals("")) {
+                                    sweetAlertDialog.dismissWithAnimation();
+                                } else {
+                                    mFilter.setName(input.getText().toString());
+                                    editNameView.setText(mFilter.getName());
+                                    sweetAlertDialog.dismissWithAnimation();
+                                }
                             }
                         });
                 dialog.show();
@@ -134,48 +154,13 @@ public class EditView extends CoordinatorLayout {
                 linearLayout.setPadding((int) (24 * dp), (int) (24 * dp), (int) (24 * dp), (int) (24 * dp));
                 int index = linearLayout.indexOfChild(linearLayout.findViewById(R.id.content_text));
                 linearLayout.addView(input, index + 1);
-
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                builder.setTitle("Change Filter Name");
-//
-//                float dp = getResources().getDisplayMetrics().density;
-//
-//                FrameLayout changeView = new FrameLayout(getContext());
-//                changeView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//                changeView.setPadding((int) (24 * dp), (int) (5 * dp), (int) (24 * dp), (int) (5 * dp));
-//
-//                final EditText input = new EditText(getContext());
-//                InputFilter[] FilterArray = new InputFilter[1];
-//                FilterArray[0] = new InputFilter.LengthFilter(9);
-//                input.setFilters(FilterArray);
-//                input.setInputType(InputType.TYPE_CLASS_TEXT);
-//                changeView.addView(input);
-//
-//                builder.setView(changeView);
-//
-//                builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mFilter.setName(input.getText().toString());
-//                        editNameView.setText(mFilter.getName());
-//                    }
-//                });
-//                builder.setNegativeButton("Cancel", null);
-//
-//                builder.show();
             }
         });
 
         findViewById(R.id.editCloseBtt).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeState();
-
-                if (mFilter instanceof RetroFilter) {
-                    for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
-                        mFilter.setValueWithType(valueType, backupValues.poll());
-                    }
-                }
+                close();
             }
         });
 
@@ -185,15 +170,17 @@ public class EditView extends CoordinatorLayout {
                 changeState();
 
                 //update
-                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
-                int Id = dbHelper.saveFilter(mFilter);
-                if (mFilter.getId() == null) {
-                    filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
-                } else {
-                    filterListView.getHorizontalAdapter().updateItem(mFilter);
+                if (!(mFilter instanceof OriginalFilter)) {
+                    FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                    int Id = dbHelper.saveFilter(mFilter);
+                    if (mFilter.getId() == null) {
+                        filterListView.getHorizontalAdapter().addItem(NewFilter(mFilter, Id), filterListView.getHorizontalAdapter().getItemCount() - 1);
+                    } else {
+                        filterListView.getHorizontalAdapter().updateItem(mFilter);
+                    }
+                    if (mOnSaveListener != null)
+                        mOnSaveListener.onSaved();
                 }
-                if (mOnSaveListener != null)
-                    mOnSaveListener.onSaved();
             }
         });
     }
@@ -204,14 +191,36 @@ public class EditView extends CoordinatorLayout {
             isOpen = true;
             backupValues = new LinkedList<>();
 
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            if (filterListView.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                filterListView.changeState();
+                filterListViewWasOpen = true;
+            } else
+                filterListViewWasOpen = false;
+
             if (mFilter instanceof RetroFilter) {
                 for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
                     backupValues.add(mFilter.getValueWithType(valueType));
                 }
+
+                //intro
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((MainActivity) getContext()).showIntro(editNameView, EDIT_FIRST_INTRO, getContext().getString(R.string.edit_first), Focus.NORMAL, materialIntroListener, ShapeType.CIRCLE);
+                    }
+                }, 400);
             }
+
         } else {
             isOpen = false;
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            if (filterListViewWasOpen) {
+                FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+                filterListView.changeState();
+                filterListViewWasOpen = false;
+            }
         }
     }
 
@@ -223,15 +232,17 @@ public class EditView extends CoordinatorLayout {
         mFilter = filter;
         editNameView.setText(mFilter.getName());
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
 
+        backupName = mFilter.getName();
+
+        namedSeekBars = new LinkedList<>();
         HashMap<String, LinearLayout> tabs = new HashMap<>();
         CustomViewPagerItems tabItems = new CustomViewPagerItems(getContext()).with(getContext()).create();
 
         if (mFilter instanceof OriginalFilter) {
             editNameView.setClickable(false);
-
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(View.generateViewId());
             tab.setGravity(Gravity.CENTER);
@@ -276,6 +287,9 @@ public class EditView extends CoordinatorLayout {
                         curSeekBar.setColor(getResources().getColor(R.color.seekbar_blue));
                         curSeekBar.setMax(255);
                         break;
+                    case BRIGHTNESS:
+                        curSeekBar.setMax(50);
+                        curSeekBar.setMin(-50);
                     case SATURATION:
                         curSeekBar.setMax(50);
                         curSeekBar.setMin(-50);
@@ -293,10 +307,11 @@ public class EditView extends CoordinatorLayout {
                     }
                 });
 
+
+                namedSeekBars.add(curSeekBar);
                 tabs.get(valueType.getPageName(getContext())).addView(curSeekBar);
             }
         }
-
 
         CustomViewPagerItemAdapter adapter = new CustomViewPagerItemAdapter(tabItems);
         viewPager.setAdapter(adapter);
@@ -327,5 +342,43 @@ public class EditView extends CoordinatorLayout {
     public boolean IsOpen() {
         return isOpen;
     }
+
+    public void close() {
+        changeState();
+        int i = 0;
+        if (mFilter instanceof RetroFilter) {
+            for (RetroFilter.ValueType valueType : RetroFilter.ValueType.values()) {
+                mFilter.setValueWithType(valueType, backupValues.poll());
+                namedSeekBars.get(i).setValue(mFilter.getValueWithType(valueType));
+                mFilter.setName(backupName);
+                i++;
+            }
+        }
+
+        //id가 null인 필터는 임시 필터
+        if(mFilter.getId()==null){
+            FilterListView filterListView = ((MainActivity) getContext()).findViewById(R.id.filterListView);
+            filterListView.getHorizontalAdapter().setLastSelectedPosition(0);
+            filterListView.getFilterList().smoothScrollToPosition(0);
+        }
+    }
+
+    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+        @Override
+        public void onUserClicked(String id) {
+            switch (id) {
+                case EDIT_FIRST_INTRO:
+                    ((MainActivity) getContext()).showIntro(viewPager, EDIT_SECOND_INTRO, getContext().getString(R.string.edit_second), Focus.NORMAL, this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_SECOND_INTRO:
+                    ((MainActivity) getContext()).showIntro(viewPagerTab, EDIT_THIRD_INTRO, getContext().getString(R.string.edit_third), Focus.NORMAL, this, ShapeType.RECTANGLE);
+                    break;
+                case EDIT_THIRD_INTRO:
+                    ((MainActivity) getContext()).showIntro(findViewById(R.id.editSaveBtt), EDIT_FORTH_INTRO, getContext().getString(R.string.edit_forth), Focus.NORMAL, this, ShapeType.CIRCLE);
+                    break;
+
+            }
+        }
+    };
 
 }

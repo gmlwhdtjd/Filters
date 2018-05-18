@@ -3,7 +3,9 @@ package com.helloworld.bartender.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
@@ -22,6 +24,10 @@ import com.helloworld.bartender.MainActivity;
 import com.helloworld.bartender.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -31,8 +37,8 @@ import java.util.List;
 /**
  * Created by 김현식 on 2018-02-05.
  */
-
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private Context mContext;
     private static String DB_NAME = "filter_list.db";
     private static final int DB_VERSION = 1;
     private static final String TABLE_MAIN_NAME = "list";
@@ -43,11 +49,101 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FILTER_TYPE = "type";
     private static final String COLUMN_FILTER_POS = "position";
     private static final String COLUMN_FILTER_ICON = "filterIcon";
-    private Context mContext;
+    private String DB_PATH;
+    private SQLiteDatabase myDatabase;
 
-    public DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) throws IOException {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
+        DB_PATH="/data/data/"
+                + mContext.getApplicationContext().getPackageName()
+                + "/databases/";
+        createDataBase();
+    }
+
+    public void createDataBase() throws IOException {
+        boolean dbExist = checkDataBase();
+        if (dbExist) {
+            // do nothing - database already exist
+        } else {
+
+            // By calling this method and empty database will be created into
+            // the default system path
+            // of your application so we are gonna be able to overwrite that
+            // database with our database.
+            this.getReadableDatabase();
+            try {
+                copyDataBase();
+            } catch (IOException e) {
+                throw new Error("Error copying database");
+            }
+
+            localizeFilterName();
+        }
+    }
+
+    private void localizeFilterName(){
+        String[] filterNames =  mContext.getResources().getStringArray(R.array.default_filter_name_array);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        for(int id=0; id<filterNames.length;id++){
+            String query = "UPDATE " + TABLE_MAIN_NAME + " SET " + COLUMN_FILTER_NAME + "='"+filterNames[id] +"' WHERE " + COLUMN_ID + "=" + String.valueOf(id);
+            db.execSQL(query);
+        }
+        db.close();
+
+    }
+
+    private boolean checkDataBase() {
+        SQLiteDatabase checkDB = null;
+        try {
+            String myPath = DB_PATH + DB_NAME;
+            checkDB = SQLiteDatabase.openDatabase(myPath, null,
+                    SQLiteDatabase.OPEN_READWRITE);
+        } catch (SQLiteException e) {
+            // database does't exist yet.
+        }
+        if (checkDB != null) {
+            checkDB.close();
+        }
+        return checkDB != null;
+    }
+
+    private void copyDataBase() throws IOException {
+        // Open your local db as the input stream
+        InputStream myInput = mContext.getAssets().open(DB_NAME);
+        // Path to the just created empty db
+        String outFileName = DB_PATH + DB_NAME;
+        // Open the empty db as the output stream
+        OutputStream myOutput = new FileOutputStream(outFileName);
+        // transfer bytes from the inputfile to the outputfile
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = myInput.read(buffer)) > 0) {
+            myOutput.write(buffer, 0, length);
+        }
+        // Close the streams
+        myOutput.flush();
+        myOutput.close();
+        myInput.close();
+
+        // Toast.makeText(myContext, "Copy Done", 300).show();
+    }
+
+    public void openDataBase() throws SQLException {
+        // Open the database
+        String myPath = DB_PATH + DB_NAME;
+        myDatabase = SQLiteDatabase.openDatabase(myPath, null,
+                SQLiteDatabase.OPEN_READWRITE);
+
+    }
+
+    @Override
+    public synchronized void close() {
+        if(myDatabase !=null){
+            myDatabase.close();
+        }
+        super.close();
     }
 
     @Override
@@ -133,7 +229,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         switch (filter.getClass().getSimpleName()) {
             case TYPE0_DEFAULT_NAME:
-                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.default_image);
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.filter_icon_image);
                 bitmap = drawable.getBitmap();
                 saveBitmapDrawable(bitmap, lastInsertedId);
 
@@ -146,7 +242,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.replace(TYPE1_FILTER_NAME, null, values);
 
                 FCameraCapture cameraCapture = ((MainActivity) mContext).getFCameraCapture();
-                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.sample_image2);
+                drawable = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.filter_icon_image);
                 bitmap = cameraCapture.bitmapFiltering(filter, drawable.getBitmap());
                 saveBitmapDrawable(bitmap, lastInsertedId);
                 break;
@@ -170,7 +266,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public FCameraFilter pasteFilter(FCameraFilter receivedFilter, int position) {
         SQLiteDatabase db = this.getWritableDatabase();
-        FCameraFilter newFilter = null;
+        FCameraFilter newFilter;
         FCameraFilter pastedFilter = null;
         int pastedFilterId;
 
@@ -219,7 +315,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
-            int i = 0;
             do {
                 String type = cursor.getString(cursor.getColumnIndex(COLUMN_FILTER_TYPE));
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
@@ -242,10 +337,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     default:
                         break;
                 }
-                i++;
             } while (cursor.moveToNext());
-            Log.d("x", String.valueOf(i) + "repeated this");
-
         }
         db.close();
         return filterLinkedList;

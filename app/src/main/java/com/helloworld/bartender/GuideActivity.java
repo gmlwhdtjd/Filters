@@ -19,7 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +30,6 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.helloworld.bartender.Database.DatabaseHelper;
-import com.helloworld.bartender.FilterableCamera.Filters.OriginalFilter;
 import com.helloworld.bartender.PreferenceSetting.PrefManager;
 
 import io.fabric.sdk.android.Fabric;
@@ -70,8 +71,6 @@ public class GuideActivity extends AppCompatActivity {
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             checkPermission();
-        }else {
-            setDefaultSetting(this);
         }
 
         // Making notification bar transparent
@@ -85,7 +84,6 @@ public class GuideActivity extends AppCompatActivity {
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
-
 
         // layouts of all welcome sliders
         // add few more layouts if you want
@@ -130,6 +128,13 @@ public class GuideActivity extends AppCompatActivity {
                 }
             }
         });
+//
+//        //기본 세팅이 안되어 있다면
+//        if(!prefManager.isDefaultFilterSet()){
+//            setDefaultSetting(this);
+//            prefManager.setDefaultFilterSet(true);
+//        }
+
     }
 
     private void addBottomDots(int currentPage) {
@@ -166,6 +171,7 @@ public class GuideActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);
+            startAnimation(position);
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
@@ -189,6 +195,44 @@ public class GuideActivity extends AppCompatActivity {
 
         }
     };
+
+    private void startAnimation(int position){
+        View view = viewPager.findViewWithTag(position);
+        switch (position) {
+            case 0:
+                LinearLayout guide1 = view.findViewById(R.id.guide1);
+                Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
+                guide1.startAnimation(guide1_anim);
+                break;
+            case 1:
+                ImageView guide2_0 = view.findViewById(R.id.guide2_0);
+                ImageView guide2_1 = view.findViewById(R.id.guide2_1);
+                ImageView guide2_2 = view.findViewById(R.id.guide2_2);
+
+                Animation guide2_0_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_0_anim);
+                Animation guide2_1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_1_anim);
+                Animation guide2_2_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide2_2_anim);
+
+                guide2_0.startAnimation(guide2_0_anim);
+                guide2_1.startAnimation(guide2_1_anim);
+                guide2_2.startAnimation(guide2_2_anim);
+                break;
+            case 2:
+                ImageView guide3_0 = view.findViewById(R.id.guide3_0);
+                ImageView guide3_1 = view.findViewById(R.id.guide3_1);
+
+                Animation guide3_0_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide3_0_anim);
+                Animation guide3_1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide3_1_anim);
+
+                guide3_0.startAnimation(guide3_0_anim);
+                guide3_1.startAnimation(guide3_1_anim);
+                break;
+            case 3:
+                break;
+            default:
+        }
+    }
+
 
     /**
      * Making notification bar transparent
@@ -216,7 +260,7 @@ public class GuideActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
-
+            view.setTag(position);
             return view;
         }
 
@@ -239,9 +283,6 @@ public class GuideActivity extends AppCompatActivity {
     }
 
     private void setDefaultSetting(Context context){
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.OriginalFilter_Name)),0);
-
         File file = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                         + File.separator + getString(R.string.app_name));
@@ -254,7 +295,6 @@ public class GuideActivity extends AppCompatActivity {
         editor.putString(this.getString(R.string.key_gallery_name),mSaveDirectory);
         editor.commit();
     }
-
 
     private void checkPermission(){
         //Permission Check

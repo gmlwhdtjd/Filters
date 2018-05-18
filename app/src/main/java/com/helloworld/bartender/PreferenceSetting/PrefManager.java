@@ -20,6 +20,10 @@ public class PrefManager {
 
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
+    private static final String IS_FIRST_IN_FILTERLIST ="isFirstInFilterList";
+
+
+
     public PrefManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -33,6 +37,15 @@ public class PrefManager {
 
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, true);
+    }
+
+    public void setIsFirstInFilterlist(boolean isFirst){
+        editor.putBoolean(IS_FIRST_IN_FILTERLIST,isFirst);
+        editor.commit();
+    }
+
+    public boolean getIsFirstInFilterlist(){
+        return pref.getBoolean(IS_FIRST_IN_FILTERLIST,true);
     }
 
 }

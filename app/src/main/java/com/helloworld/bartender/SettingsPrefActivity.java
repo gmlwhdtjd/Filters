@@ -11,11 +11,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -34,7 +31,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
     private static String device_version = "";
     private static final int OPENLICENSE_CODE = 0;
     private static final int TERMS_CODE = 1;
-    private static final int PRIVACY_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +62,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
             Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
-            Preference privacyPref = (findPreference(getString(R.string.key_privacy)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
 
@@ -117,11 +112,11 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                     }
                     if (store_version.compareTo(device_version) > 0) {
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                                .setTitleText("New Update")
+                                .setTitleText(getString(R.string.update_popup_title_new))
                                 .setContentText(getString(R.string.update_message))
                                 .showCancelButton(true)
-                                .setCancelText("Not Now")
-                                .setConfirmText("Update Now")
+                                .setCancelText(getString(R.string.update_popup_cancel))
+                                .setConfirmText(getString(R.string.update_popup_confirm))
                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
@@ -136,7 +131,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                                 .show();
                     } else {
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE)
-                                .setTitleText(getString(R.string.title_new_update))
+                                .setTitleText(getString(R.string.update_popup_title))
                                 .setConfirmText("Okay")
                                 .show();
                     }
@@ -157,14 +152,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     startDetailActivity(getActivity(), TERMS_CODE);
-                    return true;
-                }
-            });
-
-            privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(), PRIVACY_CODE);
                     return true;
                 }
             });
@@ -241,37 +228,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         context.startActivity(intent);
     }
 
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
-    }
-
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String stringValue = newValue.toString();
-
-            if (preference instanceof ListPreference) {
-
-            } else if (preference instanceof EditTextPreference) {
-                if (preference.getKey().equals("key_gallery_name")) {
-                    preference.setSummary(stringValue);
-                }
-            } else {
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
-
     /**
      * Email client intent to send support mail
      * Appends the necessary device information to email body
@@ -288,7 +244,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         }
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"samerj9712@gmail.com"});
+        //팀 이메일
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"TeamBartender3@gmail.com"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Query from android app");
         intent.putExtra(Intent.EXTRA_TEXT, body);
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.choose_email_client)));

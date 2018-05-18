@@ -7,6 +7,17 @@
         다른 필터를 선택해 주세요. :)
     </string>
 
+    <string-array name="default_filter_name_array">
+        <item>원본</item>
+        <item>벛꽃</item>
+        <item>숲</item>
+        <item>노랑</item>
+        <item>흑백</item>
+        <item>옛날</item>
+        <item>음식</item>
+        <item>몽환적</item>
+    </string-array>
+
 
     <!--Original Filter-->
     <string name="RetroFilter_Page_1">색상</string>
@@ -34,10 +45,58 @@
     <string name="title_review">리뷰 남기기</string>
     <string name="title_version">버전</string>
     <string name="title_faq">자주 묻는 질문</string>
-    <string name="title_send_feedback">피드백 보내기</string>
+    <string name="title_send_feedback">문의 하기</string>
     <string name="title_activity_setting">설정</string>
     <string name="update_message">"새로운 버전의 Bartender를 사용할 수 있습니다. 지금 다운로드 하시겠습니까?"</string>
+    <string name="edit_forth">필터를 만든 뒤에 저장하는 것을 잊지 마세요!</string>
+    <string name="edit_third">이곳에서 필터를 만들기 위한 여러 가지 속성들을 고를 수 있습니다.</string>
+    <string name="edit_second">이곳에서 속성값들을 변경하여 아름다운 필터를 만들어 보세요!</string>
+    <string name="edit_first">이곳을 눌러 필터의 이름을 바꿀 수 있습니다.</string>
+    <string name="filterList_first">플러스 버튼을 눌러서 당신만의 필터를 만들어보세요!</string>
+    <string name="main_second">이곳을 눌러 현재 선택된 필터의 값을 수정 할 수 있습니다.</string>
+    <string name="main_first">필터 리스트를 보기 위해서는 화살표를 눌러주세요.</string>
+    <string name="edit_name_popup_cancel">취소</string>
+    <string name="edit_name_popup_confirm">확인</string>
+    <string name="edit_name_popup_title">변경할 이름을 입력해주세요</string>
+    <string name="deleted_popup_content">필터 %1$s가 삭제 되었습니다!</string>
+    <string name="deleted_popup_confirm">확인</string>
+    <string name="deleted_popup_title">삭제 완료!</string>
+    <string name="delete_popup_cancel">아니요</string>
+    <string name="delete_popup_content">삭제 시에 필터를 복구할 수 없습니다. 삭제하시겠습니까?</string>
+    <string name="delete_popup_confirm">예</string>
+    <string name="delete_popup_title">정말로 삭제하시겠습니까?</string>
+    <string name="update_popup_confirm">지금 업데이트</string>
+    <string name="update_popup_cancel">나중에</string>
+    <string name="update_popup_title_new">새로운 업데이트</string>
+    <string name="update_popup_title">최신 버전입니다.</string>
+    <string name="exit_popup_content">앱을 종료하시겠습니까?</string>
+    <string name="exit_popup_quit">종료</string>
+    <string name="exit_popup_cancel">아니요</string>
+    <string name="storage_permission_summary">사진을 저장하고 관리하기 위해서 필요한 권한입니다.</string>
+    <string name="camera_permission_summary">사진을 촬영하기 위해 필요한 권한입니다.</string>
+    <string name="permission_page_title">필수 권환</string>
+    <string name="title_open_license">오픈 라이센스</string>
+    <string name="summary_share">앱을 친구들과 공유해보세요!</string>
+    <string name="title_gallery_storage">저장 경로</string>
+    <string name="summary_review">리뷰와 별점을 작성해주세요!</string>
+    <string name="summary_faq">자주 묻는 질문들을 모았습니다.</string>
+    <string name="summary_support">개선사항 및 불편하신 점을 피드백해주세요.</string>
+    <string name="tedpermission_close">닫기</string>
+    <string name="tedpermission_confirm">확인</string>
+    <string name="tedpermission_setting">설정</string>
 
+    <!--<string-array name="Questions">-->
+        <!--<item>원본 필터는 무엇인가요?</item>-->
+        <!--<item>카메라가 심하게 렉이 걸립니다.</item>-->
+        <!--<item>필터 이름 길이의 제한이 있나요?</item>-->
+        <!--<item>예상치 못한 에러를 발생하였습니다.</item>-->
+        <!--<item>선택 포커스가 작동하지 않습니다.</item>-->
+        <!--<item>사진은 어디에 저장되나요?</item>-->
+        <!--<item>삭제한 필터를 복구 하고 싶어요!</item>-->
+        <!--<item>카메라가 확대가 되지 않습니다.</item>-->
+        <!--<item>제가 만든 필터를 공유하고 싶습니다.</item>-->
+        <!--<item>위 질문들 중에 원하는 답변이 없습니다.</item>-->
+    <!--</string-array>-->
 
 
 </resources>

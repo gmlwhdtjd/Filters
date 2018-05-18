@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">Bartender</string>
+    <string name="app_name" translatable="false">Bartender</string>
 
-    <string name="picture">Picture</string>
-    <string name="description_info">Info</string>
-    <string name="request_permission">This sample needs camera permission.</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="picture" translatable="false">Picture</string>
+    <string name="description_info" translatable="false">Info</string>
+    <string name="request_permission" translatable="false">This sample needs camera permission.</string>
+    <string name="camera_error" translatable="false">This device doesn\'t support Camera2 API.</string>
 
-    <string name="tedpermission_setting">Setting</string>
-    <string name="tedpermission_close">Close</string>
-    <string name="tedpermission_confirm">Confirm</string>
-    <string name="permission_denied">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
+    <string name="tedpermission_setting" >Setting</string>
+    <string name="tedpermission_close" >Close</string>
+    <string name="tedpermission_confirm" >Confirm</string>
+    <string name="permission_denied" translatable="false">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
 
-    <string name="lockable_bottom_sheet_behavior">com.helloworld.bartender.LockableBottomSheetBehavior</string>
+    <string name="lockable_bottom_sheet_behavior" translatable="false">com.helloworld.bartender.LockableBottomSheetBehavior</string>
 
     <!--Original Filter-->
     <string name="OriginalFilter_Name">Original</string>
@@ -19,6 +19,17 @@
         You chose the original source.\n\n
         Please, Select a different filter. :)
     </string>
+
+    <string-array name="default_filter_name_array">
+        <item>Original</item>
+        <item>Cherry</item>
+        <item>Forest</item>
+        <item>Yellow</item>
+        <item>GrayScale</item>
+        <item>Long ago</item>
+        <item>Food</item>
+        <item>Dreamy</item>
+    </string-array>
 
     <!--Retro Filter-->
     <string name="RetroFilter_Page_1">Color</string>
@@ -38,43 +49,37 @@
     <string name="RetroFilter_NOISE_INTENSITY">Noise</string>
 
     <!-- Strings related to Settings -->
+    <string name="summary_support">Please feedback the improvements and inconvenience.</string>
     <string name="title_activity_setting">Settings</string>
-    <string name="pref_header_about">About</string>
-    <string name="summary_about">About Summary</string>
-    <string name="app_version">1.0</string>
-    <string name="key_app_version">key_app_version</string>
-    <string name="summary_support">support summary</string>
+    <string name="pref_header_about" translatable="false">About</string>
+    <string name="app_version" translatable="false">1.0</string>
+    <string name="key_app_version" translatable="false">key_app_version</string>
     <string name="title_send_feedback">Send Feedback</string>
     <string name="title_faq">FAQ</string>
-    <string name="summary_faq">question frequently asked</string>
+    <string name="summary_faq">questions frequently asked</string>
     <string name="title_version">Version</string>
-    <string name="title_vibrate">Vibrate</string>
-    <string name="choose_email_client">Choose email client</string>
-    <string name="summary_vibrate">Vibrate on long press</string>
-    <string name="key_vibrate">key_vibrate</string>
-    <string name="key_send_feedback">key_send_feedback</string>
-    <string name="key_review">key_review</string>
+    <string name="title_vibrate" translatable="false">Vibrate</string>
+    <string name="choose_email_client" translatable="false">Choose email client</string>
+    <string name="summary_vibrate" translatable="false">Vibrate on long press</string>
+    <string name="key_send_feedback" translatable="false">key_send_feedback</string>
+    <string name="key_review" translatable="false">key_review</string>
     <string name="title_review">Review</string>
     <string name="summary_review">Write a review and rate</string>
-    <string name="default_gallery_storage">My Videos</string>
-    <string name="key_gallery_name">key_gallery_name</string>
-    <string name="title_gallery_storage">Default Storage</string>
-    <string name="key_faq">key_faq</string>
-    <string name="key_share">key_share</string>
+    <string name="default_gallery_storage" translatable="false">My Videos</string>
+    <string name="key_gallery_name" translatable="false">key_gallery_name</string>
+    <string name="title_gallery_storage">Storage Path</string>
+    <string name="key_faq" translatable="false">key_faq</string>
+    <string name="key_share" translatable="false">key_share</string>
     <string name="title_share">Share</string>
     <string name="summary_share">Share this app with your friends!</string>
-    <string name="key_terms">key_terms</string>
-    <string name="title_terms">Terms and Services</string>
-    <string name="key_open_license">key_open_license</string>
+    <string name="key_terms" translatable="false">key_terms</string>
+    <string name="title_terms">Terms of Services</string>
+    <string name="key_open_license" translatable="false">key_open_license</string>
     <string name="title_open_license">Open License</string>
-    <string name="key_privacy">key_privacy</string>
+    <string name="key_privacy" translatable="false">key_privacy</string>
     <string name="title_privacy">Privacy Policy</string>
-    <string name="url_faq">url</string>
-    <string name="url_privacy">url</string>
-    <string name="url_open_license"> open_license://policy</string>
-    <string name="url_terms">term url</string>
 
-    <string name="apache_license">
+    <string name="open_license_text" translatable="false">
         Copyright [2018] [Team inha]  \n
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -86,19 +91,236 @@
         distributed under the License is distributed on an "AS IS" BASIS,
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
-        limitations under the License.\n
-    </string>
+        limitations under the License.\n\n
 
-    <string name="update_message">You can use newly updated version of Bartender! Do you want to update?</string>
-    <string name="title_new_update">This is Newest Version</string>
+        \n #DiscreteSeekBar\n\n
+        https://github.com/AnderWeb/discreteSeekBar\n
+        Copyright 2014 Gustavo Claramunt (Ander Webbs)\n
+        \n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+\n\n
+       http://www.apache.org/licenses/LICENSE-2.0
+\n\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n #CircleImageView\n\n
+        https://github.com/hdodenhof/CircleImageView\n
+        Copyright 2014 - 2018 Henning Dodenhof\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+
+        \n#Android-RateThisApp\n\n
+        https://github.com/kobakei/Android-RateThisApp\n
+Copyright 2013-2017 Keisuke Kobayashi\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Android DirectoryChooser\n\n
+        https://github.com/passy/Android-DirectoryChooser/\n
+        Copyright 2013-2016 Pascal Hartig\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+
+        \n#TedPermission\n\n
+        https://github.com/ParkSangGwon/TedPermission\n
+        Copyright 2017 Ted Park\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#RecyclerViewSnap\n\n
+        https://github.com/rubensousa/RecyclerViewSnap\n
+        Copyright 2016 The Android Open Source Project\n
+Copyright 2016 Rúben Sousa\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+    http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Sweet Alert Dialog\n\n
+        https://github.com/pedant/sweet-alert-dialog\n
+
+        The MIT License (MIT)\n
+\n
+Copyright © 2014 Pedant(http://pedant.cn)\n
+\n
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:\n
+\n
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.\n
+        \n
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.\n\n
+        \n#SmartTabLayout\n\n
+        https://github.com/ogaclejapan/SmartTabLayout\n
+        Copyright © 2015 ogaclejapan\n
+Copyright © 2013 The Android Open Source Project\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n\n
+        \n#Toasty\n\n
+        https://github.com/GrenderG/Toasty\n\n
+        \n#Expandable Layout\n\n
+        https://github.com/AAkira/ExpandableLayout\n
+        Copyright © 2015 A.Akira\n
+\n
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at\n
+\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+\n
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.\n
+    </string>
+    <string name="terms_service_text" translatable="false">
+         Thank you for choosing App of Team Bartender3\n
+        These Terms of Service is an agreement between you and Team Bartender3, regarding your use of 3Bartender\'s services. By using our services, you agree to the following terms
+        \n\n
+        1.Applicable law\n\n
+        Team Bartender3 is a South Korean (Republic of Korea) Team, and you agree to be bounded by the laws of South Korea.
+        \n\n
+        2.User Content\n\n
+        Team Bartender3 provides services that allow creation of content through the taking of photos or making filters. You understand that you are responsible for all data charges you incur by using these services. You are solely responsible for the content that you share through our services.
+        \n\n
+        3.Feedback\n\n
+        You agree that any feedback, suggestions, idea, or other information that you may provide to Team Bartender3, via email, reviews on Google PlayStore, are non-confidential and sole properties of Team Bartender3. We are entitled to the unrestricted use or such feedback for any purpose, including commercial, without acknowledging or compensating the sender. By providing such feedback, you waive all rights, including copyright, you may have to the content of your feedback. We welcome all feedback, but do not share any content that you expect to be compensated or given credit for in any way.\n
+       \n
+        4.Team Bartender3 Content\n\n
+        Team Bartender3s\' services and all material within them are owned by Team Bartender3 and protected by copyright, trademark, patent, and/or other intellectual property laws. The items protected by these laws include, but are not limited to, APK, text, images, code, illustrations, design, icons, photos and videos. Any unauthorized use of such content is a violation of the laws listed above and this Terms of Service. By using Team Bartender3s’ services and software, you agree that you will not copy, reproduce, republish, modify, reverse-engineer, lease, distribute, license, sell or participate in selling, in whole or in part Team Bartender3s’ services or content. Through this Terms of Service, Team Bartender3 grants a limited use and access to Team Bartender3s’ services and software.
+        \n\n
+        5.Prohibited Activities\n\n
+        In addition to the other restrictions outlined in these Terms, you also agree to refrain from the following:
+\n
+    \n    * Use the services for any purposes that are illegal, not within their intended use, or in violation of this Terms of Services.
+    \n    * Use the services in any manner that disrupts or negatively affects how others use and enjoy our services, or that could impair or damage the services or the security of the services.
+    \n    * Use robots, spiders, crawlers, scrapers or other automated means or interface to access the services or extract data.
+    \n    * Reverse-engineer any aspects of the services, or attempt to access the source code or bypass or circumvent measures employed to prevent or limit access to any area, content, or code of the services.
+    \n    * Attempt to circumvent content filtering techniques or access aspects of the services that you are not authorized to access.
+    \n    * Falsely indicate in any way that you have business affiliations with Team Bartender3 or that you or any services have been endorsed by us.
+    \n    * Violation of the privacy of others by taking photos or videos of another individual(s) without their knowledge or permission.
+    \n    * Infringement any patent, trademark or other intellectual or propriety rights.
+    \n    * Unauthorized sale, lease, or distribution in exchange for compensation, of your log-in information or access to your account.
+    \n    * Develop any third-party application that interact with our services, without our prior written consent.
+    \n    * Use the services for any illegal or unauthorized use, or encourage or promote others to do so.
+
+        \nYou also agree to abide by any third party terms that apply to any platforms you may use to write reviews for Team Bartender3 services, including Google PlayStore Terms of Service .
+    \n
+        \n
+        6.Team Bartender3 Rights\n\n
+        All right, title and interest in and to our services are exclusive property of Team Bartender3. The services are protected by patent, trademark, and copyright. This Terms of Service does not give you the right to use the Team Bartender3 service name, trademark, logo, domain name, or distinctive brand features. All feedback or suggestions that you provide to Team Bartender3 are voluntary and we have the right to use such feedback without any obligations to the sender.\n
+        \n
+        7.Copyright Policy\n\n
+Team Bartender3 respects others’ intellectual property rights, and hopes that our users will respect our intellectual property as well. We act as necessary in response to allegations of infringement of such rights, and if you feel that we have used your content in a way that violates copyright, please let us know by contacting us at TeamBartender3@gmail.com. Furthermore, if you witness a third party entity infringing on our copyright, please let us know by contacting us at TeamBartender3@gmail.com. Please provide links or screenshots if possible.
+    </string>
 
     <!-- Strings related to Popup -->
     <string name="delete_filter">Delete</string>
     <string name="duplicate_filter">Duplicate</string>
     <string name="share_filter">Share</string>
-    <string name="gallery_pref">gallery_shared_pref</string>
+    <string name="gallery_pref" translatable="false">gallery_shared_pref</string>
     <string name="permission_page_title">Required Permissions</string>
     <string name="camera_permission_summary">Permissions for taking photos</string>
     <string name="storage_permission_summary">Permissions required for saving and managing photos</string>
 
+    <!--Strings related to Alert Popup-->
+    <string name="exit_popup_cancel">Cancel</string>
+    <string name="exit_popup_quit">Quit</string>
+    <string name="exit_popup_content">Do you want to quit?</string>
+    <string name="update_message">A new version of Bartender is available. Do you want to update now?</string>
+    <string name="update_popup_title">This is Newest Version</string>
+    <string name="update_popup_title_new">New Update</string>
+    <string name="update_popup_cancel">Not Now</string>
+    <string name="update_popup_confirm">Update Now</string>
+    <string name="delete_popup_title">Are you sure?</string>
+    <string name="delete_popup_confirm">Yes, delete it!</string>
+    <string name="delete_popup_content">Won\'t be able to recover this filter</string>
+    <string name="delete_popup_cancel">No, cancel</string>
+    <string name="deleted_popup_title">Deleted!</string>
+    <string name="deleted_popup_confirm">OK</string>
+    <string name="deleted_popup_content">Your filter %1$s has been deleted!</string>
+    <string name="edit_name_popup_title">Change Filter\'s Name</string>
+    <string name="edit_name_popup_confirm">Confirm</string>
+    <string name="edit_name_popup_cancel">Cancel</string>
+    
+    
+    <!-- Strings related to Material Intro-->
+    <string name="main_first">Press the arrow to view the filter list.</string>
+    <string name="main_second">Click here to modify the value of the currently selected filter.</string>
+    <string name="filterList_first">Press the Plus button to make your own filter!</string>
+    <string name="edit_first">Click here to rename the filter.</string>
+    <string name="edit_second">Make a beautiful filter by changing the property values here!</string>
+    <string name="edit_third">Here you can choose different properties for creating filters.</string>
+    <string name="edit_forth">Don\'t forget to save the filter after you create it!</string>
 </resources>

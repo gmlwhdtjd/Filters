@@ -674,13 +674,15 @@ public class MainActivity extends AppCompatActivity {
         cameraCaptureBtt.setClickable(!lock);
         editBtt.setClickable(!lock);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mButtonLock.set(false);
-                setButtonLock(false);
-            }
-        }, 500);
+        if(lock) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mButtonLock.set(false);
+                    setButtonLock(false);
+                }
+            }, 2000);
+        }
     }
 
     //이곳에 리스너 파라미터 추가

@@ -85,18 +85,23 @@
     <string name="tedpermission_confirm">확인</string>
     <string name="tedpermission_setting">설정</string>
 
-    <!--<string-array name="Questions">-->
-        <!--<item>원본 필터는 무엇인가요?</item>-->
-        <!--<item>카메라가 심하게 렉이 걸립니다.</item>-->
-        <!--<item>필터 이름 길이의 제한이 있나요?</item>-->
-        <!--<item>예상치 못한 에러를 발생하였습니다.</item>-->
-        <!--<item>선택 포커스가 작동하지 않습니다.</item>-->
-        <!--<item>사진은 어디에 저장되나요?</item>-->
-        <!--<item>삭제한 필터를 복구 하고 싶어요!</item>-->
-        <!--<item>카메라가 확대가 되지 않습니다.</item>-->
-        <!--<item>제가 만든 필터를 공유하고 싶습니다.</item>-->
-        <!--<item>위 질문들 중에 원하는 답변이 없습니다.</item>-->
-    <!--</string-array>-->
+    <string-array name="Questions">
+        <item>원본 필터는 무엇인가요?</item>
+        <item>필터 이름 길이의 제한이 있나요?</item>
+        <item>선택 포커스가 작동하지 않습니다.</item>
+        <item>사진은 어디에 저장되나요?</item>
+        <item>삭제한 필터를 복구 하고 싶어요!</item>
+        <item>위 질문들 중에 원하는 답변이 없습니다.</item>
+    </string-array>
+
+    <string-array name="Answer">
+        <item>원본 필터는 아무런 효과도 적용되지 않은 필터 입니다. 원본 필터의 경우 삭제하거나 수정을 하실 수 없습니다.</item>
+        <item>필터의 이름은 최대 9글자로 제한되어 있습니다. 빈칸만으로 이루어진 이름으로는 저장이 되지 않습니다</item>
+        <item>선택 포커스의 경우는 플래시 꺼짐 상태에서만 작동합니다. 플래시를 꺼짐 상태로 변경 하시면 정상적으로 작동됩니다.</item>
+        <item>사진은 기본적으로 사진/앱이름 폴더에 저장됩니다. 설정>저장경로 에서 저장경로를 변경하실 수 있습니다.</item>
+        <item>한번 삭제하신 필터는 아쉽게도 복구가 불가능합니다.</item>
+        <item>위 질문들 중에 원하시는 답변이 없으시거나 제안할 내용이 있으실 경우에는 설정>문의하기 를 통해 메일을 보내주세요</item>
+    </string-array>
 
 
 </resources>

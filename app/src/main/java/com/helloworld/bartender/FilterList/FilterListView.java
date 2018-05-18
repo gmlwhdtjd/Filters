@@ -105,7 +105,6 @@ public class FilterListView extends CoordinatorLayout {
         snapHelper.attachToRecyclerView(filterList);
 
 
-
         filterListBtt = findViewById(R.id.filterListBtt);
         filterListBtt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +123,7 @@ public class FilterListView extends CoordinatorLayout {
                     ((Animatable) filterListBtt.getDrawable()).start();
 
                     prefManager = new PrefManager(getContext());
-                    if(prefManager.getIsFirstInFilterlist()) {
+                    if (prefManager.getIsFirstInFilterlist()) {
                         filterList.smoothScrollToPosition(adapter.getItemCount());
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -150,7 +149,7 @@ public class FilterListView extends CoordinatorLayout {
 
 
     public int getState() {
-       return filterListBehavior.getState();
+        return filterListBehavior.getState();
     }
 
     public void changeState() {
@@ -158,7 +157,11 @@ public class FilterListView extends CoordinatorLayout {
             filterListBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else {
             filterListBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-     }
+        }
+    }
+
+    public boolean isOpen() {
+        return filterListBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
     }
 
     //populate recyclerview
@@ -176,11 +179,13 @@ public class FilterListView extends CoordinatorLayout {
         return adapter;
     }
 
-    public View getFilterListBtt(){
+    public View getFilterListBtt() {
         return filterListBtt;
     }
 
-    public RecyclerView getFilterList(){return filterList;}
+    public RecyclerView getFilterList() {
+        return filterList;
+    }
 
     public class SpeedyLinearLayoutManager extends LinearLayoutManager {
 

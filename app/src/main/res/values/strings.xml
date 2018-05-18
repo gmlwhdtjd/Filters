@@ -313,8 +313,7 @@ Team Bartender3 respects others’ intellectual property rights, and hopes that 
     <string name="edit_name_popup_title">Change Filter\'s Name</string>
     <string name="edit_name_popup_confirm">Confirm</string>
     <string name="edit_name_popup_cancel">Cancel</string>
-    
-    
+
     <!-- Strings related to Material Intro-->
     <string name="main_first">Press the arrow to view the filter list.</string>
     <string name="main_second">Click here to modify the value of the currently selected filter.</string>
@@ -323,4 +322,24 @@ Team Bartender3 respects others’ intellectual property rights, and hopes that 
     <string name="edit_second">Make a beautiful filter by changing the property values here!</string>
     <string name="edit_third">Here you can choose different properties for creating filters.</string>
     <string name="edit_forth">Don\'t forget to save the filter after you create it!</string>
+
+    <!-- FAQ Strings-->
+    <string-array name="Questions">
+        <item>What is the original filter?</item>
+        <item>Is there length limit for the name of filter.</item>
+        <item>Selection focus does not work.</item>
+        <item>Where are the pictures stored?</item>
+        <item>I want to restore the deleted filter!</item>
+        <item>None of above answers my question.</item>
+    </string-array>
+
+    <string-array name="Answer">
+        <item>The Original filter is a filter with no effect. You can not delete or modify the source filter.</item>
+        <item>The name of the filter is limited to a maximum of nine characters. You can not save it with a name composed of blank spaces.</item>
+        <item>Selection focus works only in the flash off state. If you put flash off, it will work normally.</item>
+        <item>The pictures are saved in the Pictures / App Name folder by default. You can change the save path in Settings > Storage Path.</item>
+        <item>Unfortunately, the filter you deleted once can not be recovered.</item>
+        <item>If you have any questions, or if you have any suggestions, please send us an email via Settings > FeedBack.</item>
+    </string-array>
+
 </resources>

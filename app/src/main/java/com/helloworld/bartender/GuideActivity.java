@@ -46,6 +46,8 @@ public class GuideActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
+    private ImageView guide1;
+
 
     private PermissionListener permissionlistener = new PermissionListener() {
         @Override

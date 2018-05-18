@@ -1,11 +1,13 @@
 package com.helloworld.bartender;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -15,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -501,11 +504,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (editView.IsOpen()) {
+        if(mButtonLock.get()){
+            //If buttons are locked, passes back press event.
+        }
+        else if (editView.IsOpen()) {
             editView.close();
         } else if (mHorizontal_adapter.isPopupMenuOpen()) {
             mHorizontal_adapter.dismissPopup();
-        } else {
+        }else if(mFilterListView.isOpen()){
+            mFilterListView.changeState();
+        }
+        else {
             //앱 종료를 묻는 팝업
             SweetAlertDialog finishDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE).setTitleText("Bye")
                     .setCancelText(getString(R.string.exit_popup_cancel))
@@ -674,6 +683,16 @@ public class MainActivity extends AppCompatActivity {
         galleryBtt.setClickable(!lock);
         cameraCaptureBtt.setClickable(!lock);
         editBtt.setClickable(!lock);
+
+        if(lock) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mButtonLock.set(false);
+                    setButtonLock(false);
+                }
+            }, 2000);
+        }
     }
 
     //이곳에 리스너 파라미터 추가
@@ -698,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
      
     }
 
-    MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
+    private MaterialIntroListener materialIntroListener = new MaterialIntroListener() {
         @Override
         public void onUserClicked(String id) {
 

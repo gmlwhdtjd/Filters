@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Picture;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -120,9 +121,17 @@ public class MainActivity extends AppCompatActivity {
         // 카메라 관련
         fCameraPreview = findViewById(R.id.cameraView);
         fCameraCapture = new FCameraCapture(this);
-        fCameraCapture.setSaveDirectory(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                        + File.separator + getString(R.string.app_name));
+        SharedPreferences sp = this.getSharedPreferences(getString(R.string.gallery_pref), 0);
+        String path = sp.getString(getString(R.string.key_gallery_name), "default");
+
+        if (path.equals("default")) {
+            fCameraCapture.setSaveDirectory(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    + File.separator + getString(R.string.app_name));
+        }else {
+            fCameraCapture.setSaveDirectory(path);
+        }
+
 
         fCamera = new FCamera(this, fCameraPreview, fCameraCapture);
         fCamera.setCallback(new FCamera.Callback() {
@@ -617,6 +626,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
 
     private void checkVersion() {
         try {

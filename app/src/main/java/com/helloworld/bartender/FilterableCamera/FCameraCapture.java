@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.opengl.GLES20;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -84,8 +85,14 @@ public class FCameraCapture {
     public void setSaveDirectory(String dir) {
         File file = new File(dir);
         if (!file.exists()) {
-            file.mkdirs();
+            file = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                            + File.separator + mContext.getString(R.string.app_name));
+            if(!file.exists()){
+                file.mkdirs();
+            }
         }
+
         mSaveDirectory = file.getAbsolutePath();
         SharedPreferences pref = mContext.getSharedPreferences(mContext.getString(R.string.gallery_pref),0);
         SharedPreferences.Editor editor = pref.edit();

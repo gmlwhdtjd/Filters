@@ -3,10 +3,12 @@ package com.helloworld.bartender;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -25,10 +27,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.helloworld.bartender.PreferenceSetting.PrefManager;
 
+import io.fabric.sdk.android.Fabric;
+import java.io.File;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
@@ -60,6 +65,7 @@ public class GuideActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
@@ -276,15 +282,19 @@ public class GuideActivity extends AppCompatActivity {
         }
     }
 
-//    private void setDefaultSetting(Context context){
-//        DatabaseHelper dbHelper = null;
-//        try {
-//            dbHelper = new DatabaseHelper(this);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        dbHelper.saveFilter(new OriginalFilter(context,null,getString(R.string.OriginalFilter_Name)),0);
-//    }
+    private void setDefaultSetting(Context context){
+        File file = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                        + File.separator + getString(R.string.app_name));
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        String mSaveDirectory = file.getAbsolutePath();
+        SharedPreferences pref = this.getSharedPreferences(this.getString(R.string.gallery_pref),0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(this.getString(R.string.key_gallery_name),mSaveDirectory);
+        editor.commit();
+    }
 
     private void checkPermission(){
         //Permission Check

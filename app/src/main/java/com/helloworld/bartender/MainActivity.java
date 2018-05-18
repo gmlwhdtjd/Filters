@@ -258,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
         });
         cameraFlashBtt.setOnTouchListener(OnTouchEffectListener);
 
-        cameraTimerBtt.setOnClickListener(new OnSingleClickListener() {
+        cameraTimerBtt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSingleClick(View v) {
+            public void onClick(View v) {
                 switch (cameraTimerState) {
                     case 0:
                         ((ImageButton) v).setImageResource(R.drawable.ic_camera_timer_3);
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
                 ImageButton imageButton = (ImageButton) v;
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        imageButton.setColorFilter(Color.GRAY);
+                        imageButton.setColorFilter(getResources().getColor(R.color.button_touch));
                         ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(imageButton,
                                 "scaleX", 0.8f);
                         ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(imageButton,

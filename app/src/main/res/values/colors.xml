@@ -3,6 +3,8 @@
     <color name="main_back">#404040</color>
     <color name="main_white">#ffffff</color>
 
+    <color name="button_touch">#bbbbbb</color>
+
     <color name="shadow">#55000000</color>
     <color name="filter_list_background">#a0404040</color>
 

@@ -1,4 +1,5 @@
-# Bartender
+# Filters
+   Bartender에서 Filters로 앱 이름이 변경되었습니다.
 
 # License
    ```

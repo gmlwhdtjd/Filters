@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/pref_header_about">
         <Preference
             android:key="@string/key_gallery_name"
             android:summary="@string/default_gallery_storage"
@@ -37,12 +36,10 @@
         <Preference
             android:key="@string/key_open_license"
             android:title="@string/title_open_license" />
-
-
-    </PreferenceCategory>
-    <com.teambartender3.filters.SettingConponents.AdPreference
-        android:layout="@layout/layout_ad_preference"
-        android:key="ads"
-        />
+    <!---->
+    <!--<com.teambartender3.filters.SettingConponents.AdPreference-->
+        <!--android:layout="@layout/layout_ad_preference"-->
+        <!--android:key="ads"-->
+        <!--/>-->
 </PreferenceScreen>
 

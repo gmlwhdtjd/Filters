@@ -15,7 +15,12 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.teambartender3.filters.SettingConponents.AppCompatPreferenceActivity;
 import com.teambartender3.filters.SettingConponents.VersionChecker.MarketVersionChecker;
 
@@ -40,7 +45,21 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         appPackageName = getApplicationContext().getPackageName();
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
-        setListFooter(adsPref);
+        MobileAds.initialize(this,getString(R.string.admob_id) );
+        View view = View.inflate(this, R.layout.layout_ad_preference,null);
+        AdView adView  = new AdView(this);
+        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
+
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+        //테스트 용
+        //     adRequestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+
+        adView.loadAd(adRequestBuilder.build());
+
+        ((LinearLayout) view).addView(adView);
+        setListFooter(view);
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {

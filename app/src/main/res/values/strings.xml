@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Bartender</string>
+    <string name="app_name" translatable="false">Filters</string>
 
     <string name="picture" translatable="false">Picture</string>
     <string name="description_info" translatable="false">Info</string>
@@ -80,7 +80,7 @@
     <string name="title_privacy">Privacy Policy</string>
 
     <string name="open_license_text" translatable="false">
-        Copyright [2018] [Team inha]  \n
+        Copyright [2018] [Team Bartender 3]  \n
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
         You may obtain a copy of the License at
@@ -262,19 +262,19 @@ limitations under the License.\n
     </string>
     <string name="terms_service_text" translatable="false">
          Thank you for choosing App of Team Bartender3\n
-        These Terms of Service is an agreement between you and Team Bartender3, regarding your use of 3Bartender\'s services. By using our services, you agree to the following terms
+        These Terms of Service is an agreement between you and Team Bartender 3, regarding your use of 3 Bartender\'s services. By using our services, you agree to the following terms
         \n\n
         1.Applicable law\n\n
-        Team Bartender3 is a South Korean (Republic of Korea) Team, and you agree to be bounded by the laws of South Korea.
+        Team Bartender 3 is a South Korean (Republic of Korea) Team, and you agree to be bounded by the laws of South Korea.
         \n\n
         2.User Content\n\n
-        Team Bartender3 provides services that allow creation of content through the taking of photos or making filters. You understand that you are responsible for all data charges you incur by using these services. You are solely responsible for the content that you share through our services.
+        Team Bartender 3 provides services that allow creation of content through the taking of photos or making filters. You understand that you are responsible for all data charges you incur by using these services. You are solely responsible for the content that you share through our services.
         \n\n
         3.Feedback\n\n
-        You agree that any feedback, suggestions, idea, or other information that you may provide to Team Bartender3, via email, reviews on Google PlayStore, are non-confidential and sole properties of Team Bartender3. We are entitled to the unrestricted use or such feedback for any purpose, including commercial, without acknowledging or compensating the sender. By providing such feedback, you waive all rights, including copyright, you may have to the content of your feedback. We welcome all feedback, but do not share any content that you expect to be compensated or given credit for in any way.\n
+        You agree that any feedback, suggestions, idea, or other information that you may provide to Team Bartender 3, via email, reviews on Google PlayStore, are non-confidential and sole properties of Team Bartender 3. We are entitled to the unrestricted use or such feedback for any purpose, including commercial, without acknowledging or compensating the sender. By providing such feedback, you waive all rights, including copyright, you may have to the content of your feedback. We welcome all feedback, but do not share any content that you expect to be compensated or given credit for in any way.\n
        \n
-        4.Team Bartender3 Content\n\n
-        Team Bartender3s\' services and all material within them are owned by Team Bartender3 and protected by copyright, trademark, patent, and/or other intellectual property laws. The items protected by these laws include, but are not limited to, APK, text, images, code, illustrations, design, icons, photos and videos. Any unauthorized use of such content is a violation of the laws listed above and this Terms of Service. By using Team Bartender3s’ services and software, you agree that you will not copy, reproduce, republish, modify, reverse-engineer, lease, distribute, license, sell or participate in selling, in whole or in part Team Bartender3s’ services or content. Through this Terms of Service, Team Bartender3 grants a limited use and access to Team Bartender3s’ services and software.
+        4.Team Bartender 3 Content\n\n
+        Team Bartender 3s\' services and all material within them are owned by Team Bartender 3 and protected by copyright, trademark, patent, and/or other intellectual property laws. The items protected by these laws include, but are not limited to, APK, text, images, code, illustrations, design, icons, photos and videos. Any unauthorized use of such content is a violation of the laws listed above and this Terms of Service. By using Team Bartender 3s’ services and software, you agree that you will not copy, reproduce, republish, modify, reverse-engineer, lease, distribute, license, sell or participate in selling, in whole or in part Team Bartender 3s’ services or content. Through this Terms of Service, Team Bartender 3 grants a limited use and access to Team Bartender 3s’ services and software.
         \n\n
         5.Prohibited Activities\n\n
         In addition to the other restrictions outlined in these Terms, you also agree to refrain from the following:
@@ -284,21 +284,21 @@ limitations under the License.\n
     \n    * Use robots, spiders, crawlers, scrapers or other automated means or interface to access the services or extract data.
     \n    * Reverse-engineer any aspects of the services, or attempt to access the source code or bypass or circumvent measures employed to prevent or limit access to any area, content, or code of the services.
     \n    * Attempt to circumvent content filtering techniques or access aspects of the services that you are not authorized to access.
-    \n    * Falsely indicate in any way that you have business affiliations with Team Bartender3 or that you or any services have been endorsed by us.
+    \n    * Falsely indicate in any way that you have business affiliations with Team Bartender 3 or that you or any services have been endorsed by us.
     \n    * Violation of the privacy of others by taking photos or videos of another individual(s) without their knowledge or permission.
     \n    * Infringement any patent, trademark or other intellectual or propriety rights.
     \n    * Unauthorized sale, lease, or distribution in exchange for compensation, of your log-in information or access to your account.
     \n    * Develop any third-party application that interact with our services, without our prior written consent.
     \n    * Use the services for any illegal or unauthorized use, or encourage or promote others to do so.
 
-        \nYou also agree to abide by any third party terms that apply to any platforms you may use to write reviews for Team Bartender3 services, including Google PlayStore Terms of Service .
+        \nYou also agree to abide by any third party terms that apply to any platforms you may use to write reviews for Team Bartender 3 services, including Google PlayStore Terms of Service .
     \n
         \n
-        6.Team Bartender3 Rights\n\n
-        All right, title and interest in and to our services are exclusive property of Team Bartender3. The services are protected by patent, trademark, and copyright. This Terms of Service does not give you the right to use the Team Bartender3 service name, trademark, logo, domain name, or distinctive brand features. All feedback or suggestions that you provide to Team Bartender3 are voluntary and we have the right to use such feedback without any obligations to the sender.\n
+        6.Team Bartender 3 Rights\n\n
+        All right, title and interest in and to our services are exclusive property of Team Bartender 3. The services are protected by patent, trademark, and copyright. This Terms of Service does not give you the right to use the Team Bartender 3 service name, trademark, logo, domain name, or distinctive brand features. All feedback or suggestions that you provide to Team Bartender 3 are voluntary and we have the right to use such feedback without any obligations to the sender.\n
         \n
         7.Copyright Policy\n\n
-Team Bartender3 respects others’ intellectual property rights, and hopes that our users will respect our intellectual property as well. We act as necessary in response to allegations of infringement of such rights, and if you feel that we have used your content in a way that violates copyright, please let us know by contacting us at TeamBartender3@gmail.com. Furthermore, if you witness a third party entity infringing on our copyright, please let us know by contacting us at TeamBartender3@gmail.com. Please provide links or screenshots if possible.
+Team Bartender 3 respects others’ intellectual property rights, and hopes that our users will respect our intellectual property as well. We act as necessary in response to allegations of infringement of such rights, and if you feel that we have used your content in a way that violates copyright, please let us know by contacting us at TeamBartender3@gmail.com. Furthermore, if you witness a third party entity infringing on our copyright, please let us know by contacting us at TeamBartender3@gmail.com. Please provide links or screenshots if possible.
     </string>
 
     <!-- Strings related to Popup -->

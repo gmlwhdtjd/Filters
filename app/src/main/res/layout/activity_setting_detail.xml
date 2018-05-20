@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.helloworld.bartender.DetailSettingActivity">
+    tools:context="com.teambartender3.filters.DetailSettingActivity">
 
     <TextView
         android:id="@+id/detail_title"

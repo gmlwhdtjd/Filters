@@ -1,17 +1,14 @@
 package com.helloworld.bartender;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Picture;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;

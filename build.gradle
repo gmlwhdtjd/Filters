@@ -19,6 +19,9 @@ allprojects {
     repositories {
         maven { url 'http://guardian.github.com/maven/repo-releases'}
         maven { url "https://jitpack.io" }
+        maven {
+            url "https://maven.google.com"
+        }
         google()
         jcenter()
     }

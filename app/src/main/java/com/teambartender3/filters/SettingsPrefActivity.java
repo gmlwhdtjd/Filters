@@ -40,6 +40,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         appPackageName = getApplicationContext().getPackageName();
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
+        setListFooter(adsPref);
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -64,7 +65,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
-
+            Preference adsPref = (findPreference("ads"));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
             String path = sp.getString(getString(R.string.key_gallery_name), "Picture");

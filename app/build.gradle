@@ -62,4 +62,7 @@ dependencies {
     //    compile 'com.github.badoualy:MaterialIntroView:e713b6c28a'
     implementation project(':materialintro')
     compile project(path: ':materialintro')
+
+    compile 'com.google.android.gms:play-services-ads:15.0.1'
+
 }

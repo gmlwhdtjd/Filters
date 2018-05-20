@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Filters</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3147006186659543/6545200666</string>
+    <string name="admob_id" translatable="false">ca-app-pub-3147006186659543~4445102191 </string>
 
     <string name="picture" translatable="false">Picture</string>
     <string name="description_info" translatable="false">Info</string>

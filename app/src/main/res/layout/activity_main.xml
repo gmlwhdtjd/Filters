@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.helloworld.bartender.MainActivity">
+    tools:context="com.teambartender3.filters.MainActivity">
 
     <FrameLayout
         android:id="@+id/cameraFrame"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottomLinear">
 
-        <com.helloworld.bartender.FilterableCamera.FCameraPreview
+        <com.teambartender3.filters.FilterableCamera.FCameraPreview
             android:id="@+id/cameraView"
             android:layout_gravity="center"
             android:layout_width="match_parent"
@@ -92,7 +92,7 @@
 
     </LinearLayout>
 
-    <com.helloworld.bartender.FilterList.FilterListView
+    <com.teambartender3.filters.FilterList.FilterListView
         android:id="@+id/filterListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -152,7 +152,7 @@
             app:srcCompat="@drawable/ic_edit" />
     </LinearLayout>
 
-    <com.helloworld.bartender.Edit.EditView
+    <com.teambartender3.filters.Edit.EditView
         android:id="@+id/editView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

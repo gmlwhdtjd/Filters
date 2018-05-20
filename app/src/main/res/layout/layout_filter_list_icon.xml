@@ -7,7 +7,7 @@
     android:layout_marginRight="8dp"
     android:orientation="vertical">
 
-    <com.helloworld.bartender.FilterList.FilterRadioButton.FilterRadioButton
+    <com.teambartender3.filters.FilterList.FilterRadioButton.FilterRadioButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/filterIcon"

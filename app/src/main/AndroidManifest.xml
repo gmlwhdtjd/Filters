@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.helloworld.bartender">
+    package="com.teambartender3.filters">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -23,10 +23,10 @@
         android:versionName="1.0.0"
         tools:replace="android:icon, android:theme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.teambartender3.filters.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".GuideActivity"
+            android:name="com.teambartender3.filters.GuideActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,14 +35,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsPrefActivity"
+            android:name="com.teambartender3.filters.SettingsPrefActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SettingTheme" />
         <activity
-            android:name=".DetailSettingActivity"
+            android:name="com.teambartender3.filters.DetailSettingActivity"
             android:theme="@style/SettingTheme" />
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
-        <activity android:name=".FaqActivity"
+        <activity android:name="com.teambartender3.filters.FaqActivity"
             android:theme="@style/SettingTheme"
            />
         <meta-data

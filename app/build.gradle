@@ -18,7 +18,7 @@ repositories {
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.helloworld.bartender"
+        applicationId "com.teambartender3.filters"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1

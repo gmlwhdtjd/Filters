@@ -6,6 +6,9 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class DetailSettingActivity extends AppCompatActivity {
 
     TextView mDetailText;
@@ -20,6 +23,12 @@ public class DetailSettingActivity extends AppCompatActivity {
 
         mDetailText = findViewById(R.id.detailText);
         mTitleText = findViewById(R.id.detail_title);
+
+        AdView adView = (AdView) findViewById(R.id.detail_adView);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        adView.loadAd(adRequest);
 
         mDetailText.setMovementMethod(new ScrollingMovementMethod());
         switch (pageCode) {

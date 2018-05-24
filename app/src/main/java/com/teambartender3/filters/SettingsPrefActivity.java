@@ -48,7 +48,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         MobileAds.initialize(this,getString(R.string.admob_id) );
         View view = View.inflate(this, R.layout.layout_ad_preference,null);
         AdView adView  = new AdView(this);
-        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
         adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
 
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();

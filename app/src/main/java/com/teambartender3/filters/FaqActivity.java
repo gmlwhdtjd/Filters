@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
 import com.github.aakira.expandablelayout.Utils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.teambartender3.filters.SettingConponents.FaqListView.FaqRecyclerAdapter;
 import com.teambartender3.filters.SettingConponents.FaqListView.QuestionModel;
 
@@ -45,6 +47,15 @@ public class FaqActivity extends AppCompatActivity {
             data.add(new QuestionModel(questions[i], answers[i], Utils.createInterpolator(Utils.ACCELERATE_DECELERATE_INTERPOLATOR)));
         }
         recyclerView.setAdapter(new FaqRecyclerAdapter(data));
+
+
+        AdView adView = (AdView) findViewById(R.id.faq_adView);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        adView.loadAd(adRequest);
+
+
     }
 
     @Override

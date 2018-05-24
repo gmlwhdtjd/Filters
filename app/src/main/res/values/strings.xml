@@ -14,7 +14,7 @@
     <string name="tedpermission_confirm" >Confirm</string>
     <string name="permission_denied" translatable="false">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
 
-    <string name="lockable_bottom_sheet_behavior" translatable="false">com.helloworld.bartender.LockableBottomSheetBehavior</string>
+    <string name="lockable_bottom_sheet_behavior" translatable="false">com.teambartender3.filters.LockableBottomSheetBehavior</string>
 
     <!--Original Filter-->
     <string name="OriginalFilter_Name">Original</string>
@@ -317,7 +317,7 @@ Team Bartender 3 respects others’ intellectual property rights, and hopes that
     <string name="exit_popup_cancel">Cancel</string>
     <string name="exit_popup_quit">Quit</string>
     <string name="exit_popup_content">Do you want to quit?</string>
-    <string name="update_message">A new version of Bartender is available. Do you want to update now?</string>
+    <string name="update_message">A new version of Filters is available. Do you want to update now?</string>
     <string name="update_popup_title">This is Newest Version</string>
     <string name="update_popup_title_new">New Update</string>
     <string name="update_popup_cancel">Not Now</string>

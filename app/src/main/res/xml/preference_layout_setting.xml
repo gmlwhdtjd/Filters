@@ -36,10 +36,6 @@
         <Preference
             android:key="@string/key_open_license"
             android:title="@string/title_open_license" />
-    <!---->
-    <!--<com.teambartender3.filters.SettingConponents.AdPreference-->
-        <!--android:layout="@layout/layout_ad_preference"-->
-        <!--android:key="ads"-->
-        <!--/>-->
+
 </PreferenceScreen>
 

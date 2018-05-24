@@ -53,9 +53,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
 
         AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
 
-        //테스트 용
-        //     adRequestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-
         adView.loadAd(adRequestBuilder.build());
 
         ((LinearLayout) view).addView(adView);

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -90,10 +91,10 @@ public class GuideActivity extends AppCompatActivity {
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
-                R.layout.guilde_slide1,
-                R.layout.guilde_slide2,
-                R.layout.guilde_slide3,
-                R.layout.guilde_slide4};
+                R.layout.guide_slide1,
+                R.layout.guide_slide2,
+                R.layout.guide_slide3,
+                R.layout.guide_slide4};
 
         // adding bottom dots
         addBottomDots(0);
@@ -202,7 +203,7 @@ public class GuideActivity extends AppCompatActivity {
         View view = viewPager.findViewWithTag(position);
         switch (position) {
             case 0:
-                LinearLayout guide1 = view.findViewById(R.id.guide1);
+                ConstraintLayout guide1 = view.findViewById(R.id.guide1);
                 Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
                 guide1.startAnimation(guide1_anim);
                 break;

@@ -241,6 +241,7 @@ public class FCameraCapture {
 
             FileOutputStream fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            bitmap.recycle();
 
             Log.d(TAG, file.toString());
 

@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name" translatable="false">Filters</string>
 
+    <!--Guide Silde-->
+    <string name="Guide_Slide_1" translatable="false">Welcome to Filters!</string>
+    <string name="Guide_Slide_2">Take photos!\nWith many Filters</string>
+    <string name="Guide_Slide_3">Make your own Filter!</string>
+    <string name="permission_page_title">Required Permissions</string>
+    <string name="camera_permission" translatable="false">Camera</string>
+    <string name="storage_permission" translatable="false">Storage</string>
+    <string name="camera_permission_summary">Permissions for taking photos</string>
+    <string name="storage_permission_summary">Permissions required for saving and managing photos</string>
+
     <string name="picture" translatable="false">Picture</string>
     <string name="description_info" translatable="false">Info</string>
     <string name="request_permission" translatable="false">This sample needs camera permission.</string>
@@ -11,14 +21,9 @@
     <string name="tedpermission_confirm" >Confirm</string>
     <string name="permission_denied" translatable="false">"If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]"</string>
 
-    <string name="lockable_bottom_sheet_behavior" translatable="false">com.helloworld.bartender.LockableBottomSheetBehavior</string>
-
     <!--Original Filter-->
     <string name="OriginalFilter_Name">Original</string>
-    <string name="OriginalFilter_msg">
-        You chose the original source.\n\n
-        Please, Select a different filter. :)
-    </string>
+    <string name="OriginalFilter_msg">" You chose the original source.\\nPlease, Select a different filter. :)     "</string>
 
     <string-array name="default_filter_name_array">
         <item>Original</item>
@@ -290,9 +295,6 @@ Team Bartender 3 respects others’ intellectual property rights, and hopes that
     <string name="duplicate_filter">Duplicate</string>
     <string name="share_filter">Share</string>
     <string name="gallery_pref" translatable="false">gallery_shared_pref</string>
-    <string name="permission_page_title">Required Permissions</string>
-    <string name="camera_permission_summary">Permissions for taking photos</string>
-    <string name="storage_permission_summary">Permissions required for saving and managing photos</string>
 
     <!--Strings related to Alert Popup-->
     <string name="exit_popup_cancel">Cancel</string>

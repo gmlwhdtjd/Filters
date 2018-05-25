@@ -358,9 +358,6 @@ public class MainActivity extends AppCompatActivity {
         //버전 체크
         checkVersion();
 
-//        //디버그 용
-        new PreferencesManager(this.getApplicationContext()).resetAll();
-
         showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, getString(R.string.main_first), Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 
     }

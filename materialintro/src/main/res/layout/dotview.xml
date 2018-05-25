@@ -18,20 +18,19 @@
         android:id="@+id/guide_pointer1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/guide_pointer_1"
-        />
+        android:src="@drawable/guide_pointer_1" />
+
     <ImageView
         android:id="@+id/guide_pointer2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/guide_pointer_2"
-        />
+        android:src="@drawable/guide_pointer_2" />
+
     <ImageView
         android:id="@+id/guide_pointer3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/guide_pointer_3"
-        />
+        android:src="@drawable/guide_pointer_3" />
 
 </RelativeLayout>
 

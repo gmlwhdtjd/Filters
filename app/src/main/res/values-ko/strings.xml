@@ -2,7 +2,7 @@
 
     <!--Retro Filter-->
     <string name="OriginalFilter_Name">원본</string>
-    <string name="OriginalFilter_msg">원본을 선택하셨습니다.\\n다른 필터를 선택해 주세요. :)</string>
+    <string name="OriginalFilter_msg">원본을 선택하셨습니다.\n다른 필터를 선택해 주세요. :)</string>
 
     <string-array name="default_filter_name_array">
         <item>원본</item>

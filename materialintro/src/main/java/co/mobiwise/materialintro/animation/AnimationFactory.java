@@ -124,7 +124,41 @@ public class AnimationFactory {
         alpha3.setRepeatCount(ValueAnimator.INFINITE);
         alpha3.setRepeatMode(ValueAnimator.REVERSE);
 
-        firstDotAnimatorSet.playTogether(alpha1,alpha2,alpha3);
+        ValueAnimator scaleX1 = ObjectAnimator.ofFloat(guidePoint1, "scaleX", 1.0f, 1.2f);
+        scaleX1.setDuration(900);
+        scaleX1.setRepeatCount(ValueAnimator.INFINITE);
+        scaleX1.setRepeatMode(ValueAnimator.REVERSE);
+        scaleX1.setStartDelay(600);
+
+        ValueAnimator scaleX2 = ObjectAnimator.ofFloat(guidePoint2, "scaleX", 1.0f, 1.2f);
+        scaleX2.setDuration(900);
+        scaleX2.setRepeatCount(ValueAnimator.INFINITE);
+        scaleX2.setRepeatMode(ValueAnimator.REVERSE);
+        scaleX2.setStartDelay(300);
+
+        ValueAnimator scaleX3 = ObjectAnimator.ofFloat(guidePoint3, "scaleX", 1.0f, 1.2f);
+        scaleX3.setDuration(900);
+        scaleX3.setRepeatCount(ValueAnimator.INFINITE);
+        scaleX3.setRepeatMode(ValueAnimator.REVERSE);
+
+        ValueAnimator scaleY1 = ObjectAnimator.ofFloat(guidePoint1, "scaleY", 1.0f, 1.2f);
+        scaleY1.setDuration(900);
+        scaleY1.setRepeatCount(ValueAnimator.INFINITE);
+        scaleY1.setRepeatMode(ValueAnimator.REVERSE);
+        scaleY1.setStartDelay(600);
+
+        ValueAnimator scaleY2 = ObjectAnimator.ofFloat(guidePoint2, "scaleY", 1.0f, 1.2f);
+        scaleY2.setDuration(900);
+        scaleY2.setRepeatCount(ValueAnimator.INFINITE);
+        scaleY2.setRepeatMode(ValueAnimator.REVERSE);
+        scaleY2.setStartDelay(300);
+
+        ValueAnimator scaleY3 = ObjectAnimator.ofFloat(guidePoint3, "scaleY", 1.0f, 1.2f);
+        scaleY3.setDuration(900);
+        scaleY3.setRepeatCount(ValueAnimator.INFINITE);
+        scaleY3.setRepeatMode(ValueAnimator.REVERSE);
+
+        firstDotAnimatorSet.playTogether(alpha1,alpha2,alpha3,scaleX1,scaleX2,scaleX3, scaleY1,scaleY2,scaleY3);
         firstDotAnimatorSet.start();
     }
 

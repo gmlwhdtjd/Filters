@@ -49,6 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.mobiwise.materialintro.animation.MaterialIntroListener;
+import co.mobiwise.materialintro.prefs.PreferencesManager;
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.shape.ShapeType;
@@ -358,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         checkVersion();
 
 //        //디버그 용
-//        new PreferencesManager(this.getApplicationContext()).resetAll();
+        new PreferencesManager(this.getApplicationContext()).resetAll();
 
         showIntro(mFilterListView.getFilterListBtt(), MAIN_FIRST_INTRO, getString(R.string.main_first), Focus.ALL,materialIntroListener,ShapeType.CIRCLE);
 

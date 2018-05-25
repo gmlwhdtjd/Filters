@@ -524,8 +524,8 @@ public class MaterialIntroView extends RelativeLayout {
                 dotViewLayoutParams.height = Utils.dpToPx(Constants.DEFAULT_DOT_SIZE);
                 dotViewLayoutParams.width = Utils.dpToPx(Constants.DEFAULT_DOT_SIZE);
                 dotViewLayoutParams.setMargins(
-                        targetShape.getPoint().x - (dotViewLayoutParams.width/2)+(dotViewLayoutParams.width/10),        //targetShape.getPoint().x - (dotViewLayoutParams.width/2)
-                        targetView.getRect().centerY(),
+                        targetShape.getPoint().x - (dotViewLayoutParams.width/2),        //targetShape.getPoint().x - (dotViewLayoutParams.width/2)
+                        targetShape.getPoint().y - (dotViewLayoutParams.height/2),
                         0,
                         0);
                 dotView.setLayoutParams(dotViewLayoutParams);

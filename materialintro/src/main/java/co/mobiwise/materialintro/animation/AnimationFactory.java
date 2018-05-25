@@ -97,25 +97,16 @@ public class AnimationFactory {
 
     public static void performAnimation(View view) {
 
-        AnimatorSet animatorSet = new AnimatorSet();
-
-        ValueAnimator scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0.9f);
-        scaleX.setRepeatCount(ValueAnimator.INFINITE);
-        scaleX.setRepeatMode(ValueAnimator.REVERSE);
-        scaleX.setDuration(800);
-
-        ValueAnimator scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.9f);
-        scaleY.setRepeatCount(ValueAnimator.INFINITE);
-        scaleY.setRepeatMode(ValueAnimator.REVERSE);
-        scaleY.setDuration(800);
-
+        AnimatorSet firstDotAnimatorSet = new AnimatorSet();
+     
         ValueAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.8f);
         alpha.setDuration(800);
         alpha.setRepeatCount(ValueAnimator.INFINITE);
         alpha.setRepeatMode(ValueAnimator.REVERSE);
+        alpha.setStartDelay(200);
 
-        animatorSet.playTogether(scaleX, scaleY, alpha);
-        animatorSet.start();
+        firstDotAnimatorSet.playTogether(alpha);
+        firstDotAnimatorSet.start();
     }
 
 }

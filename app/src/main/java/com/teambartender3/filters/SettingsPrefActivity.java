@@ -18,7 +18,12 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.teambartender3.filters.SettingConponents.AppCompatPreferenceActivity;
 import com.teambartender3.filters.SettingConponents.VersionChecker.MarketVersionChecker;
 
@@ -46,6 +51,18 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         appPackageName = getApplicationContext().getPackageName();
         // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
+        MobileAds.initialize(this,getString(R.string.admob_id) );
+        View view = View.inflate(this, R.layout.layout_ad_preference,null);
+        AdView adView  = new AdView(this);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+        adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
+
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+
+        adView.loadAd(adRequestBuilder.build());
+
+        ((LinearLayout) view).addView(adView);
+        setListFooter(view);
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -70,7 +87,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             Preference termsPref = (findPreference(getString(R.string.key_terms)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
-
+            Preference adsPref = (findPreference("ads"));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
             String path = sp.getString(getString(R.string.key_gallery_name), "Picture");

@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ImageView
-    android:id="@+id/dotView"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<ImageView-->
+    <!--android:id="@+id/dotView"-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/click"-->
+    <!--android:visibility="invisible"/>-->
+<RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:src="@drawable/click"
-    android:visibility="invisible"/>
+    android:id="@+id/dotView"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ImageView
+        android:id="@+id/guide_pointer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/guide_pointer_1"
+        />
+    <ImageView
+        android:id="@+id/guide_pointer2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/guide_pointer_2"
+        />
+    <ImageView
+        android:id="@+id/guide_pointer3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/guide_pointer_3"
+        />
+
+</RelativeLayout>
 
 

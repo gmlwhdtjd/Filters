@@ -44,7 +44,7 @@
     <string name="title_faq">자주 묻는 질문</string>
     <string name="title_send_feedback">문의 하기</string>
     <string name="title_activity_setting">설정</string>
-    <string name="update_message">"새로운 버전의 Bartender를 사용할 수 있습니다. 지금 다운로드 하시겠습니까?"</string>
+    <string name="update_message">"새로운 버전의 Filters를 사용할 수 있습니다. 지금 다운로드 하시겠습니까?"</string>
     <string name="edit_forth">필터를 만든 뒤에 저장하는 것을 잊지 마세요!</string>
     <string name="edit_third">이곳에서 필터를 만들기 위한 여러 가지 속성들을 고를 수 있습니다.</string>
     <string name="edit_second">이곳에서 속성값들을 변경하여 아름다운 필터를 만들어 보세요!</string>

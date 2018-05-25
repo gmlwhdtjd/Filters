@@ -12,6 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -524,8 +525,8 @@ public class MaterialIntroView extends RelativeLayout {
                 dotViewLayoutParams.height = Utils.dpToPx(Constants.DEFAULT_DOT_SIZE);
                 dotViewLayoutParams.width = Utils.dpToPx(Constants.DEFAULT_DOT_SIZE);
                 dotViewLayoutParams.setMargins(
-                        targetShape.getPoint().x - (dotViewLayoutParams.width/2)+(dotViewLayoutParams.width/10),        //targetShape.getPoint().x - (dotViewLayoutParams.width/2)
-                        targetView.getRect().centerY(),
+                        targetShape.getPoint().x-(dotViewLayoutParams.width/4),        //targetShape.getPoint().x - (dotViewLayoutParams.width/2)
+                        targetShape.getPoint().y-(dotViewLayoutParams.height/4),
                         0,
                         0);
                 dotView.setLayoutParams(dotViewLayoutParams);

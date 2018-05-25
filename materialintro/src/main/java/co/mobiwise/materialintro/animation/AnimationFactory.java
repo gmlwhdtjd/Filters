@@ -5,6 +5,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.view.View;
+import android.widget.ImageView;
+
+import co.mobiwise.materialintro.R;
 
 /**
  * Created by mertsimsek on 25/01/16.
@@ -97,25 +100,32 @@ public class AnimationFactory {
 
     public static void performAnimation(View view) {
 
-        AnimatorSet animatorSet = new AnimatorSet();
+        ImageView guidePoint1 = view.findViewById(R.id.guide_pointer1);
+        ImageView guidePoint2 = view.findViewById(R.id.guide_pointer2);
+        ImageView guidePoint3 = view.findViewById(R.id.guide_pointer3);
 
-        ValueAnimator scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0.9f);
-        scaleX.setRepeatCount(ValueAnimator.INFINITE);
-        scaleX.setRepeatMode(ValueAnimator.REVERSE);
-        scaleX.setDuration(800);
 
-        ValueAnimator scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.9f);
-        scaleY.setRepeatCount(ValueAnimator.INFINITE);
-        scaleY.setRepeatMode(ValueAnimator.REVERSE);
-        scaleY.setDuration(800);
+        AnimatorSet firstDotAnimatorSet = new AnimatorSet();
 
-        ValueAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.8f);
-        alpha.setDuration(800);
-        alpha.setRepeatCount(ValueAnimator.INFINITE);
-        alpha.setRepeatMode(ValueAnimator.REVERSE);
+        ValueAnimator alpha1 = ObjectAnimator.ofFloat(guidePoint1, "alpha", 1.0f, 0.0f);
+        alpha1.setDuration(900);
+        alpha1.setRepeatCount(ValueAnimator.INFINITE);
+        alpha1.setRepeatMode(ValueAnimator.REVERSE);
+        alpha1.setStartDelay(600);
 
-        animatorSet.playTogether(scaleX, scaleY, alpha);
-        animatorSet.start();
+        ValueAnimator alpha2 = ObjectAnimator.ofFloat(guidePoint2, "alpha", 1.0f, 0.0f);
+        alpha2.setDuration(900);
+        alpha2.setRepeatCount(ValueAnimator.INFINITE);
+        alpha2.setRepeatMode(ValueAnimator.REVERSE);
+        alpha2.setStartDelay(300);
+
+        ValueAnimator alpha3 = ObjectAnimator.ofFloat(guidePoint3, "alpha", 1.0f, 0.0f);
+        alpha3.setDuration(900);
+        alpha3.setRepeatCount(ValueAnimator.INFINITE);
+        alpha3.setRepeatMode(ValueAnimator.REVERSE);
+
+        firstDotAnimatorSet.playTogether(alpha1,alpha2,alpha3);
+        firstDotAnimatorSet.start();
     }
 
 }

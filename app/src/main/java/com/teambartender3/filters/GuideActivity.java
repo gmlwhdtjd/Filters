@@ -203,9 +203,6 @@ public class GuideActivity extends AppCompatActivity {
         View view = viewPager.findViewWithTag(position);
         switch (position) {
             case 0:
-                ConstraintLayout guide1 = view.findViewById(R.id.guide1);
-                Animation guide1_anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.guide1_anim);
-                guide1.startAnimation(guide1_anim);
                 break;
             case 1:
                 ImageView guide2_0 = view.findViewById(R.id.guide2_0);

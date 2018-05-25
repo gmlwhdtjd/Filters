@@ -71,7 +71,7 @@
     <string name="exit_popup_cancel">아니요</string>
     <string name="storage_permission_summary">사진을 저장하고 관리하기 위해서 필요한 권한입니다.</string>
     <string name="camera_permission_summary">사진을 촬영하기 위해 필요한 권한입니다.</string>
-    <string name="permission_page_title">필수 권환</string>
+    <string name="permission_page_title">필수 권한</string>
     <string name="title_open_license">오픈 라이센스</string>
     <string name="summary_share">앱을 친구들과 공유해보세요!</string>
     <string name="title_gallery_storage">저장 경로</string>

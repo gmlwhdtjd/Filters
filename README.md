@@ -1,5 +1,10 @@
 # Filters - Make your own Filter
    Bartender에서 Filters로 앱 이름이 변경되었습니다.
+   
+# Privacy Policy
+   ```
+   https://gmlwhdtjd.github.io/filters-privacy-policy/
+   ```
 
 # License
    ```

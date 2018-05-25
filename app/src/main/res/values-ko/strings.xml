@@ -2,10 +2,7 @@
 
     <!--Retro Filter-->
     <string name="OriginalFilter_Name">원본</string>
-    <string name="OriginalFilter_msg">
-        원본을 선택하셨습니다.\n\n
-        다른 필터를 선택해 주세요. :)
-    </string>
+    <string name="OriginalFilter_msg">원본을 선택하셨습니다.\\n다른 필터를 선택해 주세요. :)</string>
 
     <string-array name="default_filter_name_array">
         <item>원본</item>
@@ -102,6 +99,6 @@
         <item>한번 삭제하신 필터는 아쉽게도 복구가 불가능합니다.</item>
         <item>위 질문들 중에 원하시는 답변이 없으시거나 제안할 내용이 있으실 경우에는 설정>문의하기 를 통해 메일을 보내주세요</item>
     </string-array>
-
-
+    <string name="Guide_Slide_2">간편하게 저장된 필터로 찰칵!</string>
+    <string name="Guide_Slide_3">맘에 드는 필터가 없다면?\n직접 만드는 나만의 필터!</string>
 </resources>

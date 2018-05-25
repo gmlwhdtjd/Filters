@@ -98,7 +98,7 @@ public class AnimationFactory {
     public static void performAnimation(View view) {
 
         AnimatorSet firstDotAnimatorSet = new AnimatorSet();
-     
+
         ValueAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.8f);
         alpha.setDuration(800);
         alpha.setRepeatCount(ValueAnimator.INFINITE);

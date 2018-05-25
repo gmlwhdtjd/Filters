@@ -15,10 +15,12 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="50dp"
-        android:text="Take photos using\n great filters"
+        android:lineSpacingExtra="14sp"
+        android:text="@string/Guide_Slide_3"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="@color/main_back"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
@@ -26,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/guide2_0"
+        android:id="@+id/guide3_0"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
@@ -35,7 +37,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/guide_sample0"
+        android:src="@drawable/guide_sample3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +45,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
-        android:id="@+id/guide2_1"
+        android:id="@+id/guide3_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
@@ -52,32 +54,12 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/guide_sample1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guide_text"
-        app:layout_constraintVertical_bias="1.0"
-        android:visibility="invisible"/>
-
-
-    <ImageView
-        android:id="@+id/guide2_2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/guide_sample2"
+        android:src="@drawable/guide_sample4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide_text"
         app:layout_constraintVertical_bias="1.0"
         android:visibility="invisible" />
-
 
 </android.support.constraint.ConstraintLayout>

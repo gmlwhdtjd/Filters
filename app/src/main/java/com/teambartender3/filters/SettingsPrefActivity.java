@@ -4,13 +4,16 @@ package com.teambartender3.filters;
  * Created by wilybear on 2018-03-23.
  */
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
@@ -26,6 +29,9 @@ import com.teambartender3.filters.SettingConponents.VersionChecker.MarketVersion
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -200,6 +206,16 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
+
+            //shared intent
+            Preference share = findPreference(getString(R.string.key_share));
+            share.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    shareApp(getActivity());
+                    return true;
+                }
+            });
         }
 
         @Override
@@ -268,6 +284,65 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.choose_email_client)));
     }
 
+    private static void shareApp(Context context) {
+        List<Intent> targetShareIntents=new ArrayList<Intent>();
+        Intent shareIntent=new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        List<ResolveInfo> resInfos=context.getPackageManager().queryIntentActivities(shareIntent, 0);
+        if(!resInfos.isEmpty()){
+            System.out.println("Have package");
+            for(ResolveInfo resInfo : resInfos){
+                String packageName=resInfo.activityInfo.packageName;
+                if(packageName.contains("com.facebook.katana")) {
+                    Intent intent=new Intent();
+                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.setPackage(packageName);
+                    targetShareIntents.add(intent);
+                } else if(packageName.contains("com.twitter.android")) {
+                    Intent intent=new Intent();
+                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    //intent.setType("image/*");
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, "제목 http://www.google.com #제목");
+                    //intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+mImagePath));
+                    intent.setPackage(packageName);
+                    targetShareIntents.add(intent);
+                } else if(packageName.contains("com.kakao.talk")) {
+                    Intent intent=new Intent();
+                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "제목");
+                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.setPackage(packageName);
+                    targetShareIntents.add(intent);
+                } else {
+                    Intent intent=new Intent();
+                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "제목");
+                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.setPackage(packageName);
+                    targetShareIntents.add(intent);
+                }
+            }
+            if(!targetShareIntents.isEmpty()){
+                Intent chooserIntent=Intent.createChooser(targetShareIntents.remove(0), "Choose app to share");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetShareIntents.toArray(new Parcelable[]{}));
+                context.startActivity(chooserIntent);
+            }else{
+                System.out.println("Do not Have Intent");
+                //showDialaog(this);
+            }
+        }
+    }
+
     private static void openPlayStore(Context context) {
         try {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
@@ -275,5 +350,4 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
-
 }

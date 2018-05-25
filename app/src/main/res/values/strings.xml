@@ -59,7 +59,9 @@
     <!-- Strings related to Settings -->
     <string name="summary_support">Please feedback the improvements and inconvenience.</string>
     <string name="title_activity_setting">Settings</string>
-    <string name="pref_header_about" translatable="false">About</string>
+    <string name="title_about" translatable="false">About</string>
+    <string name="summary_about" >Open Source License, Privacy Policy, Terms of Service</string>
+    <string name="key_about" translatable="false">key_about</string>
     <string name="app_version" translatable="false">1.0</string>
     <string name="key_app_version" translatable="false">key_app_version</string>
     <string name="title_send_feedback">Send Feedback</string>

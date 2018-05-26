@@ -364,7 +364,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity implements
                     intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
                     intent.setAction(Intent.ACTION_SEND);
                     intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + appPackageName);
                     intent.setPackage(packageName);
                     targetShareIntents.add(intent);
                 } else if(packageName.contains("com.twitter.android")) {
@@ -373,7 +373,7 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity implements
                     intent.setAction(Intent.ACTION_SEND);
                     //intent.setType("image/*");
                     intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_TEXT, "제목 http://www.google.com #제목");
+                    intent.putExtra(Intent.EXTRA_TEXT, "Filters https://play.google.com/store/apps/details?id=" + appPackageName +"#Filters");
                     //intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+mImagePath));
                     intent.setPackage(packageName);
                     targetShareIntents.add(intent);
@@ -382,8 +382,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity implements
                     intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
                     intent.setAction(Intent.ACTION_SEND);
                     intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "제목");
-                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Filters");
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + appPackageName);
                     intent.setPackage(packageName);
                     targetShareIntents.add(intent);
                 } else {
@@ -391,8 +391,8 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity implements
                     intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
                     intent.setAction(Intent.ACTION_SEND);
                     intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "제목");
-                    intent.putExtra(Intent.EXTRA_TEXT, "http://www.google.com");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Filters");
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + appPackageName);
                     intent.setPackage(packageName);
                     targetShareIntents.add(intent);
                 }

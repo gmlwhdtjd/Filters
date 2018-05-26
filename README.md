@@ -1,6 +1,10 @@
 # Filters - Make your own Filter
    Bartender에서 Filters로 앱 이름이 변경되었습니다.
    
+   드디어 Play Store에 출시되었습니다.
+   
+   [다운 받으러 가기](https://play.google.com/store/apps/details?id=com.teambartender3.filters)
+
 # Privacy Policy
   
    [Privacy Policy link](https://gmlwhdtjd.github.io/filters-privacy-policy/)

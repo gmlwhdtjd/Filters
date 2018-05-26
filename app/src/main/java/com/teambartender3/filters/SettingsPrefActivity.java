@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.annotation.MainThread;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,13 +36,19 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class SettingsPrefActivity extends AppCompatPreferenceActivity {
+interface NestedCallback{
+ void OnNestedPreferenceSelected();
+}
+
+public class SettingsPrefActivity extends AppCompatPreferenceActivity implements NestedCallback{
     private static final String TAG = SettingsPrefActivity.class.getSimpleName();
     private static String appPackageName;
     private static final int REQUEST_DIRECTORY = 0;
     private static String device_version = "";
     private static final int OPENLICENSE_CODE = 0;
     private static final int TERMS_CODE = 1;
+    private static final int PRIVACY_POLICY_CODE = 2;
+    private static final String TAG_NESTED = "TAG_NESTED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +72,17 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         setListFooter(view);
     }
 
-    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    @Override
+    public void OnNestedPreferenceSelected() {
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new AboutPreferenceFragment(), TAG_NESTED).addToBackStack(TAG_NESTED).commit();
+
+    }
+
+
+    public static class MainPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+
+        private NestedCallback mNestedCallback;
+
         @Override
         public void onResume() {
             super.onResume();
@@ -79,15 +96,26 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            if (context instanceof NestedCallback) {
+                mNestedCallback = (NestedCallback) context;
+            } else {
+                throw new IllegalStateException("Owner must implement URLCallback interface");
+            }
+        }
+
+        @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference_layout_setting);
             Preference galleryPath = (findPreference(getString(R.string.key_gallery_name)));
-            Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
-            Preference termsPref = (findPreference(getString(R.string.key_terms)));
             Preference faqPref = (findPreference(getString(R.string.key_faq)));
             Preference versionPref = (findPreference(getString(R.string.key_app_version)));
-            Preference adsPref = (findPreference("ads"));
+            Preference aboutPref=(findPreference(getString(R.string.key_about)));
+            Preference share = findPreference(getString(R.string.key_share));
+            Preference review = findPreference(getString(R.string.key_review));
+            Preference feedbackPref = findPreference(getString(R.string.key_send_feedback));
 
             SharedPreferences sp = getActivity().getSharedPreferences(getString(R.string.gallery_pref), 0);
             String path = sp.getString(getString(R.string.key_gallery_name), "Picture");
@@ -163,22 +191,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(), OPENLICENSE_CODE);
-                    return true;
-                }
-            });
-
-            termsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startDetailActivity(getActivity(), TERMS_CODE);
-                    return true;
-                }
-            });
-
             faqPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -189,7 +201,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             });
 
             // feedback preference click listener
-            Preference feedbackPref = findPreference(getString(R.string.key_send_feedback));
             feedbackPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     sendFeedback(getActivity());
@@ -198,7 +209,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             });
 
             //open playstore app
-            Preference review = findPreference(getString(R.string.key_review));
             review.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -208,7 +218,6 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             });
 
             //shared intent
-            Preference share = findPreference(getString(R.string.key_share));
             share.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -216,8 +225,15 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
-        }
 
+            aboutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    mNestedCallback.OnNestedPreferenceSelected();
+                    return true;
+                }
+            });
+        }
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -245,7 +261,46 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
         }
+
     }
+
+    public static class AboutPreferenceFragment extends PreferenceFragment {
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preference_layout_about);
+            Preference openLicensePref = (findPreference(getString(R.string.key_open_license)));
+            Preference termsPref = (findPreference(getString(R.string.key_terms)));
+            Preference privacyPref =(findPreference(getString(R.string.key_privacy)));
+
+            privacyPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(),PRIVACY_POLICY_CODE);
+                    return true;
+                }
+            });
+
+            openLicensePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(), OPENLICENSE_CODE);
+                    return true;
+                }
+            });
+
+            termsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startDetailActivity(getActivity(), TERMS_CODE);
+                    return true;
+                }
+            });
+
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -253,6 +308,16 @@ public class SettingsPrefActivity extends AppCompatPreferenceActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        }else {
+            getFragmentManager().popBackStack();
+        }
+
     }
 
     private static void startDetailActivity(Context context, int pageCode) {

@@ -4,15 +4,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class DetailSettingActivity extends AppCompatActivity {
-
-    TextView mDetailText;
-    TextView mTitleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +22,15 @@ public class DetailSettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting_detail);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDetailText = findViewById(R.id.detailText);
-        mTitleText = findViewById(R.id.detail_title);
+        TextView mDetailText = findViewById(R.id.detailText);
+        TextView mTitleText = findViewById(R.id.detail_title);
 
         AdView adView = (AdView) findViewById(R.id.detail_adView);
-
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
         adView.loadAd(adRequest);
+
+        RelativeLayout detailRelativeLayout = findViewById(R.id.detail_relative);
 
         mDetailText.setMovementMethod(new ScrollingMovementMethod());
         switch (pageCode) {
@@ -43,6 +45,18 @@ public class DetailSettingActivity extends AppCompatActivity {
                 mTitleText.setText(getString(R.string.title_terms));
                 mDetailText.setText(R.string.terms_service_text);
                 getSupportActionBar().setTitle(getString(R.string.title_terms));
+                break;
+
+            case 2:
+                WebView mWebView = new WebView(getApplicationContext());
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                params.addRule(RelativeLayout.ABOVE, R.id.detail_adView);
+                mWebView.setLayoutParams(params);
+                detailRelativeLayout.addView(mWebView);
+                WebSettings mWebSettings = mWebView.getSettings();
+                mWebSettings.setJavaScriptEnabled(true);
+                mWebView.loadUrl("https://gmlwhdtjd.github.io/filters-privacy-policy/");
+
                 break;
 
         }

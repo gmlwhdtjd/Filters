@@ -101,4 +101,5 @@
     </string-array>
     <string name="Guide_Slide_2">간편하게 저장된 필터로 찰칵!</string>
     <string name="Guide_Slide_3">맘에 드는 필터가 없다면?\n직접 만드는 나만의 필터!</string>
+    <string name="summary_about">오픈소스 라이센스, 개인 정보 처리 방침, 서비스 약관</string>
 </resources>

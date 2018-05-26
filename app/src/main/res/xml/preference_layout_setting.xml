@@ -22,20 +22,17 @@
         <Preference
             android:key="@string/key_faq"
             android:summary="@string/summary_faq"
-            android:title="@string/title_faq">
-        </Preference>
+            android:title="@string/title_faq"/>
         <Preference
             android:key="@string/key_send_feedback"
             android:summary="@string/summary_support"
             android:title="@string/title_send_feedback" />
-        <Preference
-            android:key="@string/key_terms"
-            android:title="@string/title_terms">
-        </Preference>
 
         <Preference
-            android:key="@string/key_open_license"
-            android:title="@string/title_open_license" />
+                android:key="@string/key_about"
+                android:summary="@string/summary_about"
+                android:title="@string/title_about"/>
+
 
 </PreferenceScreen>
 

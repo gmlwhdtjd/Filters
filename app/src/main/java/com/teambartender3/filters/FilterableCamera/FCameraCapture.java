@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
 
+import com.crashlytics.android.Crashlytics;
 import com.teambartender3.filters.FilterableCamera.Filters.OriginalFilter;
 import com.teambartender3.filters.FilterableCamera.Filters.FCameraFilter;
 import com.teambartender3.filters.FilterableCamera.Filters.RetroFilter;
@@ -231,24 +232,29 @@ public class FCameraCapture {
             rotMat.postRotate(-90);
         else
             rotMat.postRotate(0);
-
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMat, false);
-
         try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String millisecondStamp = String.format("%04d", System.currentTimeMillis() % 10000);
-            File file = new File(mSaveDirectory + File.separator + "IMG_" + timeStamp + "_" + millisecondStamp + ".jpg");
-
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            bitmap.recycle();
-
-            Log.d(TAG, file.toString());
-
-            mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotMat, false);
         }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
+        catch (OutOfMemoryError e) {
+            Crashlytics.log(Log.WARN, "saveImage", e.getMessage());
+        }
+        finally {
+            try {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String millisecondStamp = String.format("%04d", System.currentTimeMillis() % 10000);
+                File file = new File(mSaveDirectory + File.separator + "IMG_" + timeStamp + "_" + millisecondStamp + ".jpg");
+
+                FileOutputStream fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                bitmap.recycle();
+
+                Log.d(TAG, file.toString());
+
+                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            }
+            catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -267,33 +273,15 @@ public class FCameraCapture {
                     android.opengl.GLUtils.getEGLErrorString(egl10.eglGetError()));
         }
 
-        int[] configsCount = new int[1];
-        EGLConfig[] configs = new EGLConfig[1];
-        int[] configSpec = {
-                EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                EGL10.EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-                EGL10.EGL_RED_SIZE, 8,
-                EGL10.EGL_GREEN_SIZE, 8,
-                EGL10.EGL_BLUE_SIZE, 8,
-                EGL10.EGL_ALPHA_SIZE, 8,
-                EGL10.EGL_DEPTH_SIZE, 0,
-                EGL10.EGL_STENCIL_SIZE, 0,
-                EGL10.EGL_NONE
-        };
+        GLContextFactory contextFactory = new GLContextFactory();
+        GLConfigChooser configChooser = new GLConfigChooser(8, 8, 8, 8, 0, 0);
 
-        EGLConfig eglConfig = null;
-        if (!egl10.eglChooseConfig(eglDisplay, configSpec, configs, 1, configsCount)) {
-            throw new IllegalArgumentException("eglChooseConfig failed " +
-                    android.opengl.GLUtils.getEGLErrorString(egl10.eglGetError()));
-        } else if (configsCount[0] > 0) {
-            eglConfig = configs[0];
-        }
+        EGLConfig eglConfig = configChooser.chooseConfig(egl10, eglDisplay);
         if (eglConfig == null) {
             throw new RuntimeException("eglConfig not initialized");
         }
 
-        int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE};
-        eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
+        eglContext = contextFactory.createContext(egl10, eglDisplay, eglConfig);
 
         int[] surfaceAttr = {
                 EGL10.EGL_WIDTH, width,

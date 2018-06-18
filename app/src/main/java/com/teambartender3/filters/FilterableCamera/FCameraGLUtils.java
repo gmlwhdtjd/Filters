@@ -17,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -215,5 +216,12 @@ public class FCameraGLUtils {
         inputStream.close();
 
         return builder.toString();
+    }
+
+    public static void checkEglError(String TAG, String prompt, EGL10 egl) {
+        int error;
+        while ((error = egl.eglGetError()) != EGL10.EGL_SUCCESS) {
+            Log.e(TAG, String.format("%s: EGL error: 0x%x", prompt, error));
+        }
     }
 }
